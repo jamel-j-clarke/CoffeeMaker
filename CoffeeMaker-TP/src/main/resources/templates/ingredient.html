@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Add an Ingredient</title>
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="css/app.css" />
+<style>
+input.ng-valid {
+	background-color: lightgreen;
+}
+
+input.ng-dirty.ng-invalid-required,input.ng-dirty.ng-invalid-number {
+	background-color: pink;
+}
+
+input.ng-dirty.ng-invalid-min {
+	background-color: yellow;
+}
+body {
+		background-color:rgb(203, 195, 227);
+}
+
+</style>
+</head>
+<body>
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+
+	<script>
+		/*<![CDATA[*/
+		var app = angular.module('myApp', []);
+		app.controller('addIngredientCtrl', function($scope, $http, $q) {
+			console.log("Hit!");
+
+			$scope.reset = function() {
+				$scope.ingredient = {
+					name : '',
+					amount : '',
+					unit : '',
+				};
+				if (undefined != $scope.addIngredientForm) {
+					$scope.addIngredientForm.$setPristine(); // reset Form
+				}
+			}
+
+			$scope.submit = function() {
+				$scope.addIngredient();
+
+				$scope.reset();
+			}
+
+			$scope.addIngredient = function() {
+				$scope.success = false;
+
+				$http.post("/api/v1/inventory", $scope.ingredient).then(
+						function(success) {
+							$scope.success = true;
+						}, function(error) {
+						      if (error.status === 409) {
+						          alert("Cannot add duplicate ingredient. Try again.");
+						        } else {
+						          console.error("Error while adding ingredient", error);
+						          alert("Invalid amount. Try again.");
+						        }
+						      });
+			}
+			
+			$scope.onHome = function() {
+				window.location.href = "/index";
+			}
+
+			$scope.reset();
+
+		});
+		/*]]>*/
+	</script>
+
+
+
+	<div ng-app="myApp" class="generic-container ng-cloak"
+		ng-controller="addIngredientCtrl as ctrl">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<span class="lead">Add an Ingredient</span>
+			</div>
+
+			<div class="formcontainer">
+				<form ng-submit="submit()" name="addIngredientForm"
+					class="form-horizontal">
+
+					<div class="row">
+						<div class="form-group col-md-12">
+							<label class="col-md-1 control-lable" for="file">Name</label>
+							<div class="col-md-9">
+								<input type="text" ng-model="ingredient.name" name="name"
+									class="name form-control input-sm"
+									placeholder="Enter ingredient name. No duplicate names." required>
+								<div class="has-error" ng-show="addIngredientForm.$dirty">
+									<span ng-show="addIngredientForm.name.$error.required">This
+										is a required field.</span> 
+										<!-- Name can start with negative, works because just a string -->
+										<!-- <span
+										ng-show="addIngredientForm.name.$invalid">This field is
+										invalid.</span> -->
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="form-group col-md-12">
+							<label class="col-md-1 control-lable" for="amount">Amount</label>
+		      				<div class="col-md-4">
+		        					<input type="number" ng-model="ingredient.amount" name="amount"
+											class="form-control input-md-6"
+											placeholder="Enter ingredient amount (ounces). Must be positive." required="0" min="1"/>
+									<div class="has-error" ng-show="addIngredientForm.$dirty">
+										<span ng-show="addIngredientForm.amount.$error.required">This
+											is a required field for adding an ingredient to inventory.<br></span> <span
+											ng-show="addIngredientForm.amount.$error.min">Amount must be greater than 0
+											when adding an ingredient to inventory.</span>
+									</div>
+		      				</div>
+	           				
+	           				<!-- <label class="col-md-1 control-lable" for="unit">Unit</label>
+	      					<div class="col-md-4">          
+	        					<select ng-model="ingredient.unit" name="unit" class="form-control input-md-6">
+								    <option value="">Select your unit</option>
+								    <option value="oz">oz</option>
+								    <option value="lb">lb</option>
+								    <option value="g">g</option>
+								    <option value="kg">kg</option>
+								    <option value="cup">cup</option>
+								    <option value="tsp">tsp</option>
+								    <option value="tbsp">tbsp</option>
+								    <option value="fl oz">fl oz</option>
+								    <option value="l">l</option>
+								    <option value="ml">ml</option>
+								  </select>
+	      					</div>	  -->
+					    </div>
+					</div>
+
+					<div class="row">
+						<div class="form-actions floatRight">
+							<input type="submit" value="Submit"
+								class="btn btn-primary btn-sm"
+								ng-disabled="addRecipeForm.$invalid" />
+							<button type="button" ng-click="reset()"
+								class="btn btn-warning btn-sm"
+								ng-disabled="addIngredientForm.$pristine">Reset Form</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="panel-footer">
+				<div ng-show="success">Ingredient Added!</div>
+			</div>
+			
+		</div>
+
+		<button  ng-click="onHome();" ><img src="https://static.thenounproject.com/png/1054389-200.png" alt="Home" width="25" height="25"></button>
+		
+	</div>
+
+
+
+</body>
+</html>
