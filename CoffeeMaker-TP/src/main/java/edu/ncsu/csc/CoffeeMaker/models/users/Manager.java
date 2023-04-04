@@ -1,5 +1,8 @@
 package edu.ncsu.csc.CoffeeMaker.models.users;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 import edu.ncsu.csc.CoffeeMaker.models.Ingredient;
 import edu.ncsu.csc.CoffeeMaker.models.Inventory;
 import edu.ncsu.csc.CoffeeMaker.models.Recipe;
@@ -16,6 +19,11 @@ import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
  *
  */
 public class Manager extends Employee {
+
+    /** Manager id */
+    @Id
+    @GeneratedValue
+    static long             id;
     /** The current system inventory */
     static InventoryService inventory;
     /** The current system recipes */
@@ -37,6 +45,12 @@ public class Manager extends Employee {
         super( email, name, password );
     }
 
+    /**
+     * Adds ingredients to the inventory
+     *
+     * @param ingredient
+     *            the ingredient to be added to the inventory
+     */
     public static void addIngredient ( final Ingredient ingredient ) {
         final Inventory ivt = inventory.getInventory();
         ivt.addIngredient( ingredient );

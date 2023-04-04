@@ -3,14 +3,17 @@ package edu.ncsu.csc.CoffeeMaker.models.users;
 import java.io.Serializable;
 import java.util.Objects;
 
+import javax.persistence.Entity;
+
 import edu.ncsu.csc.CoffeeMaker.models.DomainObject;
 
 /**
  * Implements a basic User object for the CoffeeMaker system
  *
  * @author Emma Holincheck
- *
+ * @version 04/03/2023
  */
+@Entity // Not sure if we want this at this level but can check back on it
 public class User extends DomainObject {
     /** The id of the user */
     private long         id;

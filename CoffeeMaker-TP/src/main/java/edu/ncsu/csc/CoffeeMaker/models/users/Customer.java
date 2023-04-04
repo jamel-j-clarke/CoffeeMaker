@@ -54,8 +54,15 @@ public class Customer extends User {
         if ( isUsersOrder( order ) ) {
             return false;
         }
+        /**
+         * This is temporary as it focuses on user implementation depending on
+         * how we want to do authentication and order validation we may need to
+         * change this method but for the time being this implementation will
+         * suffice.
+         */
+        currentOrders.save( order );
         orders.add( order );
-        return false;
+        return true;
     }
 
     /**
