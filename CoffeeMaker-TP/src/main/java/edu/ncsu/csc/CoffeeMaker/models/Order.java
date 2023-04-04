@@ -87,4 +87,36 @@ public class Order extends DomainObject {
         return orderStatus;
     }
 
+    /**
+     * Equals method for Order object
+     */
+    @Override
+    public boolean equals ( final Object obj ) {
+        if ( this == obj ) {
+            return true;
+        }
+        if ( obj == null ) {
+            return false;
+        }
+        if ( getClass() != obj.getClass() ) {
+            return false;
+        }
+        final Order other = (Order) obj;
+        if ( beverages == null ) {
+            if ( other.beverages != null ) {
+                return false;
+            }
+        }
+        else if ( !beverages.equals( other.beverages ) ) {
+            return false;
+        }
+        if ( id != other.id ) {
+            return false;
+        }
+        if ( payment != other.payment ) {
+            return false;
+        }
+        return true;
+    }
+
 }

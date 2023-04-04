@@ -51,6 +51,9 @@ public class Customer extends User {
      * @return true if the order can be placed and false if it cannot
      */
     public boolean orderBeverage ( final Order order ) {
+        if ( isUsersOrder( order ) ) {
+            return false;
+        }
         orders.add( order );
         return false;
     }
