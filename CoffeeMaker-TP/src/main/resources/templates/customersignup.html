@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Sign Up</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+    <style>
+		@font-face {
+  			font-family: 'Raleway', sans-serif;
+  			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
+		}
+        header {
+			font-size: 56px;
+		}
+        back {
+			position: absolute;
+			bottom: 8px;
+			left: 8px;
+			font-size: 60px;
+		}
+		input[type=email], input[type=password], input[type=text] {
+			font-size: 24px;
+			border-radius: 10px;
+			border: 2px solid #000000;
+			width: 350px;
+			padding: 5px;
+		}
+		a, input[type=submit] {
+			border-radius: 10px;
+			border: 2px solid #000000;
+			text-align: center;
+			text-decoration: none;
+			color: black;
+			padding: 10px;
+			font-size: 36px;
+			width: 125px;
+			white-space: normal;
+		}
+		holder {
+       		text-align: center;
+			vertical-align: middle;
+			font-size: 18px;
+		}
+		div {
+	        margin-bottom: 10px;
+			vertical-align: middle;
+			text-align: center;
+			font-size: 24px;
+			padding: 2px;
+      	}
+		table {
+			border: none;
+			margin-left: auto;
+			margin-right: auto;
+		}
+		* {
+			font-family: raleway;
+		}
+		input:invalid {
+		    border: 2px solid #FF0000;
+		}
+    </style>
+</head>
+<body>
+	<div layout:fragment="content">
+		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+		<script>
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*]]>*/
+		</script>
+		<div ng-app="myApp" ng-controller="populateCtrl">
+			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
+			<div>
+				<header>Become a CoffeeMaker Rewards Member</header>
+			</div>
+			<br>
+			<form ng-submit="submit()" name="customerSignUpForm">
+				<table>
+					<tr>
+						<!-- holds actual table with fields that are a part of the form --> 
+						<td>
+							<table>
+								<tr>
+									<td style="text-align: right;">
+										<label>Preferred First Name:</label>
+									</td>
+									<td>
+										<input type="text" required="true"/>
+									</td>
+								</tr>
+								<tr>
+									<td style="text-align: right;">
+										<label>Last Name:</label>
+									</td>
+									<td>
+										<input type="text" required="true"/>
+									</td>
+								</tr>
+								<tr>
+									<td style="text-align: right;">
+										<label>Email:</label>
+									</td>
+									<td>
+										<input type="email" required="true" placeholder="e.g. mocha@coffeemaker.com"/>
+									</td>
+								</tr>
+								<tr>
+									<td style="text-align: right;">
+										<label>Password:</label>
+									</td>
+									<td>
+										<input type="password" required="true"/>
+									</td>
+								</tr>
+								<tr>
+									<td style="text-align: right;">
+										<label>Repeat Password:</label>
+									</td>
+									<td>
+										<input type="password" required="true"/>
+									</td>
+								</tr>
+							</table>
+						</td>
+						<!-- holds button to submit the form --> 
+						<td>
+							<input type="submit" value="Sign Up" class="a" ng-disabled="customerSignUpForm.$invalid"/>
+						</td>
+					</tr>
+				</table>
+			</form>
+            <a href="/index" style="border: none;">
+            	<back> ← </back>
+            </a>
+		</div>
+	</div>
+</body>
+</html>
