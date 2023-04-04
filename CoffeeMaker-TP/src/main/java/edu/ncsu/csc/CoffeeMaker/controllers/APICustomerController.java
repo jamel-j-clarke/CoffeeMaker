@@ -119,7 +119,7 @@ public class APICustomerController extends APIController {
      * @return Success if the user could be deleted; an error if the user does
      *         not exist
      */
-    @DeleteMapping ( BASE_PATH + "/customers/{email}" )
+    @DeleteMapping ( BASE_PATH + "/customers/{id}" )
     public ResponseEntity deleteCustomer ( @PathVariable final long id ) {
         final Customer user = customerService.findById( id );
         if ( null == user ) {

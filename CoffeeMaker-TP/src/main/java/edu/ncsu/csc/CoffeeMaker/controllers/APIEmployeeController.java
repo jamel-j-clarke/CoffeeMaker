@@ -119,7 +119,7 @@ public class APIEmployeeController extends APIController {
      * @return Success if the user could be deleted; an error if the user does
      *         not exist
      */
-    @DeleteMapping ( BASE_PATH + "/employees/{email}" )
+    @DeleteMapping ( BASE_PATH + "/employees/{id}" )
     public ResponseEntity deleteEmployee ( @PathVariable final long id ) {
         final Employee user = employeeService.findById( id );
         if ( null == user ) {
