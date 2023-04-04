@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import edu.ncsu.csc.CoffeeMaker.services.UserService;
-
 /**
  * This is the controller that holds the REST endpoints that handle CRUD
  * operations for Users.
@@ -30,111 +28,207 @@ import edu.ncsu.csc.CoffeeMaker.services.UserService;
 public class APIUserController extends APIController {
 
     /**
-     * UserService object, to be autowired in by Spring to allow for
+     * CustomerService object, to be autowired in by Spring to allow for
      * manipulating the User model
      */
     @Autowired
-    private UserService service;
+    private CustomerService customerService;
 
     /**
-     * REST API method to provide GET access to all users in the system
+     * EmployeeService object, to be autowired in by Spring to allow for
+     * manipulating the User model
+     */
+    @Autowired
+    private EmployeeService employeeService;
+
+    /**
+     * REST API method to provide GET access to all employees in the system
      *
      * @return JSON representation of all users
      */
-    @GetMapping ( BASE_PATH + "/users" )
-    public List<User> getUsers () {
-        return service.findAll();
+    @GetMapping ( BASE_PATH + "/employees" )
+    public List<Employee> getEmployees () {
+        return employeeService.findAll();
     }
 
     /**
-     * REST API method to provide GET access to a specific user, as indicated by
-     * the path variable provided (the name of the recipe desired)
+     * REST API method to provide GET access to all employees in the system
      *
-     * @param name
-     *            recipe name
+     * @return JSON representation of all users
+     */
+    @GetMapping ( BASE_PATH + "/customers" )
+    public List<Customer> getCustomers () {
+        return customerService.findAll();
+    }
+
+    /**
+     * REST API method to provide GET access to a specific employee, as
+     * indicated by the path variable provided (the id of the employee desired)
+     *
+     * @param id
+     *            employee id
      * @return response to the request
      */
-    @GetMapping ( BASE_PATH + "/users/{email}" )
-    public ResponseEntity getUser ( @PathVariable ( "email" ) final String email ) {
-        final User user = service.findByEmail( email );
-        return null == user
-                ? new ResponseEntity( errorResponse( "No user found with email " + email ), HttpStatus.NOT_FOUND )
+    @GetMapping ( BASE_PATH + "/employees/{id}" )
+    public ResponseEntity getEmployee ( @PathVariable ( "id" ) final long id ) {
+        final Employee user = employeeService.findById( id );
+        return null == user ? new ResponseEntity( errorResponse( "No user found with id " + id ), HttpStatus.NOT_FOUND )
                 : new ResponseEntity( user, HttpStatus.OK );
     }
 
     /**
-     * REST API method to provide POST access to the User model. This is used to
-     * create a new User by automatically converting the JSON RequestBody
-     * provided to a Recipe object. Invalid JSON will fail.
+     * REST API method to provide GET access to a specific employee, as
+     * indicated by the path variable provided (the id of the employee desired)
      *
-     * @param recipe
+     * @param id
+     *            customer id
+     * @return response to the request
+     */
+    @GetMapping ( BASE_PATH + "/customers/{id}" )
+    public ResponseEntity getCustomer ( @PathVariable ( "id" ) final long id ) {
+        final Customer user = customerService.findById( id );
+        return null == user ? new ResponseEntity( errorResponse( "No user found with id " + id ), HttpStatus.NOT_FOUND )
+                : new ResponseEntity( user, HttpStatus.OK );
+    }
+
+    /**
+     * REST API method to provide POST access to the Employee model. This is
+     * used to create a new Employee by automatically converting the JSON
+     * RequestBody provided to a Employee object. Invalid JSON will fail.
+     *
+     * @param employee
      *            The valid User to be saved.
      * @return ResponseEntity indicating success if the User could be saved to
-     *         the inventory, or an error if it could not be
+     *         the database, or an error if it could not be
      */
-    @PostMapping ( BASE_PATH + "/users" )
-    public ResponseEntity createUser ( @RequestBody final User user ) {
-        if ( null != service.findByEmail( user.getEmail() ) ) {
-            return new ResponseEntity( errorResponse( "User with the name " + user.getEmail() + " already exists" ),
+    @PostMapping ( BASE_PATH + "/employees" )
+    public ResponseEntity createEmployee ( @RequestBody final Employee employee ) {
+        if ( null != employeeService.findById( employee.getId() ) ) {
+            return new ResponseEntity( errorResponse( "User with the name " + employee.getName() + " already exists" ),
                     HttpStatus.CONFLICT );
         }
-        if ( service.findAll().size() < 3 ) {
-            service.save( user );
-            return new ResponseEntity( successResponse( user.getName() + " successfully created" ), HttpStatus.OK );
-        }
-        else {
-            return new ResponseEntity( errorResponse( "Insufficient space in user book for user " + user.getName() ),
-                    HttpStatus.INSUFFICIENT_STORAGE );
-        }
+        employeeService.save( employee );
+        return new ResponseEntity( successResponse( employee.getName() + " successfully created" ), HttpStatus.OK );
 
     }
 
     /**
-     * REST API method to provide PUT access to the Recipe model. This is used
-     * to edit a Recipe by automatically converting the JSON RequestBody
-     * provided to a Recipe object. Invalid JSON will fail.
+     * REST API method to provide POST access to the Employee model. This is
+     * used to create a new Employee by automatically converting the JSON
+     * RequestBody provided to a Employee object. Invalid JSON will fail.
      *
-     * @param recipe
-     *            The valid Recipe to be saved.
-     * @param name
-     *            the name of the recipe to edit
-     *
-     * @return ResponseEntity indicating success if the Recipe could be saved to
-     *         the inventory, or an error if it could not be
+     * @param employee
+     *            The valid User to be saved.
+     * @return ResponseEntity indicating success if the User could be saved to
+     *         the database, or an error if it could not be
      */
-    @PutMapping ( BASE_PATH + "/users/{id}" )
-    public ResponseEntity updateUser ( @PathVariable final long id, @RequestBody final User user ) {
-        final User currUser = service.findById( id );
+    @PostMapping ( BASE_PATH + "/customers" )
+    public ResponseEntity createCustomer ( @RequestBody final Customer customer ) {
+        if ( null != customerService.findById( customer.getId() ) ) {
+            return new ResponseEntity( errorResponse( "User with the name " + customer.getName() + " already exists" ),
+                    HttpStatus.CONFLICT );
+        }
+        customerService.save( customer );
+        return new ResponseEntity( successResponse( customer.getName() + " successfully created" ), HttpStatus.OK );
+
+    }
+
+    /**
+     * REST API method to provide PUT access to the Employee model. This is used
+     * to edit a Employee by automatically converting the JSON RequestBody
+     * provided to a Employee object. Invalid JSON will fail.
+     *
+     * @param employee
+     *            The valid Employee to be saved.
+     * @param id
+     *            the id of the employee to edit
+     *
+     * @return ResponseEntity indicating success if the Employee could be saved
+     *         to the inventory, or an error if it could not be
+     */
+    @PutMapping ( BASE_PATH + "/employees/{id}" )
+    public ResponseEntity updateEmployee ( @PathVariable final long id, @RequestBody final Employee employee ) {
+        final Employee currUser = employeeService.findById( id );
 
         if ( currUser == null ) {
             return new ResponseEntity( errorResponse( "User with the id " + id + " does not exist" ),
                     HttpStatus.NOT_FOUND );
         }
         else {
-            currUser.updateRecipe( user );
-            service.save( currUser );
-            return new ResponseEntity( successResponse( user + " successfully updated" ), HttpStatus.OK );
+            currUser.updateEmployee( employee );
+            employeeService.save( currUser );
+            return new ResponseEntity( successResponse( employee + " successfully updated" ), HttpStatus.OK );
         }
 
     }
 
     /**
-     * REST API method to allow deleting a User from the CoffeeMaker's
-     * Inventory, by making a DELETE request to the API endpoint and indicating
+     * REST API method to provide PUT access to the Employee model. This is used
+     * to edit a Customer by automatically converting the JSON RequestBody
+     * provided to a Employee object. Invalid JSON will fail.
+     *
+     * @param customer
+     *            The valid Customer to be saved.
+     * @param id
+     *            the id of the customer to edit
+     *
+     * @return ResponseEntity indicating success if the Customer could be saved
+     *         to the inventory, or an error if it could not be
+     */
+    @PutMapping ( BASE_PATH + "/customers/{id}" )
+    public ResponseEntity updateCustomer ( @PathVariable final long id, @RequestBody final Customer customer ) {
+        final Customer currUser = customerService.findById( id );
+
+        if ( currUser == null ) {
+            return new ResponseEntity( errorResponse( "User with the id " + id + " does not exist" ),
+                    HttpStatus.NOT_FOUND );
+        }
+        else {
+            currUser.updateCustomer( customer );
+            customerService.save( currUser );
+            return new ResponseEntity( successResponse( customer + " successfully updated" ), HttpStatus.OK );
+        }
+
+    }
+
+    /**
+     * REST API method to allow deleting a Employee from the CoffeeMaker's
+     * Database, by making a DELETE request to the API endpoint and indicating
      * the user to delete (as a path variable)
      *
-     * @param email
-     *            The email of the user to delete
+     * @param id
+     *            The id of the user to delete
      * @return Success if the user could be deleted; an error if the user does
      *         not exist
      */
-    @DeleteMapping ( BASE_PATH + "/users/{email}" )
-    public ResponseEntity deleteUser ( @PathVariable final String email ) {
-        final User user = service.findByEmail( email );
+    @DeleteMapping ( BASE_PATH + "/employees/{email}" )
+    public ResponseEntity deleteEmployee ( @PathVariable final long id ) {
+        final Employee user = employeeService.findById( id );
         if ( null == user ) {
-            return new ResponseEntity( errorResponse( "No user found for email " + email ), HttpStatus.NOT_FOUND );
+            return new ResponseEntity( errorResponse( "No user found for id " + id ), HttpStatus.NOT_FOUND );
         }
-        service.delete( user );
+        employeeService.delete( user );
+
+        return new ResponseEntity( successResponse( user + " was deleted successfully" ), HttpStatus.OK );
+    }
+
+    /**
+     * REST API method to allow deleting a Customer from the CoffeeMaker's
+     * Database, by making a DELETE request to the API endpoint and indicating
+     * the user to delete (as a path variable)
+     *
+     * @param id
+     *            The id of the user to delete
+     * @return Success if the user could be deleted; an error if the user does
+     *         not exist
+     */
+    @DeleteMapping ( BASE_PATH + "/customers/{email}" )
+    public ResponseEntity deleteCustomer ( @PathVariable final long id ) {
+        final Customer user = customerService.findById( id );
+        if ( null == user ) {
+            return new ResponseEntity( errorResponse( "No user found for id " + id ), HttpStatus.NOT_FOUND );
+        }
+        customerService.delete( user );
 
         return new ResponseEntity( successResponse( user + " was deleted successfully" ), HttpStatus.OK );
     }
