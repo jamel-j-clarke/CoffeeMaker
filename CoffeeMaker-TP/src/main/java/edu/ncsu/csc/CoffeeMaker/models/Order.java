@@ -49,23 +49,32 @@ public class Order extends DomainObject {
     }
 
     /**
+     * Returns the long version of the id of the order
+     *
+     * @return long version of the id
+     */
+    public long getLongId () {
+        return id;
+    }
+
+    /**
      * Starts the order and moves its status to in progress in the system
      */
-    public static void start () {
+    public void start () {
         orderStatus = OrderStatus.IN_PROGRESS;
     }
 
     /**
      * Completes the order, moving its status to done in the system
      */
-    public static void complete () {
+    public void complete () {
         orderStatus = OrderStatus.DONE;
     }
 
     /**
      * Cancels the order, moving its status to cancelled in the system
      */
-    public static void cancel () {
+    public void cancel () {
         orderStatus = OrderStatus.CANCELLED;
     }
 
@@ -74,7 +83,7 @@ public class Order extends DomainObject {
      *
      * @return the current order status
      */
-    public static OrderStatus getStatus () {
+    public OrderStatus getStatus () {
         return orderStatus;
     }
 

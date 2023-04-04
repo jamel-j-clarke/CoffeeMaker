@@ -7,6 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import edu.ncsu.csc.CoffeeMaker.models.Order;
+import edu.ncsu.csc.CoffeeMaker.models.OrderStatus;
+import edu.ncsu.csc.CoffeeMaker.services.OrderService;
 
 /**
  * Customer User
@@ -21,9 +23,11 @@ public class Customer extends User {
     /** Customer id */
     @Id
     @GeneratedValue
-    private long        id;
-
-    private List<Order> orders;
+    private long         id;
+    /** List of orders the user has made */
+    private List<Order>  orders;
+    /** The current orders in the system */
+    private OrderService currentOrders;
 
     /**
      * Creates a new Customer User
@@ -37,6 +41,58 @@ public class Customer extends User {
      */
     public Customer ( final String email, final String name, final String password ) {
         super( email, name, password );
+    }
+
+    /**
+     * Allows the user to make an order
+     *
+     * @param order
+     *            the order the user is attempting to order
+     * @return true if the order can be placed and false if it cannot
+     */
+    public boolean orderBeverage ( final Order order ) {
+        orders.add( order );
+        return false;
+    }
+
+    /**
+     * Allows the user to check the current status of their order with an
+     * orderId
+     *
+     * @param orderId
+     *            the id of the order being checked
+     * @return null if the order does not exist or if the order is not one of
+     *         the customers orders
+     */
+    public OrderStatus checkOrderStatus ( final Long orderId ) {
+        final Order userOrder = currentOrders.findById( orderId );
+        if ( userOrder == null ) {
+            return null;
+        }
+        else if ( !isUsersOrder( userOrder ) ) {
+            return null; // We may want this to throw an error in the future
+        }
+        else {
+            return userOrder.getStatus();
+        }
+
+    }
+
+    /**
+     * Helper method that validates an order is one of the users orders before
+     * searching the database for it.
+     *
+     * @param order
+     *            the order being checked
+     * @return true if the order is one of the users and false if it is not
+     */
+    private boolean isUsersOrder ( final Order order ) {
+        for ( int i = 0; i < orders.size(); i++ ) {
+            if ( orders.get( i ).equals( order ) ) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
