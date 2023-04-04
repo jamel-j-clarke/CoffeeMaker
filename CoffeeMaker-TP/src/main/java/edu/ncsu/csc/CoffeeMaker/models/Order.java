@@ -3,6 +3,10 @@ package edu.ncsu.csc.CoffeeMaker.models;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 /**
  * The order object that tracks the recipes in the order for the user
  *
@@ -10,9 +14,12 @@ import java.util.List;
  * @version 03/30/2023
  *
  */
+@Entity
 public class Order extends DomainObject {
 
     /** The id of the order */
+    @Id
+    @GeneratedValue
     private long               id;
     /** The payment for the order */
     private long               payment;
