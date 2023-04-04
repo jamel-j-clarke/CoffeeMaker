@@ -2,9 +2,11 @@ package edu.ncsu.csc.CoffeeMaker.models.users;
 
 import java.util.List;
 
+import javax.management.InvalidAttributeValueException;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import edu.ncsu.csc.CoffeeMaker.models.Order;
 import edu.ncsu.csc.CoffeeMaker.models.OrderStatus;
@@ -14,7 +16,7 @@ import edu.ncsu.csc.CoffeeMaker.services.OrderService;
  * Customer User
  *
  * @author Emma Holincheck
- * @version 03/31/2023
+ * @version 04/04/2023
  *
  */
 @Entity
@@ -25,8 +27,13 @@ public class Customer extends User {
     @GeneratedValue
     private long         id;
     /** List of orders the user has made */
+    @OneToMany
     private List<Order>  orders;
-    /** The current orders in the system */
+
+    /**
+     * The current orders in the system do not need to be saved to the database
+     * for the customer
+     */
     private OrderService currentOrders;
 
     /**
@@ -38,8 +45,11 @@ public class Customer extends User {
      *            the name of the customer
      * @param password
      *            the customers password
+     * @throws InvalidAttributeValueException
+     *             if the customers email is invalid
      */
-    public Customer ( final String email, final String name, final String password ) {
+    public Customer ( final String email, final String name, final String password )
+            throws InvalidAttributeValueException {
         super( email, name, password );
     }
 
@@ -60,9 +70,17 @@ public class Customer extends User {
          * change this method but for the time being this implementation will
          * suffice.
          */
-        currentOrders.save( order );
         orders.add( order );
         return true;
+    }
+
+    /**
+     * Getter for the users orders
+     *
+     * @return returns the users orders
+     */
+    public List<Order> getOrders () {
+        return orders;
     }
 
     /**
@@ -89,6 +107,15 @@ public class Customer extends User {
     }
 
     /**
+     * Returns the users id as a long
+     *
+     * @return the users id as a long
+     */
+    public Long getIdLong () {
+        return id;
+    }
+
+    /**
      * Helper method that validates an order is one of the users orders before
      * searching the database for it.
      *
@@ -97,12 +124,12 @@ public class Customer extends User {
      * @return true if the order is one of the users and false if it is not
      */
     private boolean isUsersOrder ( final Order order ) {
-        for ( int i = 0; i < orders.size(); i++ ) {
-            if ( orders.get( i ).equals( order ) ) {
-                return true;
-            }
+        if ( order.getUserId() == id ) {
+            return true;
         }
-        return false;
+        else {
+            return false;
+        }
     }
 
 }

@@ -1,8 +1,13 @@
 package edu.ncsu.csc.CoffeeMaker.models.users;
 
+import java.util.List;
+
+import javax.management.InvalidAttributeValueException;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import edu.ncsu.csc.CoffeeMaker.models.Inventory;
 import edu.ncsu.csc.CoffeeMaker.models.Order;
@@ -12,7 +17,7 @@ import edu.ncsu.csc.CoffeeMaker.services.OrderService;
 /**
  *
  * @author Emma Holincheck
- * @version 03/31/2023
+ * @version 04/04/2023
  *
  */
 @Entity
@@ -35,8 +40,11 @@ public class Employee extends User {
      *            of the user
      * @param password
      *            of the user
+     * @throws InvalidAttributeValueException
+     *             if the employees email is invalid
      */
-    public Employee ( final String email, final String name, final String password ) {
+    public Employee ( final String email, final String name, final String password )
+            throws InvalidAttributeValueException {
         super( email, name, password );
     }
 
@@ -74,6 +82,17 @@ public class Employee extends User {
         final Inventory ivt = currentInventory.getInventory();
         ivt.addIngredients( inventory.getIngredients() );
         currentInventory.save( ivt );
+    }
+
+    /**
+     * Returns a list of completed orders for the employee
+     *
+     * @return list of completed orders
+     */
+    public List<Order> getCompletedOrdersList () {
+        final JpaRepository<Order, Long> completedOrder = orders.getCompletedOrders();
+        final List<Order> completedOrders = completedOrder.findAll();
+        return completedOrders;
     }
 
 }

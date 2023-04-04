@@ -3,6 +3,7 @@ package edu.ncsu.csc.CoffeeMaker.models.users;
 import java.io.Serializable;
 import java.util.Objects;
 
+import javax.management.InvalidAttributeValueException;
 import javax.persistence.Entity;
 
 import edu.ncsu.csc.CoffeeMaker.models.DomainObject;
@@ -20,7 +21,7 @@ public class User extends DomainObject {
     /** The name of the user */
     private final String name;
     /** The email of the user */
-    private final String email;
+    private String       email;
     /** The password of the user */
     private final String password;
 
@@ -33,11 +34,32 @@ public class User extends DomainObject {
      *            of the user
      * @param password
      *            for the user's account
+     * @throws InvalidAttributeValueException
+     *             if the email is invalid
      */
-    public User ( final String email, final String name, final String password ) {
-        this.email = email;
+    public User ( final String email, final String name, final String password ) throws InvalidAttributeValueException {
+        validateAndSetEmail( email );
         this.name = name;
         this.password = password;
+    }
+
+    /**
+     * Helper method that validates the email and sets it if valid
+     *
+     * @param email
+     *            of the user
+     * @throws InvalidAttributeValueException
+     *             if the email is invalid in format
+     */
+    private void validateAndSetEmail ( final String email ) throws InvalidAttributeValueException {
+        if ( !email.contains( "@" ) || !email.contains( "." ) || email.indexOf( "@" ) < email.indexOf( "." )
+                || email.indexOf( "@" ) == 0 ) {
+            throw new InvalidAttributeValueException( "not a valid emails" );
+        }
+        else {
+            this.email = email;
+        }
+
     }
 
     /**

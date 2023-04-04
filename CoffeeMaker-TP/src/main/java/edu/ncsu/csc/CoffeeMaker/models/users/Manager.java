@@ -1,5 +1,6 @@
 package edu.ncsu.csc.CoffeeMaker.models.users;
 
+import javax.management.InvalidAttributeValueException;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
@@ -40,8 +41,11 @@ public class Manager extends Employee {
      *            the name of the manager user
      * @param password
      *            the password of the manager user
+     * @throws InvalidAttributeValueException
+     *             if the managers email is invalid
      */
-    public Manager ( final String email, final String name, final String password ) {
+    public Manager ( final String email, final String name, final String password )
+            throws InvalidAttributeValueException {
         super( email, name, password );
     }
 
@@ -97,8 +101,11 @@ public class Manager extends Employee {
      *            the name of the new employee
      * @param password
      *            the password of the new employee
+     * @throws InvalidAttributeValueException
+     *             if the employee's email is invalid
      */
-    public static void createEmployeeAccount ( final String email, final String name, final String password ) {
+    public static void createEmployeeAccount ( final String email, final String name, final String password )
+            throws InvalidAttributeValueException {
         final Employee temp = new Employee( email, name, password );
         employees.save( temp );
     }

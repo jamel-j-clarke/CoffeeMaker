@@ -6,12 +6,16 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.Min;
+
+import edu.ncsu.csc.CoffeeMaker.models.users.Customer;
 
 /**
  * The order object that tracks the recipes in the order for the user
  *
  * @author Emma Holincheck
- * @version 03/30/2023
+ * @version 04/04/2023
  *
  */
 @Entity
@@ -22,20 +26,38 @@ public class Order extends DomainObject {
     @GeneratedValue
     private long               id;
     /** The payment for the order */
-    private long               payment;
+    @Min ( 0 )
+    private final long         payment;
     /** The list of beverages in the order */
+    @OneToMany
     private final List<Recipe> beverages;
     /** Representative of the current status of the order in the system */
     private static OrderStatus orderStatus;
+    /** The id of the user placing the order */
+    private final long         userId;
 
     /**
      * Constructs a new Order
      *
      * @param beverages
+     *            the list of beverages in the order
+     * @param payment
+     *            the payment method for the order
      */
-    public Order ( final List<Recipe> beverages ) {
+    public Order ( final List<Recipe> beverages, final long payment, final Customer customer ) {
         this.beverages = beverages;
+        this.payment = payment;
+        userId = customer.getIdLong();
         orderStatus = OrderStatus.NOT_STARTED;
+    }
+
+    /**
+     * Gets the payment for the order
+     *
+     * @return payment information for the order
+     */
+    public long getPayment () {
+        return payment;
     }
 
     /**
@@ -46,6 +68,15 @@ public class Order extends DomainObject {
     @Override
     public Serializable getId () {
         return id;
+    }
+
+    /**
+     * Gets the id of the user who placed the order
+     *
+     * @return userId of the user who placed the order
+     */
+    public long getUserId () {
+        return userId;
     }
 
     /**
