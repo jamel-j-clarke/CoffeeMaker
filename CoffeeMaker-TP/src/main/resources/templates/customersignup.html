@@ -38,10 +38,12 @@
 			width: 125px;
 			white-space: normal;
 		}
-		holder {
+		.holder {
        		text-align: center;
 			vertical-align: middle;
-			font-size: 18px;
+		}
+		.holder#blur.active {
+			filter: blur(20px);
 		}
 		div {
 	        margin-bottom: 10px;
@@ -69,71 +71,135 @@
 		<script>
 			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
 			/*]]>*/
+			var app = angular.module('myApp', []);
+			app.controller('populateCtrl', function($scope, $http, $q) {
+				
+				// log the hit
+				console.log("Hit!");
+				
+				// clear the form function
+				$scope.reset = function() {
+					// clear the fields
+					$scope.customer = {
+						firstName: '',
+						lastName: '',
+						email: '',
+						password: '',
+						repeatPassword: ''
+					};
+					// clear the form
+					if (undefined != $scope.customerSignUpForm) {
+						scope.customerSignUpForm.$setPristine();
+					}
+				}
+				
+				// submit the form function
+				$scope.submit = function() {
+					// create the customer
+					$scope.createCustomer();
+					
+					// reset the form
+					$scope.reset();
+				}
+				
+				// create customer function
+				$scope.createCustomer() = function() {
+					$scope.success = false;
+					$scope.failure = false;
+					
+					// post the new customer
+					$http.post("/api/v1/customers", $scope.customer).then(
+						function(success) {
+							$scope.success = true;
+							$scope.failure = false;
+						},
+						function(failure) {
+							$scope.success = false;
+							$scope.failure = true;
+						}
+					)
+				};
+				
+				// successful customer creation function
+				$scope.toggle() = function() {
+					<!--- var blur = document.getElementById('allContent'); blur.classList.toggle('active') -->
+					if (success == true) {
+						alert("Your account has been created.\nelcome to the CoffeeMaker Rewards Club {{customer.firstName}}!");
+					}
+					
+				};
+				
+			});
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*<![CDATA[*/ 
 		</script>
 		<div ng-app="myApp" ng-controller="populateCtrl">
 			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
-			<div>
-				<header>Become a CoffeeMaker Rewards Member</header>
-			</div>
-			<br>
-			<form ng-submit="submit()" name="customerSignUpForm">
-				<table>
-					<tr>
-						<!-- holds actual table with fields that are a part of the form --> 
-						<td>
-							<table>
-								<tr>
-									<td style="text-align: right;">
-										<label>Preferred First Name:</label>
-									</td>
-									<td>
-										<input type="text" required="true"/>
-									</td>
-								</tr>
-								<tr>
-									<td style="text-align: right;">
-										<label>Last Name:</label>
-									</td>
-									<td>
-										<input type="text" required="true"/>
-									</td>
-								</tr>
-								<tr>
-									<td style="text-align: right;">
-										<label>Email:</label>
-									</td>
-									<td>
-										<input type="email" required="true" placeholder="e.g. mocha@coffeemaker.com"/>
-									</td>
-								</tr>
-								<tr>
-									<td style="text-align: right;">
-										<label>Password:</label>
-									</td>
-									<td>
-										<input type="password" required="true"/>
-									</td>
-								</tr>
-								<tr>
-									<td style="text-align: right;">
-										<label>Repeat Password:</label>
-									</td>
-									<td>
-										<input type="password" required="true"/>
-									</td>
-								</tr>
-							</table>
-						</td>
-						<!-- holds button to submit the form --> 
-						<td>
-							<input type="submit" value="Sign Up" class="a" ng-disabled="customerSignUpForm.$invalid"/>
-						</td>
-					</tr>
-				</table>
-			</form>
-            <a href="/index" style="border: none;">
-            	<back> ← </back>
-            </a>
+			<holder>
+				<div>
+					<header>Become a CoffeeMaker Rewards Member</header>
+				</div>
+				<br>
+				<form ng-submit="submit()" name="customerSignUpForm">
+					<table>
+						<tr>
+							<!-- holds actual table with fields that are a part of the form --> 
+							<td>
+								<table>
+									<tr>
+										<td style="text-align: right;">
+											<label>Preferred First Name:</label>
+										</td>
+										<td>
+											<input type="text" required="true"/>
+										</td>
+									</tr>
+									<tr>
+										<td style="text-align: right;">
+											<label>Last Name:</label>
+										</td>
+										<td>
+											<input type="text" required="true"/>
+										</td>
+									</tr>
+									<tr>
+										<td style="text-align: right;">
+											<label>Email:</label>
+										</td>
+										<td>
+											<input type="email" required="true" placeholder="e.g. mocha@coffeemaker.com"/>
+										</td>
+									</tr>
+									<tr>
+										<td style="text-align: right;">
+											<label>Password:</label>
+										</td>
+										<td>
+											<input type="password" required="true"/>
+										</td>
+									</tr>
+									<tr>
+										<td style="text-align: right;">
+											<label>Repeat Password:</label>
+										</td>
+										<td>
+											<input type="password" required="true"/>
+										</td>
+									</tr>
+								</table>
+							</td>
+							<!-- holds button to submit the form --> 
+							<td>
+								<input type="submit" value="Sign Up" class="a" ng-disabled="customerSignUpForm.$invalid" onclick="toggle()"/>
+							</td>
+						</tr>
+					</table>
+				</form>
+				<div ng-show="">Ingredient Added</div>
+	            <a href="/index" style="border: none;">
+	            	<back> ← </back>
+	            </a>
+            </holder>
 		</div>
 	</div>
 </body>
