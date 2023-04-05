@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Staff Login</title>
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="css/app.css" />
+<style>
+input.ng-valid {
+	background-color: lightgreen;
+}
+
+input.ng-dirty.ng-invalid-required,input.ng-dirty.ng-invalid-number {
+	background-color: pink;
+}
+
+input.ng-dirty.ng-invalid-min {
+	background-color: yellow;
+}
+body {
+		background-color:rgb(207, 176, 145);
+}
+
+</style>
+</head>
+<body>
+	<div class="generic-container ng-cloak">
+	<div class="row text-center">
+
+	<h1>Staff Login</h1>
+	<br>
+
+					<div class="row">
+						<div class="form-group col-md-12">
+							<label class="col-md-1 control-lable" for="file">Staff ID</label>
+							<div class="col-md-9">
+								<input type="text" ng-model="user.id" name="id"
+									class="name form-control input-sm"
+									placeholder="Enter your Staff ID" required=""/>
+
+							</div>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="form-group col-md-12">
+							<label class="col-md-1 control-lable" for="file">Password</label>
+							<div class="col-md-9">
+								<input type="text" ng-model="user.password" name="password"
+									class="name form-control input-sm"
+									placeholder="Enter your Password" required=""/>
+
+							</div>
+						</div>
+					</div>
+	<div class="btn-group btn-group-horizontal">
+		<div class="col-md-6">
+        <a href="stafflogin.html">
+            <button class="btn btn-primary btn-lg" style="font-size: 30px">Login</button>
+        </a>
+        </div>
+		
+    </div>
+    </div> 
+	</div>
+
+</body>
+</html>
