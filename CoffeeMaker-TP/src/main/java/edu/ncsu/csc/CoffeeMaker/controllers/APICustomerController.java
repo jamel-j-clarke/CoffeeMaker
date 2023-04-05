@@ -2,6 +2,8 @@ package edu.ncsu.csc.CoffeeMaker.controllers;
 
 import java.util.List;
 
+import javax.management.InvalidAttributeValueException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +61,8 @@ public class APICustomerController extends APIController {
     @GetMapping ( BASE_PATH + "/customers/{id}" )
     public ResponseEntity getCustomer ( @PathVariable ( "id" ) final long id ) {
         final Customer user = customerService.findById( id );
-        return null == user ? new ResponseEntity( errorResponse( "No user found with id " + id ), HttpStatus.NOT_FOUND )
+        return null == user
+                ? new ResponseEntity( errorResponse( "No customer found with id " + id ), HttpStatus.NOT_FOUND )
                 : new ResponseEntity( user, HttpStatus.OK );
     }
 
@@ -67,15 +70,15 @@ public class APICustomerController extends APIController {
      * REST API method to provide GET access to a specific employee, as
      * indicated by the path variable provided (the id of the employee desired)
      *
-     * @param id
-     *            customer id
+     * @param email
+     *            customer email
      * @return response to the request
      */
-    @GetMapping ( BASE_PATH + "/customers/{email}" )
+    @GetMapping ( BASE_PATH + "/customers/email/{email}" )
     public ResponseEntity getCustomer ( @PathVariable ( "email" ) final String email ) {
         final Customer user = customerService.findByEmail( email );
         return null == user
-                ? new ResponseEntity( errorResponse( "No user found with email " + email ), HttpStatus.NOT_FOUND )
+                ? new ResponseEntity( errorResponse( "No customer found with email " + email ), HttpStatus.NOT_FOUND )
                 : new ResponseEntity( user, HttpStatus.OK );
     }
 
@@ -91,13 +94,19 @@ public class APICustomerController extends APIController {
      */
     @PostMapping ( BASE_PATH + "/customers" )
     public ResponseEntity createCustomer ( @RequestBody final Customer customer ) {
+        try {
+            final Customer cust = new Customer( customer.getEmail(), customer.getName(), customer.getPassword() );
+        }
+        catch ( final InvalidAttributeValueException e ) {
+            return new ResponseEntity( errorResponse( "Invalid input." ), HttpStatus.CONFLICT );
+        }
         if ( null != customerService.findByEmail( customer.getEmail() ) ) {
             return new ResponseEntity(
-                    errorResponse( "User with the email " + customer.getEmail() + " already exists" ),
+                    errorResponse( "Customer with the email " + customer.getEmail() + " already exists" ),
                     HttpStatus.CONFLICT );
         }
         customerService.save( customer );
-        return new ResponseEntity( successResponse( customer.getName() + " successfully created" ), HttpStatus.OK );
+        return new ResponseEntity( successResponse( customer.getName() + " was successfully created" ), HttpStatus.OK );
 
     }
 
@@ -116,45 +125,23 @@ public class APICustomerController extends APIController {
      */
     @PutMapping ( BASE_PATH + "/customers/{id}" )
     public ResponseEntity updateCustomer ( @PathVariable final long id, @RequestBody final Customer customer ) {
+        try {
+            final Customer cust = new Customer( customer.getEmail(), customer.getName(), customer.getPassword() );
+        }
+        catch ( final InvalidAttributeValueException e ) {
+            return new ResponseEntity( errorResponse( "Invalid input. " ), HttpStatus.CONFLICT );
+        }
         final Customer currUser = customerService.findById( id );
 
         if ( currUser == null ) {
-            return new ResponseEntity( errorResponse( "User with the id " + id + " does not exist" ),
+            return new ResponseEntity( errorResponse( "Customer with the id " + id + " does not exist" ),
                     HttpStatus.NOT_FOUND );
         }
         else {
             currUser.updateUser( customer );
             customerService.save( currUser );
-            return new ResponseEntity( successResponse( customer + " successfully updated" ), HttpStatus.OK );
-        }
-
-    }
-
-    /**
-     * REST API method to provide PUT access to the Employee model. This is used
-     * to edit a Customer by automatically converting the JSON RequestBody
-     * provided to a Employee object. Invalid JSON will fail.
-     *
-     * @param customer
-     *            The valid Customer to be saved.
-     * @param email
-     *            the email of the customer to edit
-     *
-     * @return ResponseEntity indicating success if the Customer could be saved
-     *         to the inventory, or an error if it could not be
-     */
-    @PutMapping ( BASE_PATH + "/customers/{email}" )
-    public ResponseEntity updateCustomer ( @PathVariable final String email, @RequestBody final Customer customer ) {
-        final Customer currUser = customerService.findByEmail( email );
-
-        if ( currUser == null ) {
-            return new ResponseEntity( errorResponse( "User with the email " + email + " does not exist" ),
-                    HttpStatus.NOT_FOUND );
-        }
-        else {
-            currUser.updateUser( customer );
-            customerService.save( currUser );
-            return new ResponseEntity( successResponse( customer + " successfully updated" ), HttpStatus.OK );
+            return new ResponseEntity( successResponse( customer.getName() + " was successfully updated" ),
+                    HttpStatus.OK );
         }
 
     }
@@ -173,32 +160,11 @@ public class APICustomerController extends APIController {
     public ResponseEntity deleteCustomer ( @PathVariable final long id ) {
         final Customer user = customerService.findById( id );
         if ( null == user ) {
-            return new ResponseEntity( errorResponse( "No user found for id " + id ), HttpStatus.NOT_FOUND );
+            return new ResponseEntity( errorResponse( "No customer found for id " + id ), HttpStatus.NOT_FOUND );
         }
         customerService.delete( user );
 
-        return new ResponseEntity( successResponse( user + " was deleted successfully" ), HttpStatus.OK );
-    }
-
-    /**
-     * REST API method to allow deleting a Customer from the CoffeeMaker's
-     * Database, by making a DELETE request to the API endpoint and indicating
-     * the user to delete (as a path variable)
-     *
-     * @param id
-     *            The id of the user to delete
-     * @return Success if the user could be deleted; an error if the user does
-     *         not exist
-     */
-    @DeleteMapping ( BASE_PATH + "/customers/{email}" )
-    public ResponseEntity deleteCustomer ( @PathVariable final String email ) {
-        final Customer user = customerService.findByEmail( email );
-        if ( null == user ) {
-            return new ResponseEntity( errorResponse( "No user found for email " + email ), HttpStatus.NOT_FOUND );
-        }
-        customerService.delete( user );
-
-        return new ResponseEntity( successResponse( user + " was deleted successfully" ), HttpStatus.OK );
+        return new ResponseEntity( successResponse( user.getName() + " was deleted successfully" ), HttpStatus.OK );
     }
 
 }

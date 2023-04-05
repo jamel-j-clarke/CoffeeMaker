@@ -20,6 +20,12 @@ import edu.ncsu.csc.CoffeeMaker.TestConfig;
 import edu.ncsu.csc.CoffeeMaker.models.users.Customer;
 import edu.ncsu.csc.CoffeeMaker.services.CustomerService;
 
+/**
+ * Tests the Customer class and its methods
+ *
+ * @author Erin Grouge
+ *
+ */
 @ExtendWith ( SpringExtension.class )
 @EnableAutoConfiguration
 @SpringBootTest ( classes = TestConfig.class )

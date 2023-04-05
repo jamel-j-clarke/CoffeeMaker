@@ -240,7 +240,7 @@ public class EmployeeTest {
         catch ( final InvalidAttributeValueException e ) {
             assertEquals( "Invalid Input", e.getMessage() );
         }
-        // Null email
+        // Null name
         try {
             final Employee erin = new Employee( "erin@gmail.com", null, "erin'spassword" );
             fail();
@@ -248,7 +248,7 @@ public class EmployeeTest {
         catch ( final InvalidAttributeValueException e ) {
             assertEquals( "Invalid Input", e.getMessage() );
         }
-        // Null email
+        // Null password
         try {
             final Employee erin = new Employee( "erin@gmail.com", "Erin Grouge", null );
             fail();

@@ -88,7 +88,16 @@ public class User extends DomainObject {
      * @return true if it was updated, false if not.
      */
     public boolean updateUser ( final User user ) {
-        return setName( user.getName() ) && setPassword( user.getPassword() );
+        final String oldname = this.name;
+        final String oldpassword = this.password;
+        if ( setName( user.getName() ) && setPassword( user.getPassword() ) ) {
+            return true;
+        }
+        else { // If invalid, change back to old name and password
+            setName( oldname );
+            setPassword( oldpassword );
+            return false;
+        }
     }
 
     /**
