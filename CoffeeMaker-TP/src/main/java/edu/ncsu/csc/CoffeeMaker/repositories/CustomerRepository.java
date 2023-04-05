@@ -12,15 +12,24 @@ import edu.ncsu.csc.CoffeeMaker.models.users.Customer;
  *
  */
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
+    // /**
+    // * Finds a Customer object with the provided id. Spring will generate code
+    // * to make this happen.
+    // *
+    // * @param id
+    // * of the employee
+    // *
+    // * @return Found employee, null if none.
+    // */
+    // Customer findById ( long id );
+
     /**
-     * Finds a Customer object with the provided id. Spring will generate code
-     * to make this happen.
+     * Finds the customer with the given email
      *
-     * @param id
-     *            of the employee
-     *
-     * @return Found employee, null if none.
+     * @param email
+     *            the customer's email
+     * @return the customer
      */
-    Customer findById ( long id );
+    Customer findByEmail ( String email );
 
 }

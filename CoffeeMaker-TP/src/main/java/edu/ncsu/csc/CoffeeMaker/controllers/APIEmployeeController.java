@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.ncsu.csc.CoffeeMaker.models.users.Employee;
+import edu.ncsu.csc.CoffeeMaker.services.EmployeeService;
+
 /**
  * This is the controller that holds the REST endpoints that handle CRUD
  * operations for Users.
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  * to JSON
  *
  * @author Jonathan Kurian
+ * @author Erin Grouge
  *
  */
 @SuppressWarnings ( { "unchecked", "rawtypes" } )
@@ -60,6 +64,22 @@ public class APIEmployeeController extends APIController {
     }
 
     /**
+     * REST API method to provide GET access to a specific employee, as
+     * indicated by the path variable provided (the id of the employee desired)
+     *
+     * @param email
+     *            employee email
+     * @return response to the request
+     */
+    @GetMapping ( BASE_PATH + "/employees/{email}" )
+    public ResponseEntity getEmployee ( @PathVariable ( "email" ) final String email ) {
+        final Employee user = employeeService.findByEmail( email );
+        return null == user
+                ? new ResponseEntity( errorResponse( "No user found with email " + email ), HttpStatus.NOT_FOUND )
+                : new ResponseEntity( user, HttpStatus.OK );
+    }
+
+    /**
      * REST API method to provide POST access to the Employee model. This is
      * used to create a new Employee by automatically converting the JSON
      * RequestBody provided to a Employee object. Invalid JSON will fail.
@@ -71,7 +91,7 @@ public class APIEmployeeController extends APIController {
      */
     @PostMapping ( BASE_PATH + "/employees" )
     public ResponseEntity createEmployee ( @RequestBody final Employee employee ) {
-        if ( null != employeeService.findById( employee.getId() ) ) {
+        if ( null != employeeService.findById( (long) employee.getId() ) ) {
             return new ResponseEntity( errorResponse( "User with the name " + employee.getName() + " already exists" ),
                     HttpStatus.CONFLICT );
         }
@@ -102,7 +122,36 @@ public class APIEmployeeController extends APIController {
                     HttpStatus.NOT_FOUND );
         }
         else {
-            currUser.updateEmployee( employee );
+            currUser.updateUser( employee );
+            employeeService.save( currUser );
+            return new ResponseEntity( successResponse( employee + " successfully updated" ), HttpStatus.OK );
+        }
+
+    }
+
+    /**
+     * REST API method to provide PUT access to the Employee model. This is used
+     * to edit a Employee by automatically converting the JSON RequestBody
+     * provided to a Employee object. Invalid JSON will fail.
+     *
+     * @param employee
+     *            The valid Employee to be saved.
+     * @param email
+     *            the email of the employee to edit
+     *
+     * @return ResponseEntity indicating success if the Employee could be saved
+     *         to the inventory, or an error if it could not be
+     */
+    @PutMapping ( BASE_PATH + "/employees/{email}" )
+    public ResponseEntity updateEmployee ( @PathVariable final String email, @RequestBody final Employee employee ) {
+        final Employee currUser = employeeService.findByEmail( email );
+
+        if ( currUser == null ) {
+            return new ResponseEntity( errorResponse( "User with the email " + email + " does not exist" ),
+                    HttpStatus.NOT_FOUND );
+        }
+        else {
+            currUser.updateUser( employee );
             employeeService.save( currUser );
             return new ResponseEntity( successResponse( employee + " successfully updated" ), HttpStatus.OK );
         }
@@ -124,6 +173,27 @@ public class APIEmployeeController extends APIController {
         final Employee user = employeeService.findById( id );
         if ( null == user ) {
             return new ResponseEntity( errorResponse( "No user found for id " + id ), HttpStatus.NOT_FOUND );
+        }
+        employeeService.delete( user );
+
+        return new ResponseEntity( successResponse( user + " was deleted successfully" ), HttpStatus.OK );
+    }
+
+    /**
+     * REST API method to allow deleting a Employee from the CoffeeMaker's
+     * Database, by making a DELETE request to the API endpoint and indicating
+     * the user to delete (as a path variable)
+     *
+     * @param email
+     *            The email of the user to delete
+     * @return Success if the user could be deleted; an error if the user does
+     *         not exist
+     */
+    @DeleteMapping ( BASE_PATH + "/employees/{email}" )
+    public ResponseEntity deleteEmployee ( @PathVariable final String email ) {
+        final Employee user = employeeService.findByEmail( email );
+        if ( null == user ) {
+            return new ResponseEntity( errorResponse( "No user found for email " + email ), HttpStatus.NOT_FOUND );
         }
         employeeService.delete( user );
 
