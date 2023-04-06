@@ -3,9 +3,6 @@
 <head>
 	<title>Sign Up</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
     <style>
 		@font-face {
   			font-family: 'Raleway', sans-serif;
@@ -80,16 +77,22 @@
 				// clear the form function
 				$scope.reset = function() {
 					// clear the fields
+						// customer
 					$scope.customer = {
-						firstName: '',
-						lastName: '',
+						name: '',
 						email: '',
+						password: ''
+					};
+					
+						// password
+					$scope.passwordVerification = {
 						password: '',
 						repeatPassword: ''
 					};
+					
 					// clear the form
 					if (undefined != $scope.customerSignUpForm) {
-						scope.customerSignUpForm.$setPristine();
+						$scope.customerSignUpForm.$setPristine();
 					}
 				}
 				
@@ -103,28 +106,42 @@
 				}
 				
 				// create customer function
-				$scope.createCustomer() = function() {
+				$scope.createCustomer = function() {
 					$scope.success = false;
 					$scope.failure = false;
 					
-					// post the new customer
-					$http.post("/api/v1/customers", $scope.customer).then(
-						function(success) {
-							$scope.success = true;
-							$scope.failure = false;
-						},
-						function(failure) {
-							$scope.success = false;
-							$scope.failure = true;
-						}
-					)
+					// if the passwords match...
+					if ($scope.passwordVerification.password == $scope.passwordVerification.repeatPassword) {
+						
+						// add the password to the customer
+						$scope.customer.password = $scope.passwordVerification.password;
+						
+						console.log($scope.customer.name + "\n" + $scope.customer.email + "\n" + $scope.customer.password);
+						// post the new customer
+						$http.post("/api/v1/customers", $scope.customer).then(
+							function(success) {
+								$scope.success = true;
+								$scope.failure = false;
+							},
+							function(failure) {
+								$scope.success = false;
+								$scope.failure = true;
+							}
+						)
+					} 
+					// if the passwords don't match, we have a failure
+					else {
+						$scope.success = false;
+						$scope.failure = true;
+					}
+					
 				};
 				
 				// successful customer creation function
-				$scope.toggle() = function() {
+				$scope.toggle = function() {
 					<!--- var blur = document.getElementById('allContent'); blur.classList.toggle('active') -->
 					if (success == true) {
-						alert("Your account has been created.\nelcome to the CoffeeMaker Rewards Club {{customer.firstName}}!");
+						alert("Your account has been created.\nWelcome to the CoffeeMaker Rewards Club {{customer.firstName}}!");
 					}
 					
 				};
@@ -148,18 +165,10 @@
 								<table>
 									<tr>
 										<td style="text-align: right;">
-											<label>Preferred First Name:</label>
+											<label>Preferred Name:</label>
 										</td>
 										<td>
-											<input type="text" required="true"/>
-										</td>
-									</tr>
-									<tr>
-										<td style="text-align: right;">
-											<label>Last Name:</label>
-										</td>
-										<td>
-											<input type="text" required="true"/>
+											<input type="text" required="true" ng-model="customer.name"/>
 										</td>
 									</tr>
 									<tr>
@@ -167,7 +176,7 @@
 											<label>Email:</label>
 										</td>
 										<td>
-											<input type="email" required="true" placeholder="e.g. mocha@coffeemaker.com"/>
+											<input type="email" required="true" placeholder="e.g. mocha@coffeemaker.com" ng-model="customer.email"/>
 										</td>
 									</tr>
 									<tr>
@@ -175,7 +184,7 @@
 											<label>Password:</label>
 										</td>
 										<td>
-											<input type="password" required="true"/>
+											<input type="password" required="true" ng-model="passwordVerification.password"/>
 										</td>
 									</tr>
 									<tr>
@@ -183,7 +192,7 @@
 											<label>Repeat Password:</label>
 										</td>
 										<td>
-											<input type="password" required="true"/>
+											<input type="password" required="true" ng-model="passwordVerification.repeatPassword"/>
 										</td>
 									</tr>
 								</table>
@@ -195,7 +204,7 @@
 						</tr>
 					</table>
 				</form>
-				<div ng-show="">Ingredient Added</div>
+				<div ng-show="$success">Customer Added</div>
 	            <a href="/index" style="border: none;">
 	            	<back> ← </back>
 	            </a>
