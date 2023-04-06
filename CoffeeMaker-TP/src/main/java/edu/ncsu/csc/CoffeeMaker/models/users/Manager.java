@@ -1,53 +1,26 @@
 package edu.ncsu.csc.CoffeeMaker.models.users;
 
 import javax.management.InvalidAttributeValueException;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
 /**
  * The Manager User in the system that controls inventory, recipe, and personnel
  * maintenance
  *
  * @author Emma Holincheck
- * @version 03/30/2023
+ * @author Erin Grouge
+ * @version 04/04/2023
  *
  */
 public class Manager extends Employee {
 
-    /** Manager id */
-    @Id
-    @GeneratedValue
-    static long id;
-    // /** The current system inventory */
-    // static InventoryService inventory;
-    // /** The current system recipes */
-    // static RecipeService recipes;
-    // /** The current system employees */
-    // static EmployeeService employees;
-
     /**
      * Constructs a new Manger user
      *
-     * @param email
-     *            the email of the manager user
-     * @param name
-     *            the name of the manager user
-     * @param password
-     *            the password of the manager user
      * @throws InvalidAttributeValueException
      *             if the managers email is invalid
      */
-    public Manager ( final String email, final String name, final String password )
-            throws InvalidAttributeValueException {
-        super( email, name, password );
-    }
-
-    /**
-     * Constructs a default Manger user
-     *
-     */
-    public Manager () {
-        super();
+    public Manager () throws InvalidAttributeValueException {
+        super( "m4n4g3r@csc326.edu", "Manager", "tuffyhunttallyhill" );
     }
 
     // /**

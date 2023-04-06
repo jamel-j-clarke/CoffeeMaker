@@ -18,21 +18,10 @@ import edu.ncsu.csc.CoffeeMaker.models.Order;
  */
 @Entity
 public class Customer extends User {
-    //
-    // /** Customer id */
-    // @Id
-    // @GeneratedValue
-    // private long id;
+
     /** List of orders the user has made */
     @OneToMany
     private List<Order> orders;
-
-    // /**
-    // * The current orders in the system do not need to be saved to the
-    // database
-    // * for the customer
-    // */
-    // private OrderService currentOrders;
 
     /**
      * Creates a new Customer User
