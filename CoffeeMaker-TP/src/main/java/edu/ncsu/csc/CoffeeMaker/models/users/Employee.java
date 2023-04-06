@@ -12,16 +12,6 @@ import javax.persistence.Entity;
  */
 @Entity
 public class Employee extends User {
-    // /**
-    // * The id of the employee
-    // */
-    // @Id
-    // @GeneratedValue
-    // private Long id;
-    // /** The current orders in the system */
-    // private static OrderService orders;
-    // /** The current system inventory */
-    // static InventoryService currentInventory;
 
     /**
      * Creates a new Employee user
