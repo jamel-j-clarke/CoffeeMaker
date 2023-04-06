@@ -116,7 +116,7 @@
 			            	
 			        if($scope.success && $scope.customer.password == $scope.passwordAttempt){
 			            $scope.success = true;
-			            alert("Welcome back " + customer.name + "!");
+			            alert("Welcome back " + $scope.customer.name + "!");
 			            window.location.href = "/customerhomepage";
 			        } else if($scope.success) {
 			            alert("Invalid password. Try again.");

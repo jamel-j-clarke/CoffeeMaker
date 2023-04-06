@@ -166,6 +166,13 @@
 							function(failure) {
 								$scope.success = false;
 								$scope.failure = true;
+								
+								// prompt the user if they want to go to the login page
+								var ask = window.confirm("An account with this email already exists.\n Would you like to login?");
+							    if (ask) {
+							        window.location.href = "customerlogin.html";
+							
+							    }
 							}
 						)
 					} 
@@ -173,13 +180,8 @@
 					else {
 						$scope.success = false;
 						$scope.failure = true;
+						$scope.notmatching = true;
 						
-						// prompt the user if they want to go to the login page
-						var ask = window.confirm("An account with this email already exists.\n Would you like to login?");
-					    if (ask) {
-					        window.location.href = "customerlogin.html";
-					
-					    }
 					}
 				};
 			});
@@ -240,6 +242,7 @@
 						</tr>
 					</table>
 				</form>
+				<div ng-show="notmatching">Passwords do not match.</div>
             </div>
             <div class="holder" id="popup">
 				<p>Your account has been created. <br> <br> Welcome to the CoffeeMaker Rewards Club {{customer.name}}!
