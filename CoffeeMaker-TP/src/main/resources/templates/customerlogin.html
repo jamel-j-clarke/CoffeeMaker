@@ -139,19 +139,19 @@
 			            	function (response) {
 			            		$scope.customer = response.data;
 			            		$scope.success = true;
-			            		 
+                      
 			            		if($scope.customer.password === $scope.passwordAttempt) {
 						            $scope.toggle();
-						        } else {
+						          } else {
 						            alert("Invalid password. Try again.");
-						        	$scope.success = false;
-						        }
+						        	  $scope.success = false;
+						          }
+
 			            	},
 			            	function(failure){
 			                	alert("An account with that email does not exist. Click Sign Up to create an account.");
 			                	$scope.success = false;                
 			        		});
-			     
 					$scope.reset();
 				}
 				

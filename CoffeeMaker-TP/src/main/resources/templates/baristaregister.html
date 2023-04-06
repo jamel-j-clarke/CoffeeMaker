@@ -26,7 +26,7 @@
 			width: 350px;
 			padding: 5px;
 		}
-		a, input[type=submit] {
+		a, input[type=submit], button {
 			border-radius: 10px;
 			border: 2px solid #000000;
 			text-align: center;
@@ -51,7 +51,7 @@
 			font-size: 24px;
 			padding: 2px;
       	}
-      	#popup {
+      	#popup, #duplicateBaristaPopup {
       		position: fixed;
       		top: 40%;
       		left: 50%;
@@ -64,7 +64,7 @@
       		opacity: 0;
       		transition: 0.35s;
       	}
-      	#popup.active {
+      	#popup.active, #duplicateBaristaPopup.active {
       		top: 50%;
       		visibility: visible;
       		opacity: 1;
@@ -126,20 +126,18 @@
 			}
 			
 			// failed barista registration function
-			$scope.toggle = function() {
+			$scope.dupeToggle = function() {
 				var blur = document.getElementById('blur'); 
 				blur.classList.toggle('active');
-				<!--var duplicateBaristaPopup = document.getElementById('duplicateBaristaPopup'); duplicateBaristaPopup.classList.toggle('active');-->
+				var duplicateBaristaPopup = document.getElementById('duplicateBaristaPopup');
+				duplicateBaristaPopup.classList.toggle('active');
 			}
 			
 			// submit the form function
 			$scope.submit = function() {
+				
 				// create the barista
 				$scope.createBarista();
-				
-				if ($scope.success === true) {
-					$scope.toggle();
-				}
 			}
 			
 			// create barista function
@@ -147,36 +145,37 @@
 				$scope.success = false;
 				$scope.failure = false;
 				
-				// if the passwords match...
+				// find out if the passwords are matching
 				$scope.matching = $scope.passwordVerification.password === $scope.passwordVerification.repeatPassword;
+				$scope.notMatching = $scope.passwordVerification.password !== $scope.passwordVerification.repeatPassword;
 				
+				// if the passwords match...
 				if ($scope.matching === true) {
 					
 					// add the password to the barista
 					$scope.barista.password = $scope.passwordVerification.password;
 					
 					// post the new barista
-					$http.post("/api/v1/baristas", $scope.barista).then(
+					$http.post("/api/v1/employees", $scope.barista).then(
 						function(success) {
 							$scope.success = true;
 							$scope.failure = false;
+							$scope.toggle();
+							/**sessionStorage.setItem("currentUserName", $scope.barista.name);
+							sessionStorage.setItem("currentUserEmail", $scope.barista.email);*/
 						},
+						// we have a failure: the user already exists
 						function(failure) {
 							$scope.success = false;
 							$scope.failure = true;
+							$scope.dupeToggle();
 						}
 					)
 				} 
-				// if the passwords don't match, we have a failure: the user already exists
+				// if the passwords don't match, notify the user
 				else {
 					$scope.success = false;
 					$scope.failure = true;
-					
-					// prompt the user if they want to go to the login page
-					var ask = window.confirm("An account with this email already exists.\n Would you like to login?");
-				    if (ask) {
-				        window.location.href = "stafflogin.html";
-				    }
 				}
 			};
 		});
@@ -185,63 +184,83 @@
 		</script>
 		<div ng-app="myApp" ng-controller="populateCtrl">
 			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
-			<div>
-				<header>Barista Registration</header>
+			<div class="holder" id="blur">
+				<div>
+					<header>Barista Registration</header>
+				</div>
+				<br>
+				<form ng-submit="submit()" name="baristaRegistrationForm">
+					<table>
+						<tr>
+							<!-- holds actual table with fields that are a part of the form --> 
+							<td>
+								<table>
+									<tr>
+										<td style="text-align: right;">
+											<label>Preferred Name:</label>
+										</td>
+										<td>
+											<input type="text" required="true" ng-model="barista.name"/>
+										</td>
+									</tr>
+									<tr>
+										<td style="text-align: right;">
+											<label>Email:</label>
+										</td>
+										<td>
+											<input type="email" required="true" ng-model="barista.email"/>
+										</td>
+									</tr>
+									<tr>
+										<td style="text-align: right;">
+											<label>Password:</label>
+										</td>
+										<td>
+											<input type="password" required="true" ng-model="passwordVerification.password"/>
+										</td>
+									</tr>
+									<tr>
+										<td style="text-align: right;">
+											<label>Repeat Password:</label>
+										</td>
+										<td>
+											<input type="password" required="true" ng-model="passwordVerification.repeatPassword"/>
+										</td>
+									</tr>
+								</table>
+							</td>
+							<!-- holds button to submit the form --> 
+							<td>
+								<input type="submit" value="Register" class="a" ng-disabled="baristaRegistrationForm.$invalid"/>
+							</td>
+						</tr>
+					</table>
+				</form>
 			</div>
-			<br>
-			<form ng-submit="submit()" name="baristaRegistrationForm">
-				<table>
-					<tr>
-						<!-- holds actual table with fields that are a part of the form --> 
-						<td>
-							<table>
-								<tr>
-									<td style="text-align: right;">
-										<label>Preferred Name:</label>
-									</td>
-									<td>
-										<input type="text" required="true" ng-model="barista.name"/>
-									</td>
-								</tr>
-								<tr>
-									<td style="text-align: right;">
-										<label>Email:</label>
-									</td>
-									<td>
-										<input type="email" required="true" ng-model="barista.email"/>
-									</td>
-								</tr>
-								<tr>
-									<td style="text-align: right;">
-										<label>Password:</label>
-									</td>
-									<td>
-										<input type="password" required="true" ng-model="passwordVerification.password"/>
-									</td>
-								</tr>
-								<tr>
-									<td style="text-align: right;">
-										<label>Repeat Password:</label>
-									</td>
-									<td>
-										<input type="password" required="true" ng-model="passwordVerification.repeatPassword"/>
-									</td>
-								</tr>
-							</table>
-						</td>
-						<!-- holds button to submit the form --> 
-						<td>
-							<input type="submit" value="Register" class="a" ng-disabled="baristaRegistrationForm.$invalid"/>
-						</td>
-					</tr>
-				</table>
-			</form>
-			<div ng-show="failure">Please enter matching passwords.</div>
+			<div ng-show="notMatching">Please enter matching passwords.</div>
+			<!-- welcome message popup-->
 			<div class="holder" id="popup">
-				<p>Your barista account has been created. <br> <br> Welcome {{barista.name}}!
-				<br> <br> <br>
+				<p>Your barista account has been registered. <br>Welcome {{barista.name}}!</p>
+				<br> <br>
 				<a href="/baristahomepage" style="font-size: 20px">OK</a>
 			</div>
+			<!-- account already exists popup-->
+			<div class="holder" id="duplicateBaristaPopup">
+				<p>A barista account with this email already exists.<br>
+				Would you like to login?</p> 
+				<br> <br>
+				<a href="/stafflogin" style="font-size: 20px">Login</a>
+				<a href="#" style="font-size: 20px" onclick="dupeToggle()">Cancel</a>
+			</div>
+			<script type="text/javascript">
+				// failed barista registration function
+				function dupeToggle() {
+					var blur = document.getElementById('blur'); 
+					blur.classList.toggle('active');
+					var duplicateBaristaPopup = document.getElementById('duplicateBaristaPopup');
+					duplicateBaristaPopup.classList.toggle('active');
+				}
+			</script>
             <a href="/managerhomepage" style="border: none;">
             	<back> ← </back>
             </a>
