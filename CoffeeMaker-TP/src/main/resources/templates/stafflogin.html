@@ -1,0 +1,273 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Staff Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+<style>
+		@font-face {
+  			font-family: 'Raleway', sans-serif;
+  			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
+		}
+		body {
+				background-color:rgb(207, 176, 145);
+		}
+		header {
+			font-size: 56px;
+		}
+        back {
+			position: absolute;
+			bottom: 8px;
+			left: 8px;
+			font-size: 60px;
+		}
+		input[type=email], input[type=password] {
+			font-size: 24px;
+			border-radius: 10px;
+			border: 2px solid #000000;
+			width: 350px;
+			padding: 5px;
+		}
+		a, input[type=submit] {
+			border-radius: 10px;
+			border: 2px solid #000000;
+			text-align: center;
+			text-decoration: none;
+			color: black;
+			padding: 5px;
+			font-size: 36px;
+		}
+		buttons {
+			font-size: clamp(3rem, 8vw, 8rem);
+			display: flex;
+			justify-content: center;
+			vertical-align: center;
+			padding: 5px;
+		}
+		.holder {
+       		text-align: center;
+			vertical-align: middle;
+			transition: 0.35s;
+		}
+		.holder#blur.active {
+			filter: blur(7px);
+		}
+		div {
+	        margin-bottom: 10px;
+			vertical-align: middle;
+			text-align: center;
+			font-size: 24px;
+			padding: 2px;
+      	}
+      	#popup {
+      		position: fixed;
+      		top: 40%;
+      		left: 50%;
+      		transform: translate(-50%, -50%);
+      		width: 600px;
+      		padding: 50px;
+      		box-shadow: 0 5px 30px rgba(0,0,0,.3);
+      		background: #FFF;
+      		visibility: hidden;
+      		opacity: 0;
+      		transition: 0.35s;
+      	}
+      	#popup.active {
+      		top: 50%;
+      		visibility: visible;
+      		opacity: 1;
+      		transition: 0.35s;
+      	}
+      	#manpopup {
+      		position: fixed;
+      		top: 40%;
+      		left: 50%;
+      		transform: translate(-50%, -50%);
+      		width: 600px;
+      		padding: 50px;
+      		box-shadow: 0 5px 30px rgba(0,0,0,.3);
+      		background: #FFF;
+      		visibility: hidden;
+      		opacity: 0;
+      		transition: 0.35s;
+      	}
+      	#manpopup.active {
+      		top: 50%;
+      		visibility: visible;
+      		opacity: 1;
+      		transition: 0.35s;
+      	}
+		input:invalid {
+		    border: 2px solid #FF0000;
+		}
+		* {
+			font-family: raleway;
+		}
+
+</style>
+</head>
+<body>
+	<div layout:fragment="content">
+		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+		<script>
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*]]>*/
+			var app = angular.module('myApp', []);
+			app.controller('populateCtrl', function($scope, $http, $q) {
+			
+				$scope.success = false;
+				
+				$scope.employee = {
+					id: '',
+					email: '',
+					name: '',
+					password: ''
+				};
+				
+				$scope.password = '';
+			
+				$scope.encrypt = function() {
+					var pass=document.getElementById('password').value;
+					var hide=document.getElementById('hide').value;
+					if(pass=="") {
+						alert("Must Enter Password");
+						return false;
+					} else {
+						document.getElementById("hide").value = document.getElementById("password").value;
+						var hash = CryptoJS.MD5(pass);
+						document.getElementById('password').value=hash;
+						$scope.passwordAttempt = hash;
+						$scope.customer.email = document.getElementById('email').value;
+						return true;
+					}
+				}
+				
+				// successful employee login
+				$scope.toggle = function() {
+					var blur = document.getElementById('blur'); 
+					blur.classList.toggle('active');
+					var popup = document.getElementById('popup'); 
+					popup.classList.toggle('active');
+				}
+				
+				// Successful log in as manager
+				$scope.mantoggle = function() {
+					var blur = document.getElementById('blur'); 
+					blur.classList.toggle('active');
+					var manpopup = document.getElementById('manpopup'); 
+					manpopup.classList.toggle('active');
+				}
+				
+				$scope.submit = function(){
+					$scope.passwordAttempt = $scope.password;
+					$http.get("/api/v1/employees/email/" + $scope.employee.email)
+			            	.then(
+			            	function (success) {
+			            		$scope.employee = success.data;
+			            		$scope.success = true;
+			            		// Check password
+			            		if ($scope.employee.password == $scope.passwordAttempt){
+			            			if(success.status === 202){
+			            				$scope.mantoggle();
+			            			} else {
+			            				$scope.toggle();
+			            			}
+						        } else  {
+						            alert("Invalid password. Try again.");
+						        	$scope.success = false;
+						        }	
+			            	},
+			            	function(failure){
+			                	alert("An account with that email does not exist. Contact your Manager to make the account.");
+			                	$scope.success = false;                
+			        		});
+			            	
+			        
+					$scope.reset();
+				}
+				
+				$scope.reset = function(){
+					$scope.employee = {
+						id: '',
+						email: '',
+						name: '',
+						password: ''
+					};
+					
+					if (undefined != $scope.employeeLoginForm) {
+						$scope.employeeLoginForm.$setPristine();
+					}
+					
+					$scope.password = '';
+				
+				}
+				
+				$scope.reset();
+		
+			});
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*<![CDATA[*/ 
+		</script>
+
+		<div ng-app="myApp" ng-controller="populateCtrl">
+			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
+			<div>
+				<header>Employee Login</header>
+			</div>
+			<br>
+			<div class="holder" id="blur">
+				<form ng-sumbit="submit()" name="employeeLoginForm">
+					<table style="border: none; margin-left: auto; margin-right: auto;">
+						<tr>
+							<td>
+								<div style="text-align: right;">
+									<label>Email:</label>
+								</div>
+							</td>
+							<td>
+								<div>
+									<input type="email" required="true" ng-model="employee.email" name="email" placeholder="e.g. mocha@coffeemaker.com"/>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align: right;">
+								<div>
+									<label>Password:</label>
+								</div>
+							</td>
+							<td>
+								<div>
+									<input type="password" name="password" ng-model="password" required="true"/>
+								</div>
+							</td>
+							
+						</tr>
+					</table>
+					
+					<div class=buttons>
+						<div>
+							<input type="submit" value="Login" class="a" ng-click="submit()" ng-disabled="employeeLoginForm.$invalid"/>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="holder" id="popup">
+				<p>Hi {{employee.name}}! <br> You're now logged in.</p>
+				<br> <br> <br>
+				<a href="/baristahomepage" style="font-size: 20px">OK</a>
+			</div>
+			<div class="holder" id="manpopup">
+				<p>Hi {{employee.name}}! <br> You're now logged in as Manager.</p>
+				<br> <br> <br>
+				<a href="/managerhomepage" style="font-size: 20px">OK</a>
+			</div>
+            <a href="/index" style="border: none;">
+            	<back> ← </back>
+            </a>
+		</div>
+	</div>	
+</body>
+
+</html>

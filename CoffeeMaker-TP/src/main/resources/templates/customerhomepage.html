@@ -1,0 +1,173 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Customer Home</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+    <style>
+        body {
+			background-color: rgb(207, 176, 145);
+		}
+		@font-face {
+  			font-family: 'Raleway', sans-serif;
+  			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
+		}
+        header {
+			font-size: 56px;
+		}
+		a, button {
+			border-radius: 10px;
+			border: 2px solid #000000;
+			text-align: center;
+			text-decoration: none;
+			color: black;
+			padding: 10px;
+			font-size: 36px;
+			width: 275px;
+			white-space: normal;
+		}
+		.holder {
+       		text-align: center;
+			vertical-align: middle;
+			font-size: 18px;
+			transition: 0.35s;
+		}
+		.holder#blur.active {
+			filter: blur(7px);
+		}
+		#signoutPopup {
+      		position: fixed;
+      		top: 40%;
+      		left: 50%;
+      		transform: translate(-50%, -50%);
+      		width: 600px;
+      		padding: 50px;
+      		box-shadow: 0 5px 30px rgba(0,0,0,.3);
+      		background: #FFF;
+      		visibility: hidden;
+      		opacity: 0;
+      		transition: 0.35s;
+      	}
+      	#signoutPopup.active {
+      		top: 50%;
+      		visibility: visible;
+      		opacity: 1;
+      		transition: 0.35s;
+      	}
+		div {
+	        margin-bottom: 10px;
+			vertical-align: middle;
+			font-size: 30px;
+			padding: 2px;
+      	}
+		th, table {
+			margin-right: auto;
+			border: 2px solid black;
+ 			border-collapse: collapse;
+ 			padding: 15px;
+		}
+		* {
+			font-family: raleway;
+		}
+    </style>
+</head>
+<body>
+	<div layout:fragment="content">
+		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+		<script>
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*]]>*/
+			var app = angular.module('myApp', []);
+			app.controller('populateCtrl', function($scope, $http, $q) {
+				
+				// log the hit
+				console.log("Hit!");
+				
+				// get the current customer's name
+				$scope.name = sessionStorage.getItem("currentUserName");
+				console.log($scope.name);
+				
+				// sign out as a customer
+				$scope.signOut = function() {
+					// clear sesstion storage
+					sessionStorage.removeItem("currentUserName");
+					sessionStorage.clear();
+					
+					// go to the customer login page
+					window.location.href = "customerlogin.html";
+				}
+				
+				$scope.reset = function() {
+					// clear the fields of customer
+					$scope.customer = {
+						email: '',
+						name: '',
+						password: ''
+					};
+					
+					$scope.name = ' ';
+					
+					// clear the form
+					if (undefined != $scope.customerHomepageForm) {
+						$scope.customerHomepageForm.$setPristine();
+					}
+				}
+				
+				$scope.signout = function(){  
+					// update later to signout user of system instead of clearing
+					$scope.reset();	
+					window.location.href = "/index";
+				}
+			});
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*]]>*/
+		</script>
+		<div ng-app="myApp" ng-controller="populateCtrl">
+			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
+			<button style="position: absolute; top: 8px; right: 8px;" onclick="toggle()">Sign Out</button>
+			<div class="holder", style="text-align: left" id="blur">
+				<form ng-submit="submit()" name="customerHomepageForm">
+				<div>
+					<header>Hey {{name}},</header>
+				</div>
+				<br>
+				<div>
+					Current Orders:
+					<table>
+						<colgroup>
+							<col style="width: 200px"/>
+							<col style="width: 550px"/>
+							<col style="width: 250px"/>
+						</colgroup>
+						<tr>
+							<th>Order #:</th>
+							<th>Drink:</th>
+							<th>Status:</th>
+						</tr>
+					</table>
+				</div>
+				</form>
+			</div>
+			<!--  sign out popup -->
+			<div class="holder" id="signoutPopup">
+				<p>Are you sure you would like to sign out?</p>
+				<br>
+				<a href="/customerlogin" style="font-size: 20px">Sign Out</a>
+				<a href="#" style="font-size: 20px" onclick="toggle()">Cancel</a>
+			</div>
+			<script type="text/javascript">
+				// signing out function
+				function toggle() {
+					var blur = document.getElementById('blur'); 
+					blur.classList.toggle('active');
+					var popup = document.getElementById('signoutPopup'); 
+					popup.classList.toggle('active');
+				}
+			</script>
+			<button style="position: absolute; bottom: 8px; right: 8px;">Order Beverage</button>
+		</div>
+	</div>
+</body>
+</html>

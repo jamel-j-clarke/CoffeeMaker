@@ -6,68 +6,45 @@
 <link rel="stylesheet" href="css/bootstrap.css" />
 <link rel="stylesheet" href="css/app.css" />
 <style>
-body {
-		background-color:rgb(203, 195, 227);
-}
-</style>
-
+		@font-face {
+  			font-family: 'Raleway', sans-serif;
+  			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
+		}
+		body {
+				background-color:rgb(207, 176, 145);
+		}
+		header {
+			font-size: 56px;
+		}
+		* {
+			font-family: raleway;
+		}
+	</style>
 </head>
 <body>
-	<div class="generic-container ng-cloak">
-	<div class="row text-center">
-
-	<h1>Coffee Maker</h1>
 	<br>
-	<h3>Available Options</h3>
-	<br>
-	<div class="btn-group btn-group-horizontal">
-		<div class="col-md-6">
-        <a href="makecoffee.html">
-            <button class="btn btn-primary btn-lg" style="font-size: 30px">Make Beverage</button>
-        </a>
-        </div>
-		
-    	<div class="col-md-6">
-        <a href="recipe.html">
-            <button class="btn btn-primary btn-lg" style="font-size: 30px">Add a Recipe</button>
-        </a>
-        </div>
-    </div>
-    <br>
-    <br>
-    <br>
-    <div class="btn-group btn-group-horizontal">
-    	<div class="col-md-6">
-        <a href="ingredient.html">
-            <button class="btn btn-primary btn-lg" style="font-size: 30px">Add an Ingredient</button>
-        </a>
-        </div>
-		<div class="col-md-6">
-        <a href="editrecipe.html">
-            <button class="btn btn-primary btn-lg" style="font-size: 30px">Edit Recipe</button>
-        </a>
-        </div>
-    	
-    </div>
-    <br>
-    <br>
-    <br>
-    <div class="btn-group btn-group-horizontal">
-		<div class="col-md-6">
-		<a href="inventory.html">
-            <button class="btn btn-primary btn-lg" style="font-size: 30px">Update Inventory</button>
-        </a>
-    	</div>
-        <div class="col-md-6">
-        <a href="deleterecipe.html">
-            <button class="btn btn-primary btn-lg" style="font-size: 30px">Delete Recipe</button>
-        </a>
-        </div>
-    </div>
-    </div>
-    <br>
-    <br>   
-	</div>
+	<h2 align="center">Welcome to</h2>
+	<h1 align="center" ><strong>Coffee Maker</strong></h1>
 	
+	<br>
+	
+  <div class="row text-center" style="margin-top: 40px;">
+  <div class="btn-group btn-group-vertical" style="margin-right: 70px;">  
+    <div class="col-md-12">
+	    <a href="/stafflogin"><img src="https://static.thenounproject.com/png/1279813-200.png" alt="Staff Home Page" width="200px" height="200px" class="img-polaroid"></a>
+	  <h3>Staff</h3>
+	</div>
+  </div>
+  
+  <div class="btn-group btn-group-vertical" style="margin-left: 70px;">  
+    <div class="col-md-12">
+	    <a href="/customerlogin"><img src="https://cdn-icons-png.flaticon.com/512/3054/3054889.png" alt="Customer Home Page" width="200px" height="200px" class="img-polaroid"></a>
+	  <h3>Customer</h3>
+	</div>
+  </div>
+  </div>
+
 </body>
 </html>
+
+
