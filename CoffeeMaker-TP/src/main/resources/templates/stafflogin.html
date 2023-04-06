@@ -5,6 +5,19 @@
 <link rel="stylesheet" href="css/bootstrap.css" />
 <link rel="stylesheet" href="css/app.css" />
 <style>
+		@font-face {
+  			font-family: 'Raleway', sans-serif;
+  			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
+		}
+		body {
+				background-color:rgb(207, 176, 145);
+		}
+		header {
+			font-size: 56px;
+		}
+		* {
+			font-family: raleway;
+		}
 input.ng-valid {
 	background-color: lightgreen;
 }
@@ -16,10 +29,17 @@ input.ng-dirty.ng-invalid-required,input.ng-dirty.ng-invalid-number {
 input.ng-dirty.ng-invalid-min {
 	background-color: yellow;
 }
-body {
-		background-color:rgb(207, 176, 145);
-}
-
+		a, button {
+			border-radius: 10px;
+			border: 2px solid #000000;
+			text-align: center;
+			text-decoration: none;
+			color: black;
+			padding: 10px;
+			font-size: 36px;
+			width: 275px;
+			white-space: normal;
+		}
 </style>
 </head>
 <body>
@@ -62,10 +82,11 @@ body {
 		
     </div>
     </div> 
-    	            <a href="/index" style="border: none;">
-            	<back> ← </back>
-            </a>
 	</div>
-
+	
+    	            <a href="/index" style="border: none;">
+	            	<back> ← </back>
+	            </a>
 </body>
+
 </html>
