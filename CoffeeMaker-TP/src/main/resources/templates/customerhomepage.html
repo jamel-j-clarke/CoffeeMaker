@@ -56,30 +56,52 @@
 		<script>
 			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
 			/*]]>*/
+			var app = angular.module('myApp', []);
+			app.controller('populateCtrl', function($scope, $http, $q) {
+				
+				// log the hit
+				console.log("Hit!");
+				
+				// get the current customer's name
+				$scope.name = sessionStorage.getItem("currentUserName");
+				console.log($scope.name);
+				
+				// trigger sign out popup
+				$scope.toggle = function() {
+					var blur = document.getElementById('blur'); 
+					blur.classList.toggle('active');
+					var popup = document.getElementById('popup'); 
+					popup.classList.toggle('active');
+				}
+			});
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*]]>*/
 		</script>
 		<div ng-app="myApp" ng-controller="populateCtrl">
 			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
-			<div>
-				<header>Hey y/n,</header>
+			<div class="holder" id="blur">
+				<div>
+					<header>Hey {{name}},</header>
+				</div>
+				<button style="position: absolute; top: 8px; right: 8px;">Sign Out</button>
+				<br>
+				<div>
+					Current Orders:
+					<table>
+						<colgroup>
+							<col style="width: 200px"/>
+							<col style="width: 550px"/>
+							<col style="width: 250px"/>
+						</colgroup>
+						<tr>
+							<th>Order #:</th>
+							<th>Drink:</th>
+							<th>Status:</th>
+						</tr>
+					</table>
+				</div>
+				<button style="position: absolute; bottom: 8px; right: 8px;">Order Beverage</button>
 			</div>
-			<button style="position: absolute; top: 8px; right: 8px;">Sign Out</button>
-			<br>
-			<div>
-				Current Orders:
-				<table>
-					<colgroup>
-						<col style="width: 200px"/>
-						<col style="width: 550px"/>
-						<col style="width: 250px"/>
-					</colgroup>
-					<tr>
-						<th>Order #:</th>
-						<th>Recipe:</th>
-						<th>Status:</th>
-					</tr>
-				</table>
-			</div>
-			<button style="position: absolute; bottom: 8px; right: 8px;">Order Beverage</button>
 		</div>
 	</div>
 </body>
