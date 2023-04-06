@@ -128,8 +128,8 @@
 				$scope.toggle = function() {
 					var blur = document.getElementById('blur'); 
 					blur.classList.toggle('active');
-					var duplicateCustomerPopup = document.getElementById('duplicateCustomerPopup'); 
-					duplicateCustomerPopup.classList.toggle('active');
+					<!--var duplicateCustomerPopup = document.getElementById('duplicateCustomerPopup'); 
+					duplicateCustomerPopup.classList.toggle('active');-->
 				}
 				
 				// submit the form function
@@ -148,16 +148,12 @@
 					$scope.failure = false;
 					
 					// if the passwords match...
-					console.log($scope.passwordVerification.password);
-					console.log($scope.passwordVerification.repeatPassword);
-					console.log($scope.passwordVerification.password === $scope.passwordVerification.repeatPassword);
 					$scope.matching = $scope.passwordVerification.password === $scope.passwordVerification.repeatPassword
 					if ($scope.matching === true) {
 						
 						// add the password to the customer
 						$scope.customer.password = $scope.passwordVerification.password;
-						
-						console.log($scope.customer.name + "\n" + $scope.customer.email + "\n" + $scope.customer.password);
+
 						// post the new customer
 						$http.post("/api/v1/customers", $scope.customer).then(
 							function(success) {
@@ -242,7 +238,6 @@
 					</table>
 				</form>
 				<div ng-show="failure">Please enter matching passwords.</div>
-	            
             </div>
             <div class="holder" id="popup">
 				<p>Your account has been created. <br> <br> Welcome to the CoffeeMaker Rewards Club {{customer.name}}!

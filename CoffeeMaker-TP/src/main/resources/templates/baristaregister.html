@@ -37,10 +37,13 @@
 			font-size: 36px;
 			white-space: normal;
 		}
-		holder {
+		.holder {
        		text-align: center;
 			vertical-align: middle;
 			font-size: 18px;
+		}
+		.holder#blur.active {
+			filter: blur(7px);
 		}
 		div {
 	        margin-bottom: 10px;
@@ -48,6 +51,25 @@
 			text-align: center;
 			font-size: 24px;
 			padding: 2px;
+      	}
+      	#popup {
+      		position: fixed;
+      		top: 40%;
+      		left: 50%;
+      		transform: translate(-50%, -50%);
+      		width: 600px;
+      		padding: 50px;
+      		box-shadow: 0 5px 30px rgba(0,0,0,.3);
+      		background: #FFF;
+      		visibility: hidden;
+      		opacity: 0;
+      		transition: 0.35s;
+      	}
+      	#popup.active {
+      		top: 50%;
+      		visibility: visible;
+      		opacity: 1;
+      		transition: 0.35s;
       	}
 		table {
 			border: none;
@@ -66,8 +88,101 @@
 	<div layout:fragment="content">
 		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
 		<script>
-			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
-			/*]]>*/
+		/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+		/*]]>*/
+		var app = angular.module('myApp', []);
+		app.controller('populateCtrl', function($scope, $http, $q) {
+			
+			// log the hit
+			console.log("Hit!");
+			
+			// clear the form function
+			$scope.reset = function() {
+				// clear the fields
+					// barista
+				$scope.barista = {
+					name: '',
+					email: '',
+					password: ''
+				};
+				
+					// password
+				$scope.passwordVerification = {
+					password: '',
+					repeatPassword: ''
+				};
+				
+				// clear the form
+				if (undefined != $scope.baristaRegistrationForm) {
+					$scope.baristaRegistrationForm.$setPristine();
+				}
+			}
+			
+			// successful barista registration function
+			$scope.toggle = function() {
+				var blur = document.getElementById('blur'); 
+				blur.classList.toggle('active');
+				var popup = document.getElementById('popup'); 
+				popup.classList.toggle('active');
+			}
+			
+			// failed barista registration function
+			$scope.toggle = function() {
+				var blur = document.getElementById('blur'); 
+				blur.classList.toggle('active');
+				<!--var duplicateBaristaPopup = document.getElementById('duplicateBaristaPopup'); duplicateBaristaPopup.classList.toggle('active');-->
+			}
+			
+			// submit the form function
+			$scope.submit = function() {
+				// create the barista
+				$scope.createBarista();
+				
+				if ($scope.success === true) {
+					$scope.toggle();
+				}
+			}
+			
+			// create barista function
+			$scope.createBarista = function() {
+				$scope.success = false;
+				$scope.failure = false;
+				
+				// if the passwords match...
+				$scope.matching = $scope.passwordVerification.password === $scope.passwordVerification.repeatPassword;
+				
+				if ($scope.matching === true) {
+					
+					// add the password to the barista
+					$scope.barista.password = $scope.passwordVerification.password;
+					
+					// post the new barista
+					$http.post("/api/v1/baristas", $scope.barista).then(
+						function(success) {
+							$scope.success = true;
+							$scope.failure = false;
+						},
+						function(failure) {
+							$scope.success = false;
+							$scope.failure = true;
+						}
+					)
+				} 
+				// if the passwords don't match, we have a failure: the user already exists
+				else {
+					$scope.success = false;
+					$scope.failure = true;
+					
+					// prompt the user if they want to go to the login page
+					var ask = window.confirm("An account with this email already exists.\n Would you like to login?");
+				    if (ask) {
+				        window.location.href = "stafflogin.html";
+				    }
+				}
+			};
+		});
+		/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+		/*<![CDATA[*/ 
 		</script>
 		<div ng-app="myApp" ng-controller="populateCtrl">
 			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
@@ -83,26 +198,18 @@
 							<table>
 								<tr>
 									<td style="text-align: right;">
-										<label>Preferred First Name:</label>
+										<label>Preferred Name:</label>
 									</td>
 									<td>
-										<input type="text" required="true"/>
+										<input type="text" required="true" ng-model="barista.name"/>
 									</td>
 								</tr>
 								<tr>
 									<td style="text-align: right;">
-										<label>Last Name:</label>
+										<label>Email:</label>
 									</td>
 									<td>
-										<input type="text" required="true"/>
-									</td>
-								</tr>
-								<tr>
-									<td style="text-align: right;">
-										<label>ID:</label>
-									</td>
-									<td>
-										<input type="text" required="true"/>
+										<input type="email" required="true" ng-model="barista.email"/>
 									</td>
 								</tr>
 								<tr>
@@ -110,7 +217,7 @@
 										<label>Password:</label>
 									</td>
 									<td>
-										<input type="password" required="true"/>
+										<input type="password" required="true" ng-model="passwordVerification.password"/>
 									</td>
 								</tr>
 								<tr>
@@ -118,7 +225,7 @@
 										<label>Repeat Password:</label>
 									</td>
 									<td>
-										<input type="password" required="true"/>
+										<input type="password" required="true" ng-model="passwordVerification.repeatPassword"/>
 									</td>
 								</tr>
 							</table>
@@ -130,6 +237,12 @@
 					</tr>
 				</table>
 			</form>
+			<div ng-show="failure">Please enter matching passwords.</div>
+			<div class="holder" id="popup">
+				<p>Your barista account has been created. <br> <br> Welcome {{barista.name}}!
+				<br> <br> <br>
+				<a href="/baristahomepage" style="font-size: 20px">OK</a>
+			</div>
             <a href="/index" style="border: none;">
             	<back> ← </back>
             </a>
