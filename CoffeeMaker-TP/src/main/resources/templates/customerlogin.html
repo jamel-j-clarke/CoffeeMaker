@@ -106,7 +106,7 @@
 					password: ''
 				};
 				
-				$scope.passwordAttempt = '';
+				$scope.password = '';
 			
 				$scope.encrypt = function() {
 					var pass=document.getElementById('password').value;
@@ -133,24 +133,25 @@
 				}
 				
 				$scope.submit = function(){
+					$scope.passwordAttempt = $scope.password;
 					$http.get("/api/v1/customers/email/" + $scope.customer.email)
 			            	.then(
 			            	function (response) {
 			            		$scope.customer = response.data;
 			            		$scope.success = true;
-			            		$scope.toggle();
+                      
+			            		if($scope.customer.password === $scope.passwordAttempt) {
+						            $scope.toggle();
+						          } else {
+						            alert("Invalid password. Try again.");
+						        	  $scope.success = false;
+						          }
+
 			            	},
 			            	function(failure){
 			                	alert("An account with that email does not exist. Click Sign Up to create an account.");
 			                	$scope.success = false;                
 			        		});
-			            	
-			        if($scope.success && $scope.customer.password == $scope.passwordAttempt){
-			            $scope.success = true;
-			        } else if($scope.success) {
-			            alert("Invalid password. Try again.");
-			        	$scope.success = false;
-			        }	
 					$scope.reset();
 				}
 				
@@ -166,7 +167,7 @@
 						$scope.customerLoginForm.$setPristine();
 					}
 					
-					$scope.passwordAttempt = '';
+					$scope.password = '';
 				
 				}
 				
@@ -207,7 +208,7 @@
 							</td>
 							<td>
 								<div>
-									<input type="password" name="password" ng-model="passwordAttempt" required="true"/>
+									<input type="password" name="password" ng-model="password" required="true"/>
 								</div>
 							</td>
 							
