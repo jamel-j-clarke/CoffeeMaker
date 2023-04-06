@@ -110,7 +110,7 @@ public class User extends DomainObject {
     }
 
     /**
-     * Gets the users name
+     * Sets the users name
      *
      * @param name
      *            the name of the user
@@ -128,7 +128,7 @@ public class User extends DomainObject {
     }
 
     /**
-     * Gets the users name
+     * Sets the users password
      *
      * @param password
      *            the password of the user

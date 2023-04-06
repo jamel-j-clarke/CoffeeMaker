@@ -59,35 +59,35 @@ public class Customer extends User {
         super();
     }
 
-    /**
-     * Allows the user to make an order
-     *
-     * @param order
-     *            the order the user is attempting to order
-     * @return true if the order can be placed and false if it cannot
-     */
-    public boolean orderBeverage ( final Order order ) {
-        if ( isUsersOrder( order ) ) {
-            return false;
-        }
-        /**
-         * This is temporary as it focuses on user implementation depending on
-         * how we want to do authentication and order validation we may need to
-         * change this method but for the time being this implementation will
-         * suffice.
-         */
-        orders.add( order );
-        return true;
-    }
+    // /**
+    // * Allows the user to make an order
+    // *
+    // * @param order
+    // * the order the user is attempting to order
+    // * @return true if the order can be placed and false if it cannot
+    // */
+    // public boolean orderBeverage ( final Order order ) {
+    // if ( isUsersOrder( order ) ) {
+    // return false;
+    // }
+    // /**
+    // * This is temporary as it focuses on user implementation depending on
+    // * how we want to do authentication and order validation we may need to
+    // * change this method but for the time being this implementation will
+    // * suffice.
+    // */
+    // orders.add( order );
+    // return true;
+    // }
 
-    /**
-     * Getter for the users orders
-     *
-     * @return returns the users orders
-     */
-    public List<Order> getOrders () {
-        return orders;
-    }
+    // /**
+    // * Getter for the users orders
+    // *
+    // * @return returns the users orders
+    // */
+    // public List<Order> getOrders () {
+    // return orders;
+    // }
 
     // /**
     // * Allows the user to check the current status of their order with an
@@ -112,16 +112,16 @@ public class Customer extends User {
     //
     // }
 
-    /**
-     * Helper method that validates an order is one of the users orders before
-     * searching the database for it.
-     *
-     * @param order
-     *            the order being checked
-     * @return true if the order is one of the users and false if it is not
-     */
-    private boolean isUsersOrder ( final Order order ) {
-        return ( order.getUserId() == (Long) super.getId() );
-    }
+    // /**
+    // * Helper method that validates an order is one of the users orders before
+    // * searching the database for it.
+    // *
+    // * @param order
+    // * the order being checked
+    // * @return true if the order is one of the users and false if it is not
+    // */
+    // private boolean isUsersOrder ( final Order order ) {
+    // return ( order.getUserId() == (Long) super.getId() );
+    // }
 
 }
