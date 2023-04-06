@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.CoffeeMaker.models.users.Employee;
-import edu.ncsu.csc.CoffeeMaker.models.users.Manager;
 import edu.ncsu.csc.CoffeeMaker.services.EmployeeService;
 
 /**
@@ -64,9 +63,6 @@ public class APIEmployeeController extends APIController {
         final Employee user = employeeService.findById( id );
         if ( null == user ) {
             return new ResponseEntity( errorResponse( "No employee found with id " + id ), HttpStatus.NOT_FOUND );
-        }
-        if ( user instanceof Manager ) {
-            return new ResponseEntity( user, HttpStatus.ACCEPTED );
         }
         else {
             return new ResponseEntity( user, HttpStatus.OK );
