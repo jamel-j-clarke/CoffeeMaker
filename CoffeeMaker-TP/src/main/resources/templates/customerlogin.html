@@ -46,10 +46,13 @@
 			vertical-align: center;
 			padding: 5px;
 		}
-		holder {
+		.holder {
        		text-align: center;
 			vertical-align: middle;
-			font-size: 18px;
+			transition: 0.35s;
+		}
+		.holder#blur.active {
+			filter: blur(7px);
 		}
 		div {
 	        margin-bottom: 10px;
@@ -57,6 +60,25 @@
 			text-align: center;
 			font-size: 24px;
 			padding: 2px;
+      	}
+      	#popup {
+      		position: fixed;
+      		top: 40%;
+      		left: 50%;
+      		transform: translate(-50%, -50%);
+      		width: 600px;
+      		padding: 50px;
+      		box-shadow: 0 5px 30px rgba(0,0,0,.3);
+      		background: #FFF;
+      		visibility: hidden;
+      		opacity: 0;
+      		transition: 0.35s;
+      	}
+      	#popup.active {
+      		top: 50%;
+      		visibility: visible;
+      		opacity: 1;
+      		transition: 0.35s;
       	}
 		input:invalid {
 		    border: 2px solid #FF0000;
@@ -102,12 +124,21 @@
 					}
 				}
 				
+				// successful customer login
+				$scope.toggle = function() {
+					var blur = document.getElementById('blur'); 
+					blur.classList.toggle('active');
+					var popup = document.getElementById('popup'); 
+					popup.classList.toggle('active');
+				}
+				
 				$scope.submit = function(){
 					$http.get("/api/v1/customers/email/" + $scope.customer.email)
 			            	.then(
 			            	function (response) {
 			            		$scope.customer = response.data;
-			            		$scope.success = true; 
+			            		$scope.success = true;
+			            		$scope.toggle();
 			            	},
 			            	function(failure){
 			                	alert("Account with " + $scope.customer.email + " does not exist.");
@@ -116,8 +147,6 @@
 			            	
 			        if($scope.success && $scope.customer.password == $scope.passwordAttempt){
 			            $scope.success = true;
-			            alert("Welcome back " + $scope.customer.name + "!");
-			            window.location.href = "/customerhomepage";
 			        } else if($scope.success) {
 			            alert("Invalid password. Try again.");
 			        	$scope.success = false;
@@ -155,7 +184,7 @@
 				<header>Customer Login</header>
 			</div>
 			<br>
-			<holder>
+			<div class="holder" id="blur">
 				<form ng-sumbit="submit()" name="customerLoginForm">
 					<table style="border: none; margin-left: auto; margin-right: auto;">
 						<tr>
@@ -196,9 +225,12 @@
 						</div>
 					</div>
 				</form>
-			</holder>
-			
-			
+			</div>
+			<div class="holder" id="popup">
+				<p>Hi {{customer.name}}! <br> You're now logged in.</p>
+				<br> <br> <br>
+				<a href="/customerhomepage" style="font-size: 20px">OK</a>
+			</div>
             <a href="/index" style="border: none;">
             	<back> ← </back>
             </a>
