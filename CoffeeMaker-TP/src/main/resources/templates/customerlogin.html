@@ -137,7 +137,8 @@
 			            	.then(
 			            	function (response) {
 			            		$scope.customer = response.data;
-			            		$scope.success = true; 
+			            		$scope.success = true;
+			            		$scope.toggle();
 			            	},
 			            	function(failure){
 			                	alert("Account with " + $scope.customer.email + " does not exist.");
@@ -146,7 +147,7 @@
 			            	
 			        if($scope.success && $scope.customer.password == $scope.passwordAttempt){
 			            $scope.success = true;
-			            $scope.toggle();
+			            
 			        } else if($scope.success) {
 			            alert("Invalid password. Try again.");
 			        	$scope.success = false;
@@ -184,7 +185,7 @@
 				<header>Customer Login</header>
 			</div>
 			<br>
-			<holder id="blur">
+			<div class="holder" id="blur">
 				<form ng-sumbit="submit()" name="customerLoginForm">
 					<table style="border: none; margin-left: auto; margin-right: auto;">
 						<tr>
@@ -225,7 +226,7 @@
 						</div>
 					</div>
 				</form>
-			</holder>
+			</div>
 			<div class="holder" id="popup">
 				<p>Hi {{customer.name}}! <br> You're now logged in.</p>
 				<br> <br> <br>
