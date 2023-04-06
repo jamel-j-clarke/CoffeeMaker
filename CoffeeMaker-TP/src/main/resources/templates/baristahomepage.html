@@ -5,16 +5,37 @@
 <link rel="stylesheet" href="css/bootstrap.css" />
 <link rel="stylesheet" href="css/app.css" />
 <style>
-input.ng-valid {
-	background-color: lightgreen;
-}
-
-input.ng-dirty.ng-invalid-min {
-	background-color: yellow;
-}
-body {
-	background-color: rgb(207, 176, 145);
-}
+		@font-face {
+  			font-family: 'Raleway', sans-serif;
+  			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
+		}
+		body {
+				background-color:rgb(207, 176, 145);
+		}
+		header {
+			font-size: 56px;
+		}
+		* {
+			font-family: raleway;
+		}
+		input.ng-valid {
+			background-color: lightgreen;
+		}
+		
+		input.ng-dirty.ng-invalid-min {
+			background-color: yellow;
+		}
+		a, button {
+			border-radius: 10px;
+			border: 2px solid #000000;
+			text-align: center;
+			text-decoration: none;
+			color: black;
+			padding: 10px;
+			font-size: 36px;
+			width: 275px;
+			white-space: normal;
+		}
 </style>
 </head>
 <body>
@@ -23,241 +44,7 @@ body {
 	<script>
 		/*<![CDATA[*/
 		var app = angular.module('myApp', []);
-		app.controller('recipesCtrl', function($scope, $http, $q) {
-			/*All previous implementation for edit recipe that will be deleted upon convergence*/
-			console.log("Hit!");
-			
-			$scope.canSubmit = false;
-			$scope.selected = false;
-	
-			$scope.inventory = '';
-			
-			$scope.ingredient = {
-				name: '',
-				amount: '',
-			};
-			
-			$scope.inv = {
-				ingredients: ''
-			};
-			
-			$scope.recipe = {
-				name: '',
-				price: '',
-				ingredients: ''
-			};
-			
-			$scope.OGrecipe = {
-				name: '',
-				price: '',
-				ingredients: ''
-			};
-			
-			$http.get("/api/v1/recipes").then(function(response) {
-				$scope.recipes = response.data;
-			});
-			
-			$http.get("/api/v1/inventory").then(function(response) {
-				$scope.inv = response.data;
-				$scope.inventory = $scope.inv.ingredients;
-			});
-			
-			$scope.getRecipe = function() {
-				$http.get("/api/v1/recipes/" + $scope.recipe.name).then(function(response) {
-					$scope.recipe = response.data;
-				}, function(rejection) {
-					console.error("Error while getting Recipe");
-				})
-			}
-			
-			$scope.getIngredients = function() {
-				$http.get("/api/v1/recipes/" + $scope.recipe.name + "/ingredients").then(
-					function(success) {
-							$scope.ingredients = success.data;
-						}, function(error) {
-							if (error.status === 404) {
-								  console.error("Error there's no ingredients", error);
-					        } else {
-					          console.error("Error while getting ingredients", error);
-					        }
-					    });
-			}
-			
-			$scope.clear = function() {
-				if($scope.canSubmit){
-					$http.put("/api/v1/recipes/" + $scope.recipe.name, $scope.OGrecipe);
-				}
-		        
-				$scope.reset();
-			}
-
-			$scope.submit = function() {
-				$scope.editRecipe();
-				$scope.canSubmit = false;
-				$scope.reset();
-			}
-			
-			$scope.selectRecipe = function() {
-				$scope.getRecipe();
-				
-				$http.get("/api/v1/recipes/" + $scope.recipe.name).then(function(response) {
-					$scope.OGrecipe = response.data;
-				}, function(rejection) {
-					console.error("Error while getting Recipe");
-				})
-				
-				$scope.getIngredients();
-				$scope.selected = true;
-				$scope.canSubmit = false;
-			}
-
-			$scope.editRecipe = function() {
-				$scope.resetMsg();
-
-				$http.put("/api/v1/recipes/" + $scope.recipe.name, $scope.recipe).then(
-						function(response) {
-							$scope.editsuccess = true;
-							$scope.canSubmit = true;
-							$scope.getRecipe();
-						}, function(rejection) {
-							$scope.failure = true;
-							console.error("Error while editing Recipe!");
-						});
-			}
-			
-			$scope.addIngredient = function() {
-				$scope.resetMsg();
-				
-				if($scope.ingredient.amount > 0 && $scope.ingredient.name != ''){
-
-					$http.post("/api/v1/recipes/" + $scope.recipe.name + "/ingredients", $scope.ingredient).then(
-						function(success) {/*  somehow make a post too for ingredient */
-							$scope.isuccess = true;
-							
-							$scope.getIngredients();
-							$scope.canSubmit = true;
-							$scope.getRecipe();
-							
-						}, function(error) {
-						    alert("Cannot add duplicate ingredient. Try Again.");
-					    });
-				} else {
-					alert("Invalid Input. Try Again.");
-				}
-				
-				$scope.resetIngredient();
-					   				
-			}
-			
-			$scope.editIngredient = function(){
-				$scope.resetMsg();
-				
-				$scope.updateIngredient.name = $scope.name;
-				
-				if($scope.updateIngredient.amount > 0 && $scope.updateIngredient.name != ''){
-				
-					$http.put("/api/v1/recipes/" + $scope.recipe.name + "/ingredients/" + $scope.name, $scope.updateIngredient)
-		            	.then(
-		            	function (response) {
-		            		console.log(response);
-		    				$scope.editsuccess = true;	
-		    				$scope.canSubmit = true;
-		                	$scope.getIngredients();
-		                	$scope.getRecipe();
-		            	},
-		            	function(rejection){
-		                	console.error('Error while editing ingredient');
-		                	console.log(rejection);
-		                
-							$scope.editsuccess = false;
-		            	}
-		        	);
-		        } else {
-		        	alert("Invalid Input. Try Again.");
-		        }
-		        $scope.resetIngredient();
-			}
-			
-			$scope.deleteIngredient = function(){
-				$scope.resetMsg();
-				
-				if($scope.ingredients.length > 1){
-					$http.delete("/api/v1/recipes/" + $scope.recipe.name + "/ingredients/" + $scope.name)
-		            	.then(
-		            	function (response) {
-		            		console.log(response);
-		    				$scope.delsuccess=true;	
-		    				$scope.canSubmit = true;
-		                	$scope.getIngredients();
-		                	$scope.getRecipe();
-		            	},
-		            	function(rejection){
-		                	console.error('Error while deleting ingredient');
-		                	console.log(rejection);		                
-		            	});
-		        } else {
-		        	alert("Recipe must have at least one ingredient.");
-		        }
-		        
-		        $scope.resetIngredient();
-		        
-			}
-			
-			$scope.reset = function() {
-				$scope.recipe = {
-					name : '',
-					price : '',
-					ingredients: ''
-				};
-				$scope.OGrecipe = {
-					name: '',
-					price: '',
-					ingredients: ''
-				};
-				$scope.canSubmit = false;
-				$scope.selected = false;
-				$scope.resetIngredient();
-				$scope.ingredients = '';
-				if (undefined != $scope.editRecipeForm) {
-					$scope.editRecipeForm.$setPristine(); // reset Form
-				}
-				$scope.canSubmit = false;
-			}
-			
-			$scope.resetIngredient = function() {
-				$scope.ingredient = {
-					name: '',
-					amount : '',
-						
-				};
-				$scope.updateIngredient = {
-					name: '',
-					amount : '',
-						
-				};
-				if (undefined != $scope.addRecipeForm) {
-					$scope.addRecipeForm.$setPristine(); // reset Form
-				}
-			}
-			
-			$scope.signOut = function() {
-				if($scope.canSubmit){
-					alert("Current Recipe has not been submitted. Submit or Cancel before returning home.");
-				} else {
-					window.location.href = "/index";
-				}
-				
-			}
-			
-			$scope.resetMsg = function() {
-				$scope.editsuccess = false;
-				$scope.delsuccess = false;
-				$scope.isuccess = false;
-				$scope.success = false;
-			}
-
-			$scope.reset();
-
+		app.controller('baristaCtrl', function($scope, $http, $q) {
 		});
 		/*]]>*/
 	</script>
@@ -344,9 +131,6 @@ body {
 				</form>
 					
 			<div class="panel-footer">
-				<div ng-show="delsuccess">Ingredient Deleted!</div>
-				<div ng-show="editsuccess">Recipe Edited!</div>
-				<div ng-show="isuccess">Ingredient Added!</div>
 			</div>
 
 	</div>
