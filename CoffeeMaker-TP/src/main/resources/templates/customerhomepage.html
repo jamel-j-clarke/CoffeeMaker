@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title>Sign Up</title>
+	<title>Customer Home</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -73,6 +73,28 @@
 					var popup = document.getElementById('popup'); 
 					popup.classList.toggle('active');
 				}
+				
+				$scope.reset = function() {
+					// clear the fields of customer
+					$scope.customer = {
+						email: '',
+						name: '',
+						password: ''
+					};
+					
+					$scope.name = ' ';
+					
+					// clear the form
+					if (undefined != $scope.customerHomepageForm) {
+						$scope.customerHomepageForm.$setPristine();
+					}
+				}
+				
+				$scope.signout = function(){  
+					// update later to signout user of system instead of clearing
+					$scope.reset();	
+					window.location.href = "/index";
+				}
 			});
 			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
 			/*]]>*/
@@ -80,10 +102,11 @@
 		<div ng-app="myApp" ng-controller="populateCtrl">
 			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
 			<div class="holder" id="blur">
+				<form ng-submit="submit()" name="customerHomepageForm">
 				<div>
 					<header>Hey {{name}},</header>
 				</div>
-				<button style="position: absolute; top: 8px; right: 8px;">Sign Out</button>
+				<input type="submit" class="a" style="position: absolute; top: 15px; right: 15px;" value="Signout"  ng-click="signout()"/>
 				<br>
 				<div>
 					Current Orders:
@@ -100,6 +123,7 @@
 						</tr>
 					</table>
 				</div>
+				</form>
 				<button style="position: absolute; bottom: 8px; right: 8px;">Order Beverage</button>
 			</div>
 		</div>

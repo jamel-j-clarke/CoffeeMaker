@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Manager Homepage</title>
+<title>Manager Home</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" href="css/bootstrap.css" />
 <link rel="stylesheet" href="css/app.css" />
@@ -35,29 +35,44 @@
 
 </head>
 <body>  
-				</div>
-			<button style="position: absolute; top: 8px; right: 8px;">Sign Out</button>
-			<br>
-    <div class="row text-center">
+  <div layout:fragment="content">
+    <script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+	<script>
+	/*<![CDATA[*/
+	var app = angular.module('myApp', []);
+		app.controller('populateCtrl', function($scope, $http, $q) {
+			$scope.signout = function(){  
+				// update later to signout user of system instead of clearing
+				window.location.href = "/index";
+			}
+		});
+	
+		/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */ 
+		/*]]>*/
+	</script>
+	    <div class="row text-center">
         	<h1>Manager Homepage</h1>
 	<br>
 	<br>
     </div>
+		<div ng-app="myApp"
+		ng-controller="populateCtrl as ctrl">
+				<form ng-submit="submit()" name="baristaHomepageForm"
+					class="form-horizontal">
+    			<input type="submit" class="a" style="position: absolute; top: 15px; right: 15px;" value="Signout"  ng-click="signout()"/>
+			<br>
 	
- <div class="container">
   <div class="row text-center" style="margin-top: 20px;">	
   <div class="btn-group btn-group-vertical" style="margin-right: 70px;">  
     <div class="col-md-12">
-	    <a href="/inventory">
-            <button class="btn btn-default btn-sm" style="font-size: 30px">Update Inventory</button>
+	    <a href="/inventory">Update Inventory
         </a>
 	</div>
   </div>
   
   <div class="btn-group btn-group-vertical" style="margin-left: 70px;">  
     <div class="col-md-12">
-	     <a href="/editrecipe">
-            <button class="btn btn-default btn-sm" style="font-size: 30px">Edit Recipe</button>
+	     <a href="/editrecipe">Edit Recipe
         </a>
 	</div>
   </div>
@@ -66,16 +81,14 @@
     <div class="row text-center" style="margin-top: 60px;">
   <div class="btn-group btn-group-vertical" style="margin-right: 70px;">  
     <div class="col-md-12">
-	     <a href="/recipe">
-            <button class="btn btn-default btn-sm" style="font-size: 30px">Add a Recipe</button>
+	     <a href="/recipe">Add a Recipe
         </a>
 	</div>
   </div>
   
   <div class="btn-group btn-group-vertical" style="margin-left: 70px;">  
     <div class="col-md-12">
-	    <a href="/baristaregister">
-            <button class="btn btn-default btn-sm" style="font-size: 30px">Barista Creation</button>
+	    <a href="/baristaregister">Barista Creation
         </a>
 	</div>
   </div>
@@ -84,22 +97,21 @@
     <div class="row text-center" style="margin-top: 40px;">	
   <div class="btn-group btn-group-vertical" style="margin-right: 70px;">  
     <div class="col-md-12">
-	    <a href="/deleterecipe">
-            <button class="btn btn-default btn-sm" style="font-size: 30px">Delete Recipe</button>
+	    <a href="/deleterecipe">Delete Recipe
         </a>
 	</div>
   </div>
   
   <div class="btn-group btn-group-vertical" style="margin-left: 70px;">  
     <div class="col-md-12">
-	     <a href="/ingredient">
-            <button class="btn btn-default btn-sm" style="font-size: 30px">Add an Ingredient</button>
+	     <a href="/ingredient">Add an Ingredient
         </a>
 	</div>
   </div>
   </div>
-  
-</div>
-	
+ 
+</form>
+	</div>
+	</div>
 </body>
 </html>
