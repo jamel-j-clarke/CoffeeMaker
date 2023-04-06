@@ -35,14 +35,33 @@
 
 </head>
 <body>  
-				</div>
-			<button style="position: absolute; top: 8px; right: 8px;">Sign Out</button>
-			<br>
+  <div layout:fragment="content">
+    <script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+	<script>
+	/*<![CDATA[*/
+	var app = angular.module('myApp', []);
+		app.controller('populateCtrl', function($scope, $http, $q) {
+			$scope.signout = function(){  
+				// update later to signout user of system instead of clearing
+				$scope.reset();	
+				window.location.href = "index.html";
+			}
+		});
+	
+		/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */ 
+		/*]]>*/
+	</script>
+		<div class="generic-container ng-cloak" ng-app="myApp"
+		ng-controller="populateCtrl as ctrl">
+				<form ng-submit="submit()" name="baristaHomepageForm"
+					class="form-horizontal">
     <div class="row text-center">
         	<h1>Manager Homepage</h1>
 	<br>
 	<br>
     </div>
+    			<input type="submit" class="a" style="position: absolute; top: 15px; right: 15px;" value="Signout"  ng-click="signout()"/>
+			<br>
 	
  <div class="container">
   <div class="row text-center" style="margin-top: 20px;">	
@@ -100,6 +119,8 @@
   </div>
   
 </div>
-	
+</form>
+	</div>
+	</div>
 </body>
 </html>

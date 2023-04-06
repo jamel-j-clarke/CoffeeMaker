@@ -36,30 +36,41 @@
 			width: 275px;
 			white-space: normal;
 		}
+      	* {
+			font-family: raleway;
+		}
 </style>
 </head>
 <body>
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+	<div layout:fragment="content">
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
 	<script>
 		/*<![CDATA[*/
 		var app = angular.module('myApp', []);
-		app.controller('baristaCtrl', function($scope, $http, $q) {
+		app.controller('populateCtrl', function($scope, $http, $q) {
+			$scope.signout = function(){  
+				// update later to signout user of system instead of clearing
+				window.location.href = "/index";
+			}
 		});
 		/*]]>*/
 	</script>
-	<button style="position: absolute; top: 8px; right: 8px;">Sign Out</button>
-	<div class="row text-center"> 
-	<h1>Barista Homepage</h1> 
-		<br> 
-		<br> 
-	</div>
-
-
+	
+	<div class="row text-center">
+        <h1>Manager Homepage</h1>
+		<br>
+		<br>
+    </div>	
 	<div class="generic-container ng-cloak" ng-app="myApp"
-		ng-controller="recipesCtrl as ctrl">
-				<form ng-submit="submit()" name="editRecipeForm"
-					class="form-horizontal">					
+		ng-controller="populateCtrl as ctrl">
+				<form ng-submit="submit()" name="baristaHomepageForm"
+					class="form-horizontal">
+						<input type="submit" class="a" style="position: absolute; top: 15px; right: 15px;" value="Signout"  ng-click="signout()"/>
+					<div class="row text-center"> 
+					 
+						<br> 
+						<br> 
+					</div>				
 						<div class="row">
 							<label class="col-lg-12 control-lable" for="list" style="font-size: 15px">Current Orders:</label>
                               <div class="col-md-6">
@@ -135,5 +146,6 @@
 
 	</div>
 	
+	</div>
 </body>
 </html>
