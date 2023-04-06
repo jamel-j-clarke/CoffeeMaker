@@ -147,6 +147,15 @@
 			            	function (response) {
 			            		$scope.customer = response.data;
 			            		$scope.success = true;
+			            		if ($scope.customer.password == $scope.passwordAttempt){
+			            			// Successful log in
+			            			sessionStorage.setItem("currentUserName", $scope.customer.name);
+						            $scope.toggle();
+						        } else {
+						            $scope.invalidInfo=true;
+						        }	
+			            		
+			            		$scope.reset();
 			            		/** sessionStorage.setItem("currentUserEmail", $scope.customer.email); */
 			            	},
 			            	function(failure){
@@ -154,16 +163,6 @@
 			                	/**alert("An account with that email does not exist. Click Sign Up to create an account.");
 			                	$scope.success = false;*/                
 			        		});
-			            	
-			        if($scope.success && $scope.customer.password == $scope.passwordAttempt){
-			            $scope.success = true;
-			            $scope.toggle();
-	            		sessionStorage.setItem("currentUserName", $scope.customer.name);
-	            		$scope.reset();
-			        } else if($scope.success) {
-			            $scope.invalidInfo = true;
-			        	$scope.success = false;
-			        }	
 				}
 				
 				$scope.reset = function(){
