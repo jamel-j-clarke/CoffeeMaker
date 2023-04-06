@@ -116,7 +116,7 @@
 						return false;
 					} else {
 						document.getElementById("hide").value = document.getElementById("password").value;
-						var hash = CryptoJS.MD5(pass);
+						var hash = btoa(btoa(pass));
 						document.getElementById('password').value=hash;
 						$scope.passwordAttempt = hash;
 						$scope.customer.email = document.getElementById('email').value;
@@ -141,13 +141,13 @@
 				}
 				
 				$scope.submit = function(){
-					$scope.passwordAttempt = $scope.password;
+					$scope.passwordAttempt = btoa(btoa($scope.password));
 					$http.get("/api/v1/customers/email/" + $scope.customer.email)
 			            	.then(
 			            	function (response) {
 			            		$scope.customer = response.data;
 			            		$scope.success = true;
-
+								
 			            		if ($scope.customer.password == $scope.passwordAttempt){
 			            			// Successful log in
 			            			sessionStorage.setItem("currentUserName", $scope.customer.name);
@@ -262,7 +262,7 @@
 				}
 			</script>
             <a href="/index" style="border: none;">
-            	<back> ← </back>
+            	<back> â†� </back>
             </a>
 		</div>
 	</div>
