@@ -38,9 +38,10 @@
 		.holder {
        		text-align: center;
 			vertical-align: middle;
+			transition: 0.35s;
 		}
 		.holder#blur.active {
-			filter: blur(20px);
+			filter: blur(7px);
 		}
 		div {
 	        margin-bottom: 10px;
@@ -48,6 +49,25 @@
 			text-align: center;
 			font-size: 24px;
 			padding: 2px;
+      	}
+      	#popup {
+      		position: fixed;
+      		top: 40%;
+      		left: 50%;
+      		transform: translate(-50%, -50%);
+      		width: 600px;
+      		padding: 50px;
+      		box-shadow: 0 5px 30px rgba(0,0,0,.3);
+      		background: #FFF;
+      		visibility: hidden;
+      		opacity: 0;
+      		transition: 0.35s;
+      	}
+      	#popup.active {
+      		top: 50%;
+      		visibility: visible;
+      		opacity: 1;
+      		transition: 0.35s;
       	}
 		table {
 			border: none;
@@ -96,13 +116,30 @@
 					}
 				}
 				
+				// successful customer creation function
+				$scope.toggle = function() {
+					var blur = document.getElementById('blur'); 
+					blur.classList.toggle('active');
+					var popup = document.getElementById('popup'); 
+					popup.classList.toggle('active');
+				}
+				
+				// failed customer creation function
+				$scope.toggle = function() {
+					var blur = document.getElementById('blur'); 
+					blur.classList.toggle('active');
+					var duplicateCustomerPopup = document.getElementById('duplicateCustomerPopup'); 
+					duplicateCustomerPopup.classList.toggle('active');
+				}
+				
 				// submit the form function
 				$scope.submit = function() {
 					// create the customer
 					$scope.createCustomer();
 					
-					// reset the form
-					$scope.reset();
+					if ($scope.success === true) {
+						$scope.toggle();
+					}
 				}
 				
 				// create customer function
@@ -111,7 +148,11 @@
 					$scope.failure = false;
 					
 					// if the passwords match...
-					if ($scope.passwordVerification.password == $scope.passwordVerification.repeatPassword) {
+					console.log($scope.passwordVerification.password);
+					console.log($scope.passwordVerification.repeatPassword);
+					console.log($scope.passwordVerification.password === $scope.passwordVerification.repeatPassword);
+					$scope.matching = $scope.passwordVerification.password === $scope.passwordVerification.repeatPassword
+					if ($scope.matching === true) {
 						
 						// add the password to the customer
 						$scope.customer.password = $scope.passwordVerification.password;
@@ -129,30 +170,26 @@
 							}
 						)
 					} 
-					// if the passwords don't match, we have a failure
+					// if the passwords don't match, we have a failure: the user already exists
 					else {
 						$scope.success = false;
 						$scope.failure = true;
-					}
+						
+						// prompt the user if they want to go to the login page
+						var ask = window.confirm("An account with this email already exists.\n Would you like to login?");
+					    if (ask) {
+					        window.location.href = "customerlogin.html";
 					
-				};
-				
-				// successful customer creation function
-				$scope.toggle = function() {
-					<!--- var blur = document.getElementById('allContent'); blur.classList.toggle('active') -->
-					if (success == true) {
-						alert("Your account has been created.\nWelcome to the CoffeeMaker Rewards Club {{customer.firstName}}!");
+					    }
 					}
-					
 				};
-				
 			});
 			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
 			/*<![CDATA[*/ 
 		</script>
 		<div ng-app="myApp" ng-controller="populateCtrl">
 			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
-			<holder>
+			<div class="holder" id="blur">
 				<div>
 					<header>Become a CoffeeMaker Rewards Member</header>
 				</div>
@@ -199,16 +236,22 @@
 							</td>
 							<!-- holds button to submit the form --> 
 							<td>
-								<input type="submit" value="Sign Up" class="a" ng-disabled="customerSignUpForm.$invalid" onclick="toggle()"/>
+								<input type="submit" value="Sign Up" class="a" ng-disabled="customerSignUpForm.$invalid"/>
 							</td>
 						</tr>
 					</table>
 				</form>
-				<div ng-show="$success">Customer Added</div>
-	            <a href="/index" style="border: none;">
-	            	<back> ← </back>
-	            </a>
-            </holder>
+				<div ng-show="failure">Please enter matching passwords.</div>
+	            
+            </div>
+            <div class="holder" id="popup">
+				<p>Your account has been created. <br> <br> Welcome to the CoffeeMaker Rewards Club {{customer.name}}!
+				<br> <br> <br>
+				<a href="/customerhomepage" style="font-size: 20px">OK</a>
+			</div>
+            <a href="/index" style="border: none;">
+            	<back> ← </back>
+            </a>
 		</div>
 	</div>
 </body>
