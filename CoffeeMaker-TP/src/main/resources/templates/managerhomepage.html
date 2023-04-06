@@ -43,23 +43,22 @@
 		app.controller('populateCtrl', function($scope, $http, $q) {
 			$scope.signout = function(){  
 				// update later to signout user of system instead of clearing
-				$scope.reset();	
-				window.location.href = "index.html";
+				window.location.href = "/index";
 			}
 		});
 	
 		/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */ 
 		/*]]>*/
 	</script>
-		<div class="generic-container ng-cloak" ng-app="myApp"
-		ng-controller="populateCtrl as ctrl">
-				<form ng-submit="submit()" name="baristaHomepageForm"
-					class="form-horizontal">
-    <div class="row text-center">
+	    <div class="row text-center">
         	<h1>Manager Homepage</h1>
 	<br>
 	<br>
     </div>
+		<div ng-app="myApp"
+		ng-controller="populateCtrl as ctrl">
+				<form ng-submit="submit()" name="baristaHomepageForm"
+					class="form-horizontal">
     			<input type="submit" class="a" style="position: absolute; top: 15px; right: 15px;" value="Signout"  ng-click="signout()"/>
 			<br>
 	
