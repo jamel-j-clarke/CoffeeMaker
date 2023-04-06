@@ -13,10 +13,24 @@ input.ng-dirty.ng-invalid-min {
 	background-color: yellow;
 }
 body {
-	background-color:rgb(203, 195, 227);
+	background-color:rgb(207, 176, 145);
 }
-</style>
-
+a {
+	border-radius: 10px;
+	border: 2px solid #000000;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	padding: 10px;
+	font-size: 36px;
+	white-space: normal;
+}
+back {
+	position: absolute;
+	bottom: 8px;
+	left: 8px;
+	font-size: 60px;
+}
 </style>
 
 </head>
@@ -109,24 +123,12 @@ body {
 			<div class="panel-heading">
 				<span class="lead">Current Inventory</span>
 			</div>
-			<div class="formcontainer">
-			<div ng-hide="inventory.ingredients.length > 0">
-				<div class="col-sm-1">
-					<label style="font-size: 15px">No ingredients to display.</label>
-				</div>
-				<div class="col-sm-1">
-					<button type="button" ng-click="onAddIngredient()" class="btn btn-warning btn-sm">Add Ingredients</button>
-				</div>
-			</div>
-				
-			<ul ng-repeat="ingredient in inventory.ingredients">
-					<td>{{ ingredient.name }}</td>
-                    <td>{{ ingredient.amount }}</td>
-			</ul>
-			</div>
+			
 			<br>
-			<div ng-hide="inventory.ingredients.length == 0">
-
+				
+			<span ng-repeat="ingredient in inventory.ingredients">&emsp;{{ingredient.name}} :  &nbsp;{{ingredient.amount}}<br /></span>
+			
+			<br>
 				<div class="panel-heading">
 					<span class="lead">Update Inventory</span>
 				</div>
@@ -175,18 +177,13 @@ body {
 
 					</form>
 				</div>
-			</div>
 			<div class="panel-footer">
 				<div ng-show="success">Inventory Updated!</div>
 			</div>
-		</div>
-
-
-		<button  ng-click="onHome();" ><img src="https://static.thenounproject.com/png/1054389-200.png" alt="Home" width="25" height="25"></button>
-		
+		</div>	
 	</div>
-
-
-
+		            <a href="/managerhomepage" style="border: none;">
+            	<back> ← </back>
+            </a>
 </body>
 </html>
