@@ -53,7 +53,7 @@
 			font-size: 24px;
 			padding: 2px;
       	}
-      	#popup {
+      	#popup, #duplicateCustomerPopup {
       		position: fixed;
       		top: 40%;
       		left: 50%;
@@ -66,7 +66,7 @@
       		opacity: 0;
       		transition: 0.35s;
       	}
-      	#popup.active {
+      	#popup.active, #duplicateCustomerPopup.active {
       		top: 50%;
       		visibility: visible;
       		opacity: 1;
@@ -127,12 +127,12 @@
 					popup.classList.toggle('active');
 				}
 				
-				// failed customer creation function
-				$scope.flopToggle = function() {
+				// customer account already exists function
+				$scope.dupeToggle = function() {
 					var blur = document.getElementById('blur'); 
 					blur.classList.toggle('active');
-					/* var duplicateCustomerPopup = document.getElementById('duplicateCustomerPopup'); 
-					duplicateCustomerPopup.classList.toggle('active'); */
+					var duplicateCustomerPopup = document.getElementById('duplicateCustomerPopup'); 
+					duplicateCustomerPopup.classList.toggle('active');
 				}
 				
 				// submit the form function
@@ -171,12 +171,12 @@
 							function(failure) {
 								$scope.success = false;
 								$scope.failure = true;
-								
+								$scope.dupeToggle();
 								// prompt the user if they want to go to the login page
-								var ask = window.confirm("An account with this email already exists.\n Would you like to login?");
+								/** var ask = window.confirm("An account with this email already exists.\n Would you like to login?");
 							    if (ask) {
 							        window.location.href = "customerlogin.html";
-							    }
+							    }*/
 							}
 						)
 					} 
@@ -248,11 +248,29 @@
 				</form>
 				<div ng-show="notmatching">Passwords do not match.</div>
             </div>
+            <!-- welcome message popup -->
             <div class="holder" id="popup">
 				<p>Your account has been created. <br> <br> Welcome to the CoffeeMaker Rewards Club {{customer.name}}!
 				<br> <br> <br>
 				<a href="/customerhomepage" style="font-size: 20px">OK</a>
 			</div>
+			<!-- account already exists popup -->
+			<div class="holder" id="duplicateCustomerPopup">
+				<p>A customer account with this email already exists.
+				<br>Would you like to login?</p>
+				<br><br>
+				<a href="/customerlogin" style="font-size: 20px">Login</a>
+				<a href="#" style="font-size: 20px" onclick="dupeToggle()">Cancel</a> 
+			</div>
+			<script type="text/javascript">
+				// customer account already exists function
+				function dupeToggle() {
+					var blur = document.getElementById('blur'); 
+					blur.classList.toggle('active');
+					var duplicateCustomerPopup = document.getElementById('duplicateCustomerPopup');
+					duplicateCustomerPopup.classList.toggle('active');
+				}
+			</script>
             <a href="/customerlogin" style="border: none;">
             	<back> ← </back>
             </a>

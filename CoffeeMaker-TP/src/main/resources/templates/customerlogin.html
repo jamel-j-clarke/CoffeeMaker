@@ -61,7 +61,7 @@
 			font-size: 24px;
 			padding: 2px;
       	}
-      	#popup {
+      	#popup, #newCustomerPopup {
       		position: fixed;
       		top: 40%;
       		left: 50%;
@@ -74,7 +74,7 @@
       		opacity: 0;
       		transition: 0.35s;
       	}
-      	#popup.active {
+      	#popup.active, #newCustomerPopup.active {
       		top: 50%;
       		visibility: visible;
       		opacity: 1;
@@ -132,6 +132,14 @@
 					popup.classList.toggle('active');
 				}
 				
+				// customer doesn't exists function
+				$scope.newToggle = function() {
+					var blur = document.getElementById('blur'); 
+					blur.classList.toggle('active');
+					var newCustomerPopup = document.getElementById('newCustomerPopup'); 
+					newCustomerPopup.classList.toggle('active');
+				}
+				
 				$scope.submit = function(){
 					$scope.passwordAttempt = $scope.password;
 					$http.get("/api/v1/customers/email/" + $scope.customer.email)
@@ -139,25 +147,23 @@
 			            	function (response) {
 			            		$scope.customer = response.data;
 			            		$scope.success = true;
-			            		if($scope.customer.password == $scope.passwordAttempt){
+
+			            		if ($scope.customer.password == $scope.passwordAttempt){
 			            			// Successful log in
 			            			sessionStorage.setItem("currentUserName", $scope.customer.name);
 						            $scope.toggle();
+						            $scope.reset();
 						        } else {
-						            alert("Invalid password. Try again.");
-						        	$scope.success = false;
+						            $scope.invalidInfo=true;
 						        }	
-			            		
-			            		$scope.reset();
+
 			            		/** sessionStorage.setItem("currentUserEmail", $scope.customer.email); */
 			            	},
 			            	function(failure){
-			            		
-			                	alert("An account with that email does not exist. Click Sign Up to create an account.");
-			                	$scope.success = false;                
+			            		$scope.newToggle();
+			                	/**alert("An account with that email does not exist. Click Sign Up to create an account.");
+			                	$scope.success = false;*/                
 			        		});
-			            	
-			        
 				}
 				
 				$scope.reset = function(){
@@ -231,12 +237,30 @@
 						</div>
 					</div>
 				</form>
+				<div ng-show="invalidInfo">Incorrect email/password.</div>
 			</div>
 			<div class="holder" id="popup">
 				<p>Hi {{customer.name}}! <br> You're now logged in.</p>
 				<br> <br> <br>
 				<a href="/customerhomepage" style="font-size: 20px">OK</a>
 			</div>
+			<!-- account doesn't exist popup -->
+			<div class="holder" id="newCustomerPopup">
+				<p>A customer account with this email does not exist.
+				<br>Would you like to sign up?</p>
+				<br><br>
+				<a href="/customersignup" style="font-size: 20px">Sign Up</a>
+				<a href="#" style="font-size: 20px" onclick="newToggle()">Cancel</a> 
+			</div>
+			<script type="text/javascript">
+				// customer account already exists function
+				function newToggle() {
+					var blur = document.getElementById('blur'); 
+					blur.classList.toggle('active');
+					var newCustomerPopup = document.getElementById('newCustomerPopup');
+					newCustomerPopup.classList.toggle('active');
+				}
+			</script>
             <a href="/index" style="border: none;">
             	<back> ← </back>
             </a>
