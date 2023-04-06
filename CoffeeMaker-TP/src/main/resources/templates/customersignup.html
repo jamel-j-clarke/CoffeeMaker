@@ -8,9 +8,6 @@
   			font-family: 'Raleway', sans-serif;
   			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
 		}
-		body {
-			background-color: rgb(207, 176, 145);
-		}
         header {
 			font-size: 56px;
 		}
@@ -102,8 +99,8 @@
 					// clear the fields
 						// customer
 					$scope.customer = {
-						name: '',
 						email: '',
+						name: '',
 						password: ''
 					};
 					
@@ -128,11 +125,11 @@
 				}
 				
 				// failed customer creation function
-				$scope.toggle = function() {
+				$scope.flopToggle = function() {
 					var blur = document.getElementById('blur'); 
 					blur.classList.toggle('active');
-					<!--var duplicateCustomerPopup = document.getElementById('duplicateCustomerPopup'); 
-					duplicateCustomerPopup.classList.toggle('active');-->
+					/* var duplicateCustomerPopup = document.getElementById('duplicateCustomerPopup'); 
+					duplicateCustomerPopup.classList.toggle('active'); */
 				}
 				
 				// submit the form function
@@ -141,7 +138,8 @@
 					$scope.createCustomer();
 					
 					if ($scope.success === true) {
-						$scope.toggle();
+						console.log("this ran...");
+						
 					}
 				}
 				
@@ -157,11 +155,13 @@
 						// add the password to the customer
 						$scope.customer.password = $scope.passwordVerification.password;
 
+						
 						// post the new customer
 						$http.post("/api/v1/customers", $scope.customer).then(
 							function(success) {
 								$scope.success = true;
 								$scope.failure = false;
+								$scope.toggle();
 							},
 							function(failure) {
 								$scope.success = false;
@@ -240,13 +240,14 @@
 						</tr>
 					</table>
 				</form>
-				<div ng-show="failure">Please enter matching passwords.</div>
             </div>
             <div class="holder" id="popup">
 				<p>Your account has been created. <br> <br> Welcome to the CoffeeMaker Rewards Club {{customer.name}}!
 				<br> <br> <br>
 				<a href="/customerhomepage" style="font-size: 20px">OK</a>
 			</div>
+			<div ng-show="failure">Please enter matching passwords.</div>
+            
             <a href="/index" style="border: none;">
             	<back> ← </back>
             </a>
