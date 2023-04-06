@@ -108,4 +108,95 @@ public class MappingController {
         return "ingredient";
     }
 
+    /**
+     * On a GET request to /baristahomepage, the UserController will return
+     * /src/main/resources/templates/baristahomepage.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/baristahomepage", "/baristahomepage.html" } )
+    public String baristaHomepageForm ( final Model model ) {
+        return "baristahomepage";
+    }
+
+    /**
+     * On a GET request to /baristaregister, the UserController will return
+     * /src/main/resources/templates/baristaregister.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/baristaregister", "/baristaregister.html" } )
+    public String baristaRegisterForm ( final Model model ) {
+        return "baristaregister";
+    }
+
+    /**
+     * On a GET request to /customerhomepage, the UserController will return
+     * /src/main/resources/templates/customerhomepage.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/customerhomepage", "/customerhomepage.html" } )
+    public String customerHomepageForm ( final Model model ) {
+        return "customerhomepage";
+    }
+
+    /**
+     * On a GET request to /customerlogin, the UserController will return
+     * /src/main/resources/templates/customerlogin.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/customerlogin", "/customerlogin.html" } )
+    public String customerLoginForm ( final Model model ) {
+        return "customerlogin";
+    }
+
+    /**
+     * On a GET request to /customersignup, the UserController will return
+     * /src/main/resources/templates/customersignup.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/customersignup", "/customersignup.html" } )
+    public String customerSignupForm ( final Model model ) {
+        return "customersignup";
+    }
+
+    /**
+     * On a GET request to /customerhomepage, the UserController will return
+     * /src/main/resources/templates/managerhomepage.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/managerhomepage", "/managerhomepage.html" } )
+    public String managerHomepageForm ( final Model model ) {
+        return "managerhomepage";
+    }
+
+    /**
+     * On a GET request to /stafflogin, the UserController will return
+     * /src/main/resources/templates/stafflogin.html.
+     *
+     * @param model
+     *            underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/stafflogin", "/stafflogin.html" } )
+    public String staffLoginForm ( final Model model ) {
+        return "stafflogin";
+    }
+
 }

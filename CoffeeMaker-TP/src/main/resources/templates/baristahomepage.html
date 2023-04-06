@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Barista Homepage</title>
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="css/app.css" />
+<style>
+		@font-face {
+  			font-family: 'Raleway', sans-serif;
+  			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
+		}
+		body {
+				background-color:rgb(207, 176, 145);
+		}
+		header {
+			font-size: 56px;
+		}
+		* {
+			font-family: raleway;
+		}
+		input.ng-valid {
+			background-color: lightgreen;
+		}
+		
+		input.ng-dirty.ng-invalid-min {
+			background-color: yellow;
+		}
+		a, button {
+			border-radius: 10px;
+			border: 2px solid #000000;
+			text-align: center;
+			text-decoration: none;
+			color: black;
+			padding: 10px;
+			font-size: 36px;
+			width: 275px;
+			white-space: normal;
+		}
+</style>
+</head>
+<body>
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+	<script>
+		/*<![CDATA[*/
+		var app = angular.module('myApp', []);
+		app.controller('baristaCtrl', function($scope, $http, $q) {
+		});
+		/*]]>*/
+	</script>
+	<button style="position: absolute; top: 8px; right: 8px;">Sign Out</button>
+	<div class="row text-center"> 
+	<h1>Barista Homepage</h1> 
+		<br> 
+		<br> 
+	</div>
+
+
+	<div class="generic-container ng-cloak" ng-app="myApp"
+		ng-controller="recipesCtrl as ctrl">
+				<form ng-submit="submit()" name="editRecipeForm"
+					class="form-horizontal">					
+						<div class="row">
+							<label class="col-lg-12 control-lable" for="list" style="font-size: 15px">Current Orders:</label>
+                              <div class="col-md-6">
+                              <table class="table table-striped">
+                                <thead>
+                                  <tr>
+                                    <th>Order #</th>
+                                    <th>Recipe Info</th>
+                                    <th>Status</th>
+                                    <th>Completed</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr ng-repeat="ingredient in ingredients">       
+                                      <td>{{ ingredient.amount }}</td>
+                                      <td>{{ ingredient.name }}</td>
+                                      <td>button</td>
+                                      <td>
+                                      	<label>
+                                          <input type="radio" name="name" ng-model="$parent.name" value="{{ingredient.name}}">
+                                        </label>
+                                      </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                              </div>
+                             <div class="form-actions floatRight">
+								<button type="button" ng-click="submit()"
+										class="btn btn-default btn-sm"
+										ng-disabled="!canSubmit">Complete Order</button>
+							</div>
+					    </div>
+					
+						<div class="row">
+							<label class="col-lg-12 control-lable" for="list" style="font-size: 15px">All Orders:</label>
+                              <div class="col-md-6">
+                              <table class="table table-striped">
+                                <thead>
+                                  <tr>
+                                    <th>Fulfill</th>
+                                    <th>Order #</th>
+                                    <th>Recipe Info</th>
+                                    <th>Status</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr ng-repeat="ingredient in ingredients">
+                                     <td>
+                                      <label>
+                                          <input type="radio" name="name" ng-model="$parent.name" value="{{ingredient.name}}">
+                                        </label>
+                                      </td>
+                                      <td>{{ ingredient.name }}</td>
+                                      <td>{{ ingredient.amount }}</td>
+                                      <td>button</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                              </div>
+                    </div>
+					<div class="row" >
+						<div class="form-actions floatRight">
+								<button type="button" ng-click="submit()"
+										class="btn btn-default btn-sm"
+										ng-disabled="!canSubmit">Fulfill Order</button>
+						</div>
+					</div>
+					<br>	
+				</form>
+					
+			<div class="panel-footer">
+			</div>
+
+	</div>
+	
+</body>
+</html>

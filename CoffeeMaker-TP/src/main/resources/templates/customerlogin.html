@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Welcome Customer!</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+    <style>
+		@font-face {
+  			font-family: 'Raleway', sans-serif;
+  			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
+		}
+		body {
+			background-color: rgb(207, 176, 145);
+		}
+        header {
+			font-size: 56px;
+		}
+        back {
+			position: absolute;
+			bottom: 8px;
+			left: 8px;
+			font-size: 60px;
+		}
+		input[type=email], input[type=password] {
+			font-size: 24px;
+			border-radius: 10px;
+			border: 2px solid #000000;
+			width: 350px;
+			padding: 5px;
+		}
+		a, input[type=submit] {
+			border-radius: 10px;
+			border: 2px solid #000000;
+			text-align: center;
+			text-decoration: none;
+			color: black;
+			padding: 5px;
+			font-size: 36px;
+		}
+		buttons {
+			font-size: clamp(3rem, 8vw, 8rem);
+			display: flex;
+			justify-content: center;
+			vertical-align: center;
+			padding: 5px;
+		}
+		holder {
+       		text-align: center;
+			vertical-align: middle;
+			font-size: 18px;
+		}
+		div {
+	        margin-bottom: 10px;
+			vertical-align: middle;
+			text-align: center;
+			font-size: 24px;
+			padding: 2px;
+      	}
+		input:invalid {
+		    border: 2px solid #FF0000;
+		}
+		* {
+			font-family: raleway;
+		}
+		
+    </style>
+</head>
+<body>
+	<div layout:fragment="content">
+		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+		<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js"></script>
+		<script>
+			/*<![CDATA[*/
+			var app = angular.module('myApp', []);
+			app.controller('customerLoginCtrl', function($scope, $http, $q) {
+			
+			$scope.success = false;
+			
+			$scope.customer = {
+				email: '',
+				name: '',
+				password: ''
+			}
+			
+			$scope.passwordAttempt = '';
+		
+			$scope.encrypt = function() {
+				var pass=document.getElementById('password').value;
+				var hide=document.getElementById('hide').value;
+				if(pass=="") {
+					document.getElementById('err').innerHTML='Error:Password is missing';
+					return false;
+				} else {
+					document.getElementById("hide").value = document.getElementById("password").value;
+					var hash = CryptoJS.MD5(pass);
+					document.getElementById('password').value=hash;
+					$scope.passwordAttempt = hash;
+					$scope.customer.email = document.getElementById('email').value;
+					return true;
+				}
+			}
+			
+			$scope.submit = function(){
+				$http.get("/api/v1/customers/email/" + $scope.customer.email)
+		            	.then(
+		            	function (response) {
+		            		$scope.customer = response.data;
+		            		if($scope.customer.password == $scope.passwordAttempt){
+		            			$scope.success = true;
+		            			alert("Welcome back " + customer.name + "!");
+		            			window.location.href = "/customerhomepage";
+		            		} else {
+		            			alert("Invalid password. Try again.");
+		        				$scope.success = false;
+		            		}
+		            	},
+		            	function(rejection){
+		                	alert("Account with " + $scope.customer.email + " does not exist.");
+		                	$scope.success = false;                
+		            	});
+				$scope.reset();
+			}
+			
+			$scope.reset = function(){
+				$scope.customer = {
+					email: '',
+					name: '',
+					password: ''
+				}
+			
+			}
+		
+			}
+			/*]]>*/
+		</script>
+		<div ng-app="myApp" ng-controller="populateCtrl">
+			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
+			<div>
+				<header>Customer Login</header>
+			</div>
+			<br>
+			
+			<form class="form-signin" method="post" name="signin" id="signin">
+				<input type="email"  name="email" id="email" placeholder="Email" value=""  />
+				<input type="password"  name="password" id="password" placeholder="Password" value=""  />
+				<input type="hidden" name="hide" id="hide" />
+				<div style="color:red" id="err"></div>
+				<div class="row">
+					<input type="submit" name="login" onclick="return encrypt()" value="Log In"  >
+					<a href="/customersignup">Sign Up</a>
+				</div>
+				<div>
+					<a href="/customerhomepage" style="font-size: 29px;">Continue as Guest</a>
+				</div>
+			</form>
+			
+			
+            <a href="/index" style="border: none;">
+            	<back> ← </back>
+            </a>
+		</div>
+	</div>
+</body>
+</html>

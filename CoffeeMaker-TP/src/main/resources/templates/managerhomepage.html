@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Manager Homepage</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="css/app.css" />
+<style>
+		@font-face {
+  			font-family: 'Raleway', sans-serif;
+  			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
+		}
+		body {
+				background-color:rgb(207, 176, 145);
+		}
+		header {
+			font-size: 56px;
+		}
+		* {
+			font-family: raleway;
+		}
+		a, button {
+			border-radius: 10px;
+			border: 2px solid #000000;
+			text-align: center;
+			text-decoration: none;
+			color: black;
+			padding: 10px;
+			font-size: 36px;
+			width: 275px;
+			white-space: normal;
+		}
+</style>
+
+
+</head>
+<body>  
+				</div>
+			<button style="position: absolute; top: 8px; right: 8px;">Sign Out</button>
+			<br>
+    <div class="row text-center">
+        	<h1>Manager Homepage</h1>
+	<br>
+	<br>
+    </div>
+	
+ <div class="container">
+  <div class="row text-center" style="margin-top: 20px;">	
+  <div class="btn-group btn-group-vertical" style="margin-right: 70px;">  
+    <div class="col-md-12">
+	    <a href="/inventory">
+            <button class="btn btn-default btn-sm" style="font-size: 30px">Update Inventory</button>
+        </a>
+	</div>
+  </div>
+  
+  <div class="btn-group btn-group-vertical" style="margin-left: 70px;">  
+    <div class="col-md-12">
+	     <a href="/editrecipe">
+            <button class="btn btn-default btn-sm" style="font-size: 30px">Edit Recipe</button>
+        </a>
+	</div>
+  </div>
+  </div>
+  
+    <div class="row text-center" style="margin-top: 60px;">
+  <div class="btn-group btn-group-vertical" style="margin-right: 70px;">  
+    <div class="col-md-12">
+	     <a href="/recipe">
+            <button class="btn btn-default btn-sm" style="font-size: 30px">Add a Recipe</button>
+        </a>
+	</div>
+  </div>
+  
+  <div class="btn-group btn-group-vertical" style="margin-left: 70px;">  
+    <div class="col-md-12">
+	    <a href="/baristaregister">
+            <button class="btn btn-default btn-sm" style="font-size: 30px">Barista Creation</button>
+        </a>
+	</div>
+  </div>
+  </div>
+  
+    <div class="row text-center" style="margin-top: 40px;">	
+  <div class="btn-group btn-group-vertical" style="margin-right: 70px;">  
+    <div class="col-md-12">
+	    <a href="/deleterecipe">
+            <button class="btn btn-default btn-sm" style="font-size: 30px">Delete Recipe</button>
+        </a>
+	</div>
+  </div>
+  
+  <div class="btn-group btn-group-vertical" style="margin-left: 70px;">  
+    <div class="col-md-12">
+	     <a href="/ingredient">
+            <button class="btn btn-default btn-sm" style="font-size: 30px">Add an Ingredient</button>
+        </a>
+	</div>
+  </div>
+  </div>
+  
+</div>
+	
+</body>
+</html>
