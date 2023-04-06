@@ -37,14 +37,25 @@ public class CustomerService extends Service<Customer, Long> {
         return customerRepository;
     }
 
+    // /**
+    // * Find a customer with the provided id
+    // *
+    // * @param id
+    // * id of the customer
+    // * @return found customer, null if none
+    // */
+    // public Customer findById ( final long id ) {
+    // return customerRepository.findById( id );
+    // }
+
     /**
      * Find a customer with the provided id
      *
-     * @param id
-     *            id of the customer
+     * @param email
+     *            email of the customer
      * @return found customer, null if none
      */
-    public Customer findById ( final long id ) {
-        return customerRepository.findById( id );
+    public Customer findByEmail ( final String email ) {
+        return customerRepository.findByEmail( email );
     }
 }

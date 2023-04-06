@@ -1,9 +1,12 @@
 package edu.ncsu.csc.CoffeeMaker.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -15,6 +18,7 @@ import edu.ncsu.csc.CoffeeMaker.models.users.Customer;
  * The order object that tracks the recipes in the order for the user
  *
  * @author Emma Holincheck
+ * @author Erin Grouge
  * @version 04/04/2023
  *
  */
@@ -24,7 +28,7 @@ public class Order extends DomainObject {
     /** The id of the order */
     @Id
     @GeneratedValue
-    private long               id;
+    private Long               id;
     /** The payment for the order */
     @Min ( 0 )
     private final long         payment;
@@ -32,6 +36,7 @@ public class Order extends DomainObject {
     @OneToMany
     private final List<Recipe> beverages;
     /** Representative of the current status of the order in the system */
+    @Enumerated ( EnumType.STRING )
     private static OrderStatus orderStatus;
     /** The id of the user placing the order */
     private final long         userId;
@@ -47,8 +52,17 @@ public class Order extends DomainObject {
     public Order ( final List<Recipe> beverages, final long payment, final Customer customer ) {
         this.beverages = beverages;
         this.payment = payment;
-        userId = customer.getIdLong();
+        userId = (long) customer.getId();
         orderStatus = OrderStatus.NOT_STARTED;
+    }
+
+    /**
+     * Constructs a default order
+     */
+    public Order () {
+        userId = 0;
+        payment = 0;
+        beverages = new ArrayList<Recipe>();
     }
 
     /**
@@ -77,15 +91,6 @@ public class Order extends DomainObject {
      */
     public long getUserId () {
         return userId;
-    }
-
-    /**
-     * Returns the long version of the id of the order
-     *
-     * @return long version of the id
-     */
-    public long getLongId () {
-        return id;
     }
 
     /**

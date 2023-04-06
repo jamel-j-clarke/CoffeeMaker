@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import javax.management.InvalidAttributeValueException;
-import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
 import edu.ncsu.csc.CoffeeMaker.models.DomainObject;
 
@@ -12,18 +14,21 @@ import edu.ncsu.csc.CoffeeMaker.models.DomainObject;
  * Implements a basic User object for the CoffeeMaker system
  *
  * @author Emma Holincheck
- * @version 04/03/2023
+ * @author Erin Grouge
+ * @version 04/04/2023
  */
-@Entity // Not sure if we want this at this level but can check back on it
+@MappedSuperclass
 public class User extends DomainObject {
     /** The id of the user */
-    private long         id;
+    @Id
+    @GeneratedValue
+    private Long   id;
     /** The name of the user */
-    private final String name;
+    private String name;
     /** The email of the user */
-    private String       email;
+    private String email;
     /** The password of the user */
-    private final String password;
+    private String password;
 
     /**
      * Constructs a new user object
@@ -38,9 +43,17 @@ public class User extends DomainObject {
      *             if the email is invalid
      */
     public User ( final String email, final String name, final String password ) throws InvalidAttributeValueException {
-        validateAndSetEmail( email );
-        this.name = name;
-        this.password = password;
+        if ( ! ( setEmail( email ) && setName( name ) && setPassword( password ) ) ) {
+            throw new InvalidAttributeValueException( "Invalid Input" );
+        }
+    }
+
+    /**
+     * Constructs a new user object
+     *
+     */
+    public User () {
+        super();
     }
 
     /**
@@ -48,18 +61,43 @@ public class User extends DomainObject {
      *
      * @param email
      *            of the user
-     * @throws InvalidAttributeValueException
-     *             if the email is invalid in format
+     * @return true if the email was set, false if it was invalid
      */
-    private void validateAndSetEmail ( final String email ) throws InvalidAttributeValueException {
-        if ( !email.contains( "@" ) || !email.contains( "." ) || email.indexOf( "@" ) < email.indexOf( "." )
-                || email.indexOf( "@" ) == 0 ) {
-            throw new InvalidAttributeValueException( "not a valid emails" );
+    private boolean setEmail ( final String email ) {
+        if ( email == null || email.trim().equals( "" ) ) {
+            return false;
+        }
+        else if ( !email.contains( "@" ) || !email.contains( "." )
+                || ( email.indexOf( "." ) - email.indexOf( "@" ) <= 1 ) || email.indexOf( "@" ) == 0
+                || ( email.lastIndexOf( "." ) == email.length() - 1 ) ) {
+            // throw new InvalidAttributeValueException( "not a valid emails" );
+            return false;
         }
         else {
             this.email = email;
+            return true;
         }
 
+    }
+
+    /**
+     * Updates the user's name and password with the new user name and password
+     *
+     * @param user
+     *            the new user information
+     * @return true if it was updated, false if not.
+     */
+    public boolean updateUser ( final User user ) {
+        final String oldname = this.name;
+        final String oldpassword = this.password;
+        if ( setName( user.getName() ) && setPassword( user.getPassword() ) ) {
+            return true;
+        }
+        else { // If invalid, change back to old name and password
+            setName( oldname );
+            setPassword( oldpassword );
+            return false;
+        }
     }
 
     /**
@@ -69,6 +107,41 @@ public class User extends DomainObject {
      */
     public String getName () {
         return name;
+    }
+
+    /**
+     * Sets the users name
+     *
+     * @param name
+     *            the name of the user
+     *
+     * @return true if the name was set, false if it was invalid
+     */
+    private boolean setName ( final String name ) {
+        if ( name != null && !name.trim().equals( "" ) ) {
+            this.name = name.trim();
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
+     * Sets the users password
+     *
+     * @param password
+     *            the password of the user
+     * @return true if the password is set, false if not
+     */
+    private boolean setPassword ( final String password ) {
+        if ( password != null && !password.trim().equals( "" ) ) {
+            this.password = password.trim();
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**
@@ -94,7 +167,7 @@ public class User extends DomainObject {
      */
     @Override
     public Serializable getId () {
-        return id;
+        return this.id;
     }
 
     /**
@@ -115,7 +188,7 @@ public class User extends DomainObject {
         }
         final User other = (User) obj;
         return Objects.equals( name, other.name ) && Objects.equals( email, other.email )
-                && Objects.equals( password, other.password );
+                && Objects.equals( password, other.password ) && Objects.equals( id, other.id );
     }
 
     /**

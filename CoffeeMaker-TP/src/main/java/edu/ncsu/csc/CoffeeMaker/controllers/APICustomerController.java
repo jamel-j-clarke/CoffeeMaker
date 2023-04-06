@@ -2,6 +2,8 @@ package edu.ncsu.csc.CoffeeMaker.controllers;
 
 import java.util.List;
 
+import javax.management.InvalidAttributeValueException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.ncsu.csc.CoffeeMaker.models.users.Customer;
+import edu.ncsu.csc.CoffeeMaker.services.CustomerService;
+
 /**
  * This is the controller that holds the REST endpoints that handle CRUD
  * operations for Users.
@@ -21,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
  * to JSON
  *
  * @author Jonathan Kurian
+ * @author Erin Grouge
  *
  */
 @SuppressWarnings ( { "unchecked", "rawtypes" } )
@@ -55,7 +61,24 @@ public class APICustomerController extends APIController {
     @GetMapping ( BASE_PATH + "/customers/{id}" )
     public ResponseEntity getCustomer ( @PathVariable ( "id" ) final long id ) {
         final Customer user = customerService.findById( id );
-        return null == user ? new ResponseEntity( errorResponse( "No user found with id " + id ), HttpStatus.NOT_FOUND )
+        return null == user
+                ? new ResponseEntity( errorResponse( "No customer found with id " + id ), HttpStatus.NOT_FOUND )
+                : new ResponseEntity( user, HttpStatus.OK );
+    }
+
+    /**
+     * REST API method to provide GET access to a specific employee, as
+     * indicated by the path variable provided (the id of the employee desired)
+     *
+     * @param email
+     *            customer email
+     * @return response to the request
+     */
+    @GetMapping ( BASE_PATH + "/customers/email/{email}" )
+    public ResponseEntity getCustomer ( @PathVariable ( "email" ) final String email ) {
+        final Customer user = customerService.findByEmail( email );
+        return null == user
+                ? new ResponseEntity( errorResponse( "No customer found with email " + email ), HttpStatus.NOT_FOUND )
                 : new ResponseEntity( user, HttpStatus.OK );
     }
 
@@ -64,19 +87,26 @@ public class APICustomerController extends APIController {
      * used to create a new Employee by automatically converting the JSON
      * RequestBody provided to a Employee object. Invalid JSON will fail.
      *
-     * @param employee
-     *            The valid User to be saved.
+     * @param customer
+     *            The valid customer to be saved.
      * @return ResponseEntity indicating success if the User could be saved to
      *         the database, or an error if it could not be
      */
     @PostMapping ( BASE_PATH + "/customers" )
     public ResponseEntity createCustomer ( @RequestBody final Customer customer ) {
-        if ( null != customerService.findById( customer.getId() ) ) {
-            return new ResponseEntity( errorResponse( "User with the name " + customer.getName() + " already exists" ),
+        try {
+            final Customer cust = new Customer( customer.getEmail(), customer.getName(), customer.getPassword() );
+        }
+        catch ( final InvalidAttributeValueException e ) {
+            return new ResponseEntity( errorResponse( "Invalid input." ), HttpStatus.CONFLICT );
+        }
+        if ( null != customerService.findByEmail( customer.getEmail() ) ) {
+            return new ResponseEntity(
+                    errorResponse( "Customer with the email " + customer.getEmail() + " already exists" ),
                     HttpStatus.CONFLICT );
         }
         customerService.save( customer );
-        return new ResponseEntity( successResponse( customer.getName() + " successfully created" ), HttpStatus.OK );
+        return new ResponseEntity( successResponse( customer.getName() + " was successfully created" ), HttpStatus.OK );
 
     }
 
@@ -95,16 +125,23 @@ public class APICustomerController extends APIController {
      */
     @PutMapping ( BASE_PATH + "/customers/{id}" )
     public ResponseEntity updateCustomer ( @PathVariable final long id, @RequestBody final Customer customer ) {
+        try {
+            final Customer cust = new Customer( customer.getEmail(), customer.getName(), customer.getPassword() );
+        }
+        catch ( final InvalidAttributeValueException e ) {
+            return new ResponseEntity( errorResponse( "Invalid input. " ), HttpStatus.CONFLICT );
+        }
         final Customer currUser = customerService.findById( id );
 
         if ( currUser == null ) {
-            return new ResponseEntity( errorResponse( "User with the id " + id + " does not exist" ),
+            return new ResponseEntity( errorResponse( "Customer with the id " + id + " does not exist" ),
                     HttpStatus.NOT_FOUND );
         }
         else {
-            currUser.updateCustomer( customer );
+            currUser.updateUser( customer );
             customerService.save( currUser );
-            return new ResponseEntity( successResponse( customer + " successfully updated" ), HttpStatus.OK );
+            return new ResponseEntity( successResponse( customer.getName() + " was successfully updated" ),
+                    HttpStatus.OK );
         }
 
     }
@@ -123,11 +160,11 @@ public class APICustomerController extends APIController {
     public ResponseEntity deleteCustomer ( @PathVariable final long id ) {
         final Customer user = customerService.findById( id );
         if ( null == user ) {
-            return new ResponseEntity( errorResponse( "No user found for id " + id ), HttpStatus.NOT_FOUND );
+            return new ResponseEntity( errorResponse( "No customer found for id " + id ), HttpStatus.NOT_FOUND );
         }
         customerService.delete( user );
 
-        return new ResponseEntity( successResponse( user + " was deleted successfully" ), HttpStatus.OK );
+        return new ResponseEntity( successResponse( user.getName() + " was deleted successfully" ), HttpStatus.OK );
     }
 
 }

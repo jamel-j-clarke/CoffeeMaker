@@ -2,6 +2,8 @@ package edu.ncsu.csc.CoffeeMaker.controllers;
 
 import java.util.List;
 
+import javax.management.InvalidAttributeValueException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.ncsu.csc.CoffeeMaker.models.users.Employee;
+import edu.ncsu.csc.CoffeeMaker.services.EmployeeService;
+
 /**
  * This is the controller that holds the REST endpoints that handle CRUD
  * operations for Users.
@@ -21,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
  * to JSON
  *
  * @author Jonathan Kurian
+ * @author Erin Grouge
  *
  */
 @SuppressWarnings ( { "unchecked", "rawtypes" } )
@@ -55,7 +61,24 @@ public class APIEmployeeController extends APIController {
     @GetMapping ( BASE_PATH + "/employees/{id}" )
     public ResponseEntity getEmployee ( @PathVariable ( "id" ) final long id ) {
         final Employee user = employeeService.findById( id );
-        return null == user ? new ResponseEntity( errorResponse( "No user found with id " + id ), HttpStatus.NOT_FOUND )
+        return null == user
+                ? new ResponseEntity( errorResponse( "No employee found with id " + id ), HttpStatus.NOT_FOUND )
+                : new ResponseEntity( user, HttpStatus.OK );
+    }
+
+    /**
+     * REST API method to provide GET access to a specific employee, as
+     * indicated by the path variable provided (the id of the employee desired)
+     *
+     * @param email
+     *            employee email
+     * @return response to the request
+     */
+    @GetMapping ( BASE_PATH + "/employees/email/{email}" )
+    public ResponseEntity getEmployee ( @PathVariable final String email ) {
+        final Employee user = employeeService.findByEmail( email );
+        return null == user
+                ? new ResponseEntity( errorResponse( "No employee found with email " + email ), HttpStatus.NOT_FOUND )
                 : new ResponseEntity( user, HttpStatus.OK );
     }
 
@@ -71,8 +94,16 @@ public class APIEmployeeController extends APIController {
      */
     @PostMapping ( BASE_PATH + "/employees" )
     public ResponseEntity createEmployee ( @RequestBody final Employee employee ) {
-        if ( null != employeeService.findById( employee.getId() ) ) {
-            return new ResponseEntity( errorResponse( "User with the name " + employee.getName() + " already exists" ),
+        // Check for invalid inputs with temporary employee object
+        try {
+            final Employee emp = new Employee( employee.getEmail(), employee.getName(), employee.getPassword() );
+        }
+        catch ( final InvalidAttributeValueException e ) {
+            return new ResponseEntity( errorResponse( "Invalid input." ), HttpStatus.CONFLICT );
+        }
+        if ( null != employeeService.findByEmail( employee.getEmail() ) ) {
+            return new ResponseEntity(
+                    errorResponse( "Employee with the email " + employee.getEmail() + " already exists" ),
                     HttpStatus.CONFLICT );
         }
         employeeService.save( employee );
@@ -94,17 +125,27 @@ public class APIEmployeeController extends APIController {
      *         to the inventory, or an error if it could not be
      */
     @PutMapping ( BASE_PATH + "/employees/{id}" )
-    public ResponseEntity updateEmployee ( @PathVariable final long id, @RequestBody final Employee employee ) {
+    public ResponseEntity updateEmployeeById ( @PathVariable final long id, @RequestBody final Employee employee ) {
+        // Check for invalid inputs with temporary employee object
+        try {
+            final Employee emp = new Employee( employee.getEmail(), employee.getName(), employee.getPassword() );
+        }
+        catch ( final InvalidAttributeValueException e ) {
+            return new ResponseEntity( errorResponse( "Invalid input." ), HttpStatus.CONFLICT );
+        }
         final Employee currUser = employeeService.findById( id );
 
         if ( currUser == null ) {
-            return new ResponseEntity( errorResponse( "User with the id " + id + " does not exist" ),
+            return new ResponseEntity( errorResponse( "Employee with the id " + id + " does not exist" ),
                     HttpStatus.NOT_FOUND );
         }
-        else {
-            currUser.updateEmployee( employee );
+        if ( currUser.updateUser( employee ) ) {
             employeeService.save( currUser );
-            return new ResponseEntity( successResponse( employee + " successfully updated" ), HttpStatus.OK );
+            return new ResponseEntity( successResponse( employee.getName() + " was successfully updated" ),
+                    HttpStatus.OK );
+        }
+        else {
+            return new ResponseEntity( errorResponse( "Invalid name or password." ), HttpStatus.CONFLICT );
         }
 
     }
@@ -123,7 +164,7 @@ public class APIEmployeeController extends APIController {
     public ResponseEntity deleteEmployee ( @PathVariable final long id ) {
         final Employee user = employeeService.findById( id );
         if ( null == user ) {
-            return new ResponseEntity( errorResponse( "No user found for id " + id ), HttpStatus.NOT_FOUND );
+            return new ResponseEntity( errorResponse( "No employee found for id " + id ), HttpStatus.NOT_FOUND );
         }
         employeeService.delete( user );
 

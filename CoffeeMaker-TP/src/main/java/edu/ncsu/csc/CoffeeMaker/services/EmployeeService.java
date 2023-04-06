@@ -37,14 +37,25 @@ public class EmployeeService extends Service<Employee, Long> {
         return employeeRepository;
     }
 
+    // /**
+    // * Find an employee with the provided name
+    // *
+    // * @param id
+    // * id of the employee to find
+    // * @return found employee, null if none
+    // */
+    // public Employee findById ( final long id ) {
+    // return employeeRepository.findById( id );
+    // }
+
     /**
-     * Find an employee with the provided name
+     * Find a customer with the provided id
      *
-     * @param id
-     *            id of the employee to find
+     * @param email
+     *            email of the employee
      * @return found employee, null if none
      */
-    public Employee findById ( final long id ) {
-        return employeeRepository.findById( id );
+    public Employee findByEmail ( final String email ) {
+        return employeeRepository.findByEmail( email );
     }
 }
