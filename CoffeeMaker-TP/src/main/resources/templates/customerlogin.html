@@ -139,9 +139,13 @@
 			            		$scope.customer = response.data;
 			            		$scope.success = true;
 			            		$scope.toggle();
+			            		sessionStorage.setItem("currentUserName", $scope.customer.name);
+			            		$scope.reset();
+			            		/** sessionStorage.setItem("currentUserEmail", $scope.customer.email); */
 			            	},
 			            	function(failure){
-			                	alert("Account with " + $scope.customer.email + " does not exist.");
+			            		
+			                	alert("An account with that email does not exist. Click Sign Up to create an account.");
 			                	$scope.success = false;                
 			        		});
 			            	
@@ -151,7 +155,7 @@
 			            alert("Invalid password. Try again.");
 			        	$scope.success = false;
 			        }	
-					$scope.reset();
+					
 				}
 				
 				$scope.reset = function(){
@@ -170,7 +174,7 @@
 				
 				}
 				
-				$scope.reset();
+				
 		
 			});
 			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */

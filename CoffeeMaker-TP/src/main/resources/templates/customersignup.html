@@ -162,6 +162,8 @@
 								$scope.success = true;
 								$scope.failure = false;
 								$scope.toggle();
+								sessionStorage.setItem("currentUserName", $scope.customer.name);
+								/** sessionStorage.setItem("currentUserEmail", $scope.customer.email); */
 							},
 							function(failure) {
 								$scope.success = false;
@@ -171,7 +173,6 @@
 								var ask = window.confirm("An account with this email already exists.\n Would you like to login?");
 							    if (ask) {
 							        window.location.href = "customerlogin.html";
-							
 							    }
 							}
 						)
