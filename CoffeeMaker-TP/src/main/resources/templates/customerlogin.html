@@ -139,8 +139,15 @@
 			            	function (response) {
 			            		$scope.customer = response.data;
 			            		$scope.success = true;
-			            		$scope.toggle();
-			            		sessionStorage.setItem("currentUserName", $scope.customer.name);
+			            		if($scope.customer.password == $scope.passwordAttempt){
+			            			// Successful log in
+			            			sessionStorage.setItem("currentUserName", $scope.customer.name);
+						            $scope.toggle();
+						        } else {
+						            alert("Invalid password. Try again.");
+						        	$scope.success = false;
+						        }	
+			            		
 			            		$scope.reset();
 			            		/** sessionStorage.setItem("currentUserEmail", $scope.customer.email); */
 			            	},
@@ -150,12 +157,7 @@
 			                	$scope.success = false;                
 			        		});
 			            	
-			        if($scope.success && $scope.customer.password == $scope.passwordAttempt){
-			            $scope.success = true;
-			        } else if($scope.success) {
-			            alert("Invalid password. Try again.");
-			        	$scope.success = false;
-			        }	
+			        
 				}
 				
 				$scope.reset = function(){

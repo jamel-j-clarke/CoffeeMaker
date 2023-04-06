@@ -167,9 +167,6 @@
 			            	function (success) {
 			            		$scope.employee = success.data;
 			            		$scope.success = true;
-			            		console.log($scope.employee.password);
-			            		console.log($scope.passwordAttempt);
-			            		console.log(success.status);
 			            		// Check password
 			            		if ($scope.employee.password == $scope.passwordAttempt){
 			            			if(success.status === 202){
