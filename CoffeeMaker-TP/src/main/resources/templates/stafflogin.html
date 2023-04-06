@@ -80,6 +80,25 @@
       		opacity: 1;
       		transition: 0.35s;
       	}
+      	#manpopup {
+      		position: fixed;
+      		top: 40%;
+      		left: 50%;
+      		transform: translate(-50%, -50%);
+      		width: 600px;
+      		padding: 50px;
+      		box-shadow: 0 5px 30px rgba(0,0,0,.3);
+      		background: #FFF;
+      		visibility: hidden;
+      		opacity: 0;
+      		transition: 0.35s;
+      	}
+      	#manpopup.active {
+      		top: 50%;
+      		visibility: visible;
+      		opacity: 1;
+      		transition: 0.35s;
+      	}
 		input:invalid {
 		    border: 2px solid #FF0000;
 		}
@@ -138,7 +157,7 @@
 					var blur = document.getElementById('blur'); 
 					blur.classList.toggle('active');
 					var manpopup = document.getElementById('manpopup'); 
-					popup.classList.toggle('active');
+					manpopup.classList.toggle('active');
 				}
 				
 				$scope.submit = function(){
