@@ -151,11 +151,10 @@
 			            			// Successful log in
 			            			sessionStorage.setItem("currentUserName", $scope.customer.name);
 						            $scope.toggle();
+						            $scope.reset();
 						        } else {
 						            $scope.invalidInfo=true;
 						        }	
-			            		
-			            		$scope.reset();
 			            		/** sessionStorage.setItem("currentUserEmail", $scope.customer.email); */
 			            	},
 			            	function(failure){
