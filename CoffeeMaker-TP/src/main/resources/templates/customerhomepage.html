@@ -28,11 +28,34 @@
 			width: 275px;
 			white-space: normal;
 		}
-		holder {
+		.holder {
        		text-align: center;
 			vertical-align: middle;
 			font-size: 18px;
+			transition: 0.35s;
 		}
+		.holder#blur.active {
+			filter: blur(7px);
+		}
+		#signoutPopup {
+      		position: fixed;
+      		top: 40%;
+      		left: 50%;
+      		transform: translate(-50%, -50%);
+      		width: 600px;
+      		padding: 50px;
+      		box-shadow: 0 5px 30px rgba(0,0,0,.3);
+      		background: #FFF;
+      		visibility: hidden;
+      		opacity: 0;
+      		transition: 0.35s;
+      	}
+      	#signoutPopup.active {
+      		top: 50%;
+      		visibility: visible;
+      		opacity: 1;
+      		transition: 0.35s;
+      	}
 		div {
 	        margin-bottom: 10px;
 			vertical-align: middle;
@@ -66,12 +89,14 @@
 				$scope.name = sessionStorage.getItem("currentUserName");
 				console.log($scope.name);
 				
-				// trigger sign out popup
-				$scope.toggle = function() {
-					var blur = document.getElementById('blur'); 
-					blur.classList.toggle('active');
-					var popup = document.getElementById('popup'); 
-					popup.classList.toggle('active');
+				// sign out as a customer
+				$scope.signOut = function() {
+					// clear sesstion storage
+					sessionStorage.removeItem("currentUserName");
+					sessionStorage.clear();
+					
+					// go to the customer login page
+					window.location.href = "customerlogin.html";
 				}
 			});
 			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
@@ -79,11 +104,12 @@
 		</script>
 		<div ng-app="myApp" ng-controller="populateCtrl">
 			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
-			<div class="holder" id="blur">
+			<button style="position: absolute; top: 8px; right: 8px;" onclick="toggle()">Sign Out</button>
+			<div class="holder", style="text-align: left" id="blur">
 				<div>
 					<header>Hey {{name}},</header>
 				</div>
-				<button style="position: absolute; top: 8px; right: 8px;">Sign Out</button>
+				
 				<br>
 				<div>
 					Current Orders:
@@ -100,8 +126,25 @@
 						</tr>
 					</table>
 				</div>
-				<button style="position: absolute; bottom: 8px; right: 8px;">Order Beverage</button>
+				
 			</div>
+			<!--  sign out popup -->
+			<div class="holder" id="signoutPopup">
+				<p>Are you sure you would like to sign out?</p>
+				<br>
+				<a href="/customerlogin" style="font-size: 20px">Sign Out</a>
+				<a href="#" style="font-size: 20px" onclick="toggle()">Cancel</a>
+			</div>
+			<script type="text/javascript">
+				// signing out function
+				function toggle() {
+					var blur = document.getElementById('blur'); 
+					blur.classList.toggle('active');
+					var popup = document.getElementById('signoutPopup'); 
+					popup.classList.toggle('active');
+				}
+			</script>
+			<button style="position: absolute; bottom: 8px; right: 8px;">Order Beverage</button>
 		</div>
 	</div>
 </body>
