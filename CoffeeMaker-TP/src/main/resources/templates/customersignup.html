@@ -1,0 +1,215 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Sign Up</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+		@font-face {
+  			font-family: 'Raleway', sans-serif;
+  			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
+		}
+        header {
+			font-size: 56px;
+		}
+        back {
+			position: absolute;
+			bottom: 8px;
+			left: 8px;
+			font-size: 60px;
+		}
+		input[type=email], input[type=password], input[type=text] {
+			font-size: 24px;
+			border-radius: 10px;
+			border: 2px solid #000000;
+			width: 350px;
+			padding: 5px;
+		}
+		a, input[type=submit] {
+			border-radius: 10px;
+			border: 2px solid #000000;
+			text-align: center;
+			text-decoration: none;
+			color: black;
+			padding: 10px;
+			font-size: 36px;
+			width: 125px;
+			white-space: normal;
+		}
+		.holder {
+       		text-align: center;
+			vertical-align: middle;
+		}
+		.holder#blur.active {
+			filter: blur(20px);
+		}
+		div {
+	        margin-bottom: 10px;
+			vertical-align: middle;
+			text-align: center;
+			font-size: 24px;
+			padding: 2px;
+      	}
+		table {
+			border: none;
+			margin-left: auto;
+			margin-right: auto;
+		}
+		* {
+			font-family: raleway;
+		}
+		input:invalid {
+		    border: 2px solid #FF0000;
+		}
+    </style>
+</head>
+<body>
+	<div layout:fragment="content">
+		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+		<script>
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*]]>*/
+			var app = angular.module('myApp', []);
+			app.controller('populateCtrl', function($scope, $http, $q) {
+				
+				// log the hit
+				console.log("Hit!");
+				
+				// clear the form function
+				$scope.reset = function() {
+					// clear the fields
+						// customer
+					$scope.customer = {
+						name: '',
+						email: '',
+						password: ''
+					};
+					
+						// password
+					$scope.passwordVerification = {
+						password: '',
+						repeatPassword: ''
+					};
+					
+					// clear the form
+					if (undefined != $scope.customerSignUpForm) {
+						$scope.customerSignUpForm.$setPristine();
+					}
+				}
+				
+				// submit the form function
+				$scope.submit = function() {
+					// create the customer
+					$scope.createCustomer();
+					
+					// reset the form
+					$scope.reset();
+				}
+				
+				// create customer function
+				$scope.createCustomer = function() {
+					$scope.success = false;
+					$scope.failure = false;
+					
+					// if the passwords match...
+					if ($scope.passwordVerification.password == $scope.passwordVerification.repeatPassword) {
+						
+						// add the password to the customer
+						$scope.customer.password = $scope.passwordVerification.password;
+						
+						console.log($scope.customer.name + "\n" + $scope.customer.email + "\n" + $scope.customer.password);
+						// post the new customer
+						$http.post("/api/v1/customers", $scope.customer).then(
+							function(success) {
+								$scope.success = true;
+								$scope.failure = false;
+							},
+							function(failure) {
+								$scope.success = false;
+								$scope.failure = true;
+							}
+						)
+					} 
+					// if the passwords don't match, we have a failure
+					else {
+						$scope.success = false;
+						$scope.failure = true;
+					}
+					
+				};
+				
+				// successful customer creation function
+				$scope.toggle = function() {
+					<!--- var blur = document.getElementById('allContent'); blur.classList.toggle('active') -->
+					if (success == true) {
+						alert("Your account has been created.\nWelcome to the CoffeeMaker Rewards Club {{customer.firstName}}!");
+					}
+					
+				};
+				
+			});
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*<![CDATA[*/ 
+		</script>
+		<div ng-app="myApp" ng-controller="populateCtrl">
+			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
+			<holder>
+				<div>
+					<header>Become a CoffeeMaker Rewards Member</header>
+				</div>
+				<br>
+				<form ng-submit="submit()" name="customerSignUpForm">
+					<table>
+						<tr>
+							<!-- holds actual table with fields that are a part of the form --> 
+							<td>
+								<table>
+									<tr>
+										<td style="text-align: right;">
+											<label>Preferred Name:</label>
+										</td>
+										<td>
+											<input type="text" required="true" ng-model="customer.name"/>
+										</td>
+									</tr>
+									<tr>
+										<td style="text-align: right;">
+											<label>Email:</label>
+										</td>
+										<td>
+											<input type="email" required="true" placeholder="e.g. mocha@coffeemaker.com" ng-model="customer.email"/>
+										</td>
+									</tr>
+									<tr>
+										<td style="text-align: right;">
+											<label>Password:</label>
+										</td>
+										<td>
+											<input type="password" required="true" ng-model="passwordVerification.password"/>
+										</td>
+									</tr>
+									<tr>
+										<td style="text-align: right;">
+											<label>Repeat Password:</label>
+										</td>
+										<td>
+											<input type="password" required="true" ng-model="passwordVerification.repeatPassword"/>
+										</td>
+									</tr>
+								</table>
+							</td>
+							<!-- holds button to submit the form --> 
+							<td>
+								<input type="submit" value="Sign Up" class="a" ng-disabled="customerSignUpForm.$invalid" onclick="toggle()"/>
+							</td>
+						</tr>
+					</table>
+				</form>
+				<div ng-show="$success">Customer Added</div>
+	            <a href="/index" style="border: none;">
+	            	<back> ← </back>
+	            </a>
+            </holder>
+		</div>
+	</div>
+</body>
+</html>
