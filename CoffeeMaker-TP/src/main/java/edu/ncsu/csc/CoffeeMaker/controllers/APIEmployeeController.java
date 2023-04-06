@@ -61,9 +61,12 @@ public class APIEmployeeController extends APIController {
     @GetMapping ( BASE_PATH + "/employees/{id}" )
     public ResponseEntity getEmployee ( @PathVariable ( "id" ) final long id ) {
         final Employee user = employeeService.findById( id );
-        return null == user
-                ? new ResponseEntity( errorResponse( "No employee found with id " + id ), HttpStatus.NOT_FOUND )
-                : new ResponseEntity( user, HttpStatus.OK );
+        if ( null == user ) {
+            return new ResponseEntity( errorResponse( "No employee found with id " + id ), HttpStatus.NOT_FOUND );
+        }
+        else {
+            return new ResponseEntity( user, HttpStatus.OK );
+        }
     }
 
     /**
@@ -77,9 +80,15 @@ public class APIEmployeeController extends APIController {
     @GetMapping ( BASE_PATH + "/employees/email/{email}" )
     public ResponseEntity getEmployee ( @PathVariable final String email ) {
         final Employee user = employeeService.findByEmail( email );
-        return null == user
-                ? new ResponseEntity( errorResponse( "No employee found with email " + email ), HttpStatus.NOT_FOUND )
-                : new ResponseEntity( user, HttpStatus.OK );
+        if ( null == user ) {
+            return new ResponseEntity( errorResponse( "No employee found with email " + email ), HttpStatus.NOT_FOUND );
+        }
+        if ( "m4n4g3r@csc326.edu".equals( email ) ) {
+            return new ResponseEntity( user, HttpStatus.ACCEPTED );
+        }
+        else {
+            return new ResponseEntity( user, HttpStatus.OK );
+        }
     }
 
     /**

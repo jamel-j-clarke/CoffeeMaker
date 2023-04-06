@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title>Sign Up</title>
+	<title>Customer Home</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -98,6 +98,28 @@
 					// go to the customer login page
 					window.location.href = "customerlogin.html";
 				}
+				
+				$scope.reset = function() {
+					// clear the fields of customer
+					$scope.customer = {
+						email: '',
+						name: '',
+						password: ''
+					};
+					
+					$scope.name = ' ';
+					
+					// clear the form
+					if (undefined != $scope.customerHomepageForm) {
+						$scope.customerHomepageForm.$setPristine();
+					}
+				}
+				
+				$scope.signout = function(){  
+					// update later to signout user of system instead of clearing
+					$scope.reset();	
+					window.location.href = "/index";
+				}
 			});
 			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
 			/*]]>*/
@@ -109,7 +131,12 @@
 				<div>
 					<header>Hey {{name}},</header>
 				</div>
-				
+
+			<div class="holder" id="blur">
+				<form ng-submit="submit()" name="customerHomepageForm">
+				<div>
+					<header>Hey {{name}},</header>
+				</div>
 				<br>
 				<div>
 					Current Orders:
@@ -126,7 +153,7 @@
 						</tr>
 					</table>
 				</div>
-				
+				</form>
 			</div>
 			<!--  sign out popup -->
 			<div class="holder" id="signoutPopup">

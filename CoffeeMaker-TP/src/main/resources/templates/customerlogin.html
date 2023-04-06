@@ -147,6 +147,7 @@
 			            	function (response) {
 			            		$scope.customer = response.data;
 			            		$scope.success = true;
+
 			            		if ($scope.customer.password == $scope.passwordAttempt){
 			            			// Successful log in
 			            			sessionStorage.setItem("currentUserName", $scope.customer.name);
@@ -155,6 +156,7 @@
 						        } else {
 						            $scope.invalidInfo=true;
 						        }	
+
 			            		/** sessionStorage.setItem("currentUserEmail", $scope.customer.email); */
 			            	},
 			            	function(failure){

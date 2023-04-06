@@ -16,12 +16,11 @@
 		header {
 			font-size: 56px;
 		}
-		back {
+        back {
 			position: absolute;
 			bottom: 8px;
 			left: 8px;
-			font-size: 60p
-			x;
+			font-size: 60px;
 		}
 		input[type=email], input[type=password] {
 			font-size: 24px;
@@ -80,6 +79,25 @@
       		opacity: 1;
       		transition: 0.35s;
       	}
+      	#manpopup {
+      		position: fixed;
+      		top: 40%;
+      		left: 50%;
+      		transform: translate(-50%, -50%);
+      		width: 600px;
+      		padding: 50px;
+      		box-shadow: 0 5px 30px rgba(0,0,0,.3);
+      		background: #FFF;
+      		visibility: hidden;
+      		opacity: 0;
+      		transition: 0.35s;
+      	}
+      	#manpopup.active {
+      		top: 50%;
+      		visibility: visible;
+      		opacity: 1;
+      		transition: 0.35s;
+      	}
 		input:invalid {
 		    border: 2px solid #FF0000;
 		}
@@ -107,7 +125,7 @@
 					password: ''
 				};
 				
-				$scope.passwordAttempt = '';
+				$scope.password = '';
 			
 				$scope.encrypt = function() {
 					var pass=document.getElementById('password').value;
@@ -133,25 +151,39 @@
 					popup.classList.toggle('active');
 				}
 				
+				// Successful log in as manager
+				$scope.mantoggle = function() {
+					var blur = document.getElementById('blur'); 
+					blur.classList.toggle('active');
+					var manpopup = document.getElementById('manpopup'); 
+					manpopup.classList.toggle('active');
+				}
+				
 				$scope.submit = function(){
+					$scope.passwordAttempt = $scope.password;
 					$http.get("/api/v1/employees/email/" + $scope.employee.email)
 			            	.then(
-			            	function (response) {
-			            		$scope.employee = response.data;
+			            	function (success) {
+			            		$scope.employee = success.data;
 			            		$scope.success = true;
-			            		$scope.toggle();
+			            		// Check password
+			            		if ($scope.employee.password == $scope.passwordAttempt){
+			            			if(success.status === 202){
+			            				$scope.mantoggle();
+			            			} else {
+			            				$scope.toggle();
+			            			}
+						        } else  {
+						            alert("Invalid password. Try again.");
+						        	$scope.success = false;
+						        }	
 			            	},
 			            	function(failure){
 			                	alert("An account with that email does not exist. Contact your Manager to make the account.");
 			                	$scope.success = false;                
 			        		});
 			            	
-			        if($scope.success && $scope.employee.password == $scope.passwordAttempt){
-			            $scope.success = true;
-			        } else if($scope.success) {
-			            alert("Invalid password. Try again.");
-			        	$scope.success = false;
-			        }	
+			        
 					$scope.reset();
 				}
 				
@@ -167,7 +199,7 @@
 						$scope.employeeLoginForm.$setPristine();
 					}
 					
-					$scope.passwordAttempt = '';
+					$scope.password = '';
 				
 				}
 				
@@ -207,7 +239,7 @@
 							</td>
 							<td>
 								<div>
-									<input type="password" name="password" ng-model="passwordAttempt" required="true"/>
+									<input type="password" name="password" ng-model="password" required="true"/>
 								</div>
 							</td>
 							
@@ -225,6 +257,11 @@
 				<p>Hi {{employee.name}}! <br> You're now logged in.</p>
 				<br> <br> <br>
 				<a href="/baristahomepage" style="font-size: 20px">OK</a>
+			</div>
+			<div class="holder" id="manpopup">
+				<p>Hi {{employee.name}}! <br> You're now logged in as Manager.</p>
+				<br> <br> <br>
+				<a href="/managerhomepage" style="font-size: 20px">OK</a>
 			</div>
             <a href="/index" style="border: none;">
             	<back> ← </back>
