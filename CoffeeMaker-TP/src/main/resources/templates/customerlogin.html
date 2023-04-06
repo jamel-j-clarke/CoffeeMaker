@@ -70,92 +70,133 @@
 <body>
 	<div layout:fragment="content">
 		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
-		<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js"></script>
 		<script>
-			/*<![CDATA[*/
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*]]>*/
 			var app = angular.module('myApp', []);
-			app.controller('customerLoginCtrl', function($scope, $http, $q) {
+			app.controller('populateCtrl', function($scope, $http, $q) {
 			
-			$scope.success = false;
-			
-			$scope.customer = {
-				email: '',
-				name: '',
-				password: ''
-			}
-			
-			$scope.passwordAttempt = '';
-		
-			$scope.encrypt = function() {
-				var pass=document.getElementById('password').value;
-				var hide=document.getElementById('hide').value;
-				if(pass=="") {
-					document.getElementById('err').innerHTML='Error:Password is missing';
-					return false;
-				} else {
-					document.getElementById("hide").value = document.getElementById("password").value;
-					var hash = CryptoJS.MD5(pass);
-					document.getElementById('password').value=hash;
-					$scope.passwordAttempt = hash;
-					$scope.customer.email = document.getElementById('email').value;
-					return true;
-				}
-			}
-			
-			$scope.submit = function(){
-				$http.get("/api/v1/customers/email/" + $scope.customer.email)
-		            	.then(
-		            	function (response) {
-		            		$scope.customer = response.data;
-		            		if($scope.customer.password == $scope.passwordAttempt){
-		            			$scope.success = true;
-		            			alert("Welcome back " + customer.name + "!");
-		            			window.location.href = "/customerhomepage";
-		            		} else {
-		            			alert("Invalid password. Try again.");
-		        				$scope.success = false;
-		            		}
-		            	},
-		            	function(rejection){
-		                	alert("Account with " + $scope.customer.email + " does not exist.");
-		                	$scope.success = false;                
-		            	});
-				$scope.reset();
-			}
-			
-			$scope.reset = function(){
+				$scope.success = false;
+				
 				$scope.customer = {
 					email: '',
 					name: '',
 					password: ''
-				}
+				};
+				
+				$scope.passwordAttempt = '';
 			
-			}
+				$scope.encrypt = function() {
+					var pass=document.getElementById('password').value;
+					var hide=document.getElementById('hide').value;
+					if(pass=="") {
+						alert("Must Enter Password");
+						return false;
+					} else {
+						document.getElementById("hide").value = document.getElementById("password").value;
+						var hash = CryptoJS.MD5(pass);
+						document.getElementById('password').value=hash;
+						$scope.passwordAttempt = hash;
+						$scope.customer.email = document.getElementById('email').value;
+						return true;
+					}
+				}
+				
+				$scope.submit = function(){
+					$http.get("/api/v1/customers/email/" + $scope.customer.email)
+			            	.then(
+			            	function (response) {
+			            		$scope.customer = response.data;
+			            		$scope.success = true; 
+			            	},
+			            	function(failure){
+			                	alert("Account with " + $scope.customer.email + " does not exist.");
+			                	$scope.success = false;                
+			        		});
+			            	
+			        if($scope.success && $scope.customer.password == $scope.passwordAttempt){
+			            $scope.success = true;
+			            alert("Welcome back " + customer.name + "!");
+			            window.location.href = "/customerhomepage";
+			        } else if($scope.success) {
+			            alert("Invalid password. Try again.");
+			        	$scope.success = false;
+			        }	
+					$scope.reset();
+				}
+				
+				$scope.reset = function(){
+					$scope.customer = {
+						id: '',
+						email: '',
+						name: '',
+						password: ''
+					};
+					
+					if (undefined != $scope.customerLoginForm) {
+						$scope.customerLoginForm.$setPristine();
+					}
+					
+					$scope.passwordAttempt = '';
+				
+				}
+				
+				$scope.reset();
 		
-			}
-			/*]]>*/
+			});
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*<![CDATA[*/ 
 		</script>
+		
+			
 		<div ng-app="myApp" ng-controller="populateCtrl">
 			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
 			<div>
 				<header>Customer Login</header>
 			</div>
 			<br>
-			
-			<form class="form-signin" method="post" name="signin" id="signin">
-				<input type="email"  name="email" id="email" placeholder="Email" value=""  />
-				<input type="password"  name="password" id="password" placeholder="Password" value=""  />
-				<input type="hidden" name="hide" id="hide" />
-				<div style="color:red" id="err"></div>
-				<div class="row">
-					<input type="submit" name="login" onclick="return encrypt()" value="Log In"  >
-					<a href="/customersignup">Sign Up</a>
-				</div>
-				<div>
-					<a href="/customerhomepage" style="font-size: 29px;">Continue as Guest</a>
-				</div>
-			</form>
+			<holder>
+				<form ng-sumbit="submit()" name="customerLoginForm">
+					<table style="border: none; margin-left: auto; margin-right: auto;">
+						<tr>
+							<td>
+								<div style="text-align: right;">
+									<label>Email:</label>
+								</div>
+							</td>
+							<td>
+								<div>
+									<input type="email" required="true" ng-model="customer.email" name="email" placeholder="e.g. mocha@coffeemaker.com"/>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align: right;">
+								<div>
+									<label>Password:</label>
+								</div>
+							</td>
+							<td>
+								<div>
+									<input type="password" name="password" ng-model="passwordAttempt" required="true"/>
+								</div>
+							</td>
+							
+						</tr>
+					</table>
+					
+					<div class=buttons>
+						<div>
+							<input type="submit" value="Login" class="a" ng-click="submit()" ng-disabled="customerLoginForm.$invalid"/>
+							 
+							<a href="/customersignup">Sign Up</a>
+						</div>
+						<div>
+							<a href="/customerhomepage" style="font-size: 29px;">Continue as Guest</a>
+						</div>
+					</div>
+				</form>
+			</holder>
 			
 			
             <a href="/index" style="border: none;">
