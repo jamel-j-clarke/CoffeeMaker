@@ -106,7 +106,7 @@
 					password: ''
 				};
 				
-				$scope.passwordAttempt = '';
+				$scope.password = '';
 			
 				$scope.encrypt = function() {
 					var pass=document.getElementById('password').value;
@@ -133,6 +133,7 @@
 				}
 				
 				$scope.submit = function(){
+					$scope.passwordAttempt = $scope.password;
 					$http.get("/api/v1/customers/email/" + $scope.customer.email)
 			            	.then(
 			            	function (response) {
@@ -155,7 +156,6 @@
 			            alert("Invalid password. Try again.");
 			        	$scope.success = false;
 			        }	
-					
 				}
 				
 				$scope.reset = function(){
@@ -170,7 +170,7 @@
 						$scope.customerLoginForm.$setPristine();
 					}
 					
-					$scope.passwordAttempt = '';
+					$scope.password = '';
 				
 				}
 				
@@ -211,7 +211,7 @@
 							</td>
 							<td>
 								<div>
-									<input type="password" name="password" ng-model="passwordAttempt" required="true"/>
+									<input type="password" name="password" ng-model="password" required="true"/>
 								</div>
 							</td>
 							
