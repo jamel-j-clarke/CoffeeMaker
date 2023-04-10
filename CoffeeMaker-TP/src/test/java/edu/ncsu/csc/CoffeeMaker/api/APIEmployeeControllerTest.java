@@ -10,6 +10,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.io.UnsupportedEncodingException;
+
 import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -485,6 +487,25 @@ public class APIEmployeeControllerTest {
     }
 
     /**
+     * Tests retrieving manager
+     *
+     * @throws UnsupportedEncodingException
+     *             if there is an error
+     * @throws Exception
+     *             if there is an error
+     */
+    @Test
+    @Transactional
+    public void testGetManager () throws UnsupportedEncodingException, Exception {
+        final String man = mvc.perform( get( "/api/v1/employees/email/m4n4g3r@csc326.edu" ) ).andDo( print() )
+                .andExpect( status().isAccepted() ).andReturn().getResponse().getContentAsString();
+        System.out.println( "***" + man + "***" );
+        assertTrue( man.contains( "Manager" ) );
+        assertTrue( man.contains( "m4n4g3r@csc326.edu" ) );
+        assertTrue( man.contains( "tuffyhunttalleyhill" ) );
+    }
+
+    /**
      * Tests the delete API endpoints
      *
      * @throws Exception
@@ -579,4 +600,5 @@ public class APIEmployeeControllerTest {
         mvc.perform( delete( "/api/v1/employees/12345" ) ).andExpect( status().isNotFound() );
 
     }
+
 }

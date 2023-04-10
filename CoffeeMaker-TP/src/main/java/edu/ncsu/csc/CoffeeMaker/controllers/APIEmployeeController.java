@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.CoffeeMaker.models.users.Employee;
+import edu.ncsu.csc.CoffeeMaker.models.users.Manager;
 import edu.ncsu.csc.CoffeeMaker.services.EmployeeService;
 
 /**
@@ -76,15 +77,18 @@ public class APIEmployeeController extends APIController {
      * @param email
      *            employee email
      * @return response to the request
+     * @throws InvalidAttributeValueException
+     *             if there is an error
      */
     @GetMapping ( BASE_PATH + "/employees/email/{email}" )
-    public ResponseEntity getEmployee ( @PathVariable final String email ) {
+    public ResponseEntity getEmployee ( @PathVariable final String email ) throws InvalidAttributeValueException {
+        if ( Manager.checkEmail( email ) ) {
+            final Manager man = new Manager();
+            return new ResponseEntity( man, HttpStatus.ACCEPTED );
+        }
         final Employee user = employeeService.findByEmail( email );
         if ( null == user ) {
             return new ResponseEntity( errorResponse( "No employee found with email " + email ), HttpStatus.NOT_FOUND );
-        }
-        if ( "m4n4g3r@csc326.edu".equals( email ) ) {
-            return new ResponseEntity( user, HttpStatus.ACCEPTED );
         }
         else {
             return new ResponseEntity( user, HttpStatus.OK );

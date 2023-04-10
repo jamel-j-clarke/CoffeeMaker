@@ -1,7 +1,9 @@
 package edu.ncsu.csc.CoffeeMaker.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import javax.management.InvalidAttributeValueException;
@@ -18,6 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import edu.ncsu.csc.CoffeeMaker.TestConfig;
 import edu.ncsu.csc.CoffeeMaker.models.users.Employee;
+import edu.ncsu.csc.CoffeeMaker.models.users.Manager;
 import edu.ncsu.csc.CoffeeMaker.services.EmployeeService;
 
 /**
@@ -328,6 +331,27 @@ public class EmployeeTest {
         catch ( final InvalidAttributeValueException e ) {
             assertEquals( "Invalid Input", e.getMessage() );
         }
+
+    }
+
+    /**
+     * Tests the Manager class
+     *
+     */
+    @Test
+    @Transactional
+    public void testManager () {
+        assertTrue( Manager.checkEmail( "m4n4g3r@csc326.edu" ) );
+        assertTrue( Manager.checkPassword( "tuffyhunttalleyhill" ) );
+
+        assertFalse( Manager.checkEmail( "manager@ncsu.edu" ) );
+        assertFalse( Manager.checkPassword( "tuffyhunttallyhill" ) );
+
+        assertFalse( Manager.checkEmail( "" ) );
+        assertFalse( Manager.checkPassword( "" ) );
+
+        assertFalse( Manager.checkEmail( null ) );
+        assertFalse( Manager.checkPassword( null ) );
 
     }
 }

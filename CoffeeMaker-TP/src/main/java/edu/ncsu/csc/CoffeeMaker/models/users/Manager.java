@@ -8,10 +8,17 @@ import javax.management.InvalidAttributeValueException;
  *
  * @author Emma Holincheck
  * @author Erin Grouge
- * @version 04/04/2023
+ * @version 04/09/2023
  *
  */
 public class Manager extends Employee {
+
+    /** The name of the user */
+    private final String  name     = "Manager";
+    /** The email of the user */
+    private static String email    = "m4n4g3r@csc326.edu";
+    /** The password of the user */
+    private static String password = "tuffyhunttalleyhill";
 
     /**
      * Constructs a new Manger user
@@ -20,7 +27,29 @@ public class Manager extends Employee {
      *             if the managers email is invalid
      */
     public Manager () throws InvalidAttributeValueException {
-        super( "m4n4g3r@csc326.edu", "Manager", "tuffyhunttallyhill" );
+        super( "m4n4g3r@csc326.edu", "Manager", "tuffyhunttalleyhill" );
+    }
+
+    /**
+     * Returns true if the email is the manager's email
+     *
+     * @param e
+     *            the email to check
+     * @return true if the email's match
+     */
+    public static boolean checkEmail ( final String e ) {
+        return email.equals( e );
+    }
+
+    /**
+     * Returns true if the password matches the manager's password
+     *
+     * @param p
+     *            the password to check
+     * @return true if the password matches
+     */
+    public static boolean checkPassword ( final String p ) {
+        return password.equals( p );
     }
 
     // /**
