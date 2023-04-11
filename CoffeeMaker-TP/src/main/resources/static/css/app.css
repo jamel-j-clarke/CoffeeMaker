@@ -31,7 +31,28 @@ label {
 	user-select: none;
 }
 
-.popupButton {
+#signoutPopup {
+	position: fixed;
+	top: 40%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 600px;
+	padding: 50px;
+	box-shadow: 0 5px 30px rgba(0,0,0,.3);
+	background: #FFF;
+	visibility: hidden;
+	opacity: 0;
+	transition: 0.35s;
+	font-size: 24px;
+}
+#signoutPopup.active {
+	top: 50%;
+	visibility: visible;
+	opacity: 1;
+	transition: 0.35s;
+}
+
+popupButton, .popupButton {
 	border-radius: 10px;
 	border: 2px solid #000000;
 	padding: 5px;
@@ -41,10 +62,10 @@ label {
 	text-decoration: none;
 	background-color: transparent;
 	user-select: none;
-	outline: none;
 }
-.popupButton:hover {
+popupButton:hover, .popupButton:hover {
 	color: black;
+	cursor: pointer;
 }
 
 .holder {
@@ -66,9 +87,13 @@ div {
 
 th, table {
 	margin-right: auto;
+	margin-left: auto;
 	border: 2px solid black;
 	border-collapse: collapse;
 	padding: 15px;
+}
+td {
+	padding: 10px;
 }
 back {
 	position: absolute;
@@ -79,7 +104,7 @@ back {
 back:hover {
 	color: black;
 }
-input[type=email], input[type=password] {
+input[type=email], input[type=password], input[type=text] {
 	font-size: 24px;
 	border-radius: 10px;
 	border: 2px solid #000000;
@@ -88,4 +113,17 @@ input[type=email], input[type=password] {
 }
 input:invalid {
     border: 2px solid #FF0000;
+}
+/**input.ng-dirty.ng-invalid-min {
+	background-color: yellow;
+}
+input.ng-valid {
+	background-color: lightgreen;
+}*/
+img {
+	border-radius: 10px;
+	border: 2px solid #000000;
+	width: 225px;
+	height: 225px;
+	padding: 10px;
 }

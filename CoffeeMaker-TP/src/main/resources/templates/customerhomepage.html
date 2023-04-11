@@ -8,28 +8,6 @@
 	<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="css/bootstrap.css" />
 	<link rel="stylesheet" href="css/app.css" />
-    <style>
-		#signoutPopup {
-      		position: fixed;
-      		top: 40%;
-      		left: 50%;
-      		transform: translate(-50%, -50%);
-      		width: 600px;
-      		padding: 50px;
-      		box-shadow: 0 5px 30px rgba(0,0,0,.3);
-      		background: #FFF;
-      		visibility: hidden;
-      		opacity: 0;
-      		transition: 0.35s;
-      		font-size: 24px;
-      	}
-      	#signoutPopup.active {
-      		top: 50%;
-      		visibility: visible;
-      		opacity: 1;
-      		transition: 0.35s;
-      	}
-    </style>
 </head>
 <body>
 	<div layout:fragment="content">
@@ -85,7 +63,7 @@
 		<div ng-app="myApp" ng-controller="populateCtrl">
 			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
 			<button style="position: absolute; top: 8px; right: 8px;" onclick="toggle()">Sign Out</button>
-			<div class="holder", style="text-align: left" id="blur">
+			<div class="holder" style="text-align: left" id="blur">
 				<form ng-submit="submit()" name="customerHomepageForm">
 				<div>
 					<header>Hey {{name}},</header>
@@ -108,6 +86,7 @@
 				</div>
 				</form>
 			</div>
+			
 			<!--  sign out popup -->
 			<div class="holder" id="signoutPopup">
 				<p>Are you sure you would like to sign out?</p>
@@ -115,6 +94,8 @@
 				<popupButton href="/customerlogin" onclick="goToLogin()">Sign Out</popupButton>
 				<popupButton href="#" onclick="toggle()">Cancel</popupButton>
 			</div>
+			<!-- end of sign out popup -->
+			
 			<script type="text/javascript">
 				// make signout popup appear function
 				function toggle() {
@@ -129,7 +110,8 @@
 					window.location.href = "/customerlogin";
 				}
 			</script>
-			<!-- end of sign out popup -->
+			
+			
 			<button style="position: absolute; bottom: 8px; right: 8px;">Order Beverage</button>
 		</div>
 	</div>
