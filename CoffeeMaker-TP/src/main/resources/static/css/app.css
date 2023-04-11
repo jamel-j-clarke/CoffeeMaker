@@ -1,62 +1,63 @@
-body, #mainWrapper {
-	height: 70%;
-	background-color: rgb(245, 245, 245);
+body {
+	background-color: rgb(207, 176, 145);
+	font-family: raleway;
 }
 
-body, .form-control {
-	font-size: 12px !important;
+@font-face {
+	font-family: 'Raleway', sans-serif;
+	src:
+		url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
 }
 
-.floatRight {
-	float: right;
-	margin-right: 18px;
+header {
+	font-size: 56px;
 }
 
-.has-error {
-	color: red;
+a, button {
+	border-radius: 10px;
+	border: 2px solid #000000;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	padding: 10px;
+	font-size: 36px;
+	width: 275px;
+	white-space: normal;
 }
 
-.formcontainer {
-	background-color: #DAE8E8;
-	padding: 20px;
+popupButton {
+	border-radius: 10px;
+	border: 2px solid #000000;
+	padding: 10px;
+	color: black;
+	font-size: 24px;
+	text-align: center;
+	text-decoration: none;
+	background-color: transparent;
+	user-select: none;
 }
 
-.tablecontainer {
-	padding-left: 20px;
+.holder {
+	text-align: center;
+	vertical-align: middle;
+	font-size: 18px;
+	transition: 0.35s;
 }
 
-.generic-container {
-	width: 80%;
-	margin-left: 20px;
-	margin-top: 20px;
-	margin-bottom: 20px;
-	padding: 20px;
-	background-color: #EAE7E7;
-	border: 1px solid #ddd;
-	border-radius: 4px;
-	box-shadow: 0 0 30px black;
+.holder#blur.active {
+	filter: blur(7px);
+}
+div {
+	margin-bottom: 10px;
+	vertical-align: middle;
+	padding: 2px;
+	font-size: 30px;
+	color: black;
 }
 
-.custom-width {
-	width: 80px !important;
-}
-
-.username.ng-valid {
-	background-color: lightgreen;
-}
-
-.username.ng-dirty.ng-invalid-required {
-	background-color: red;
-}
-
-.username.ng-dirty.ng-invalid-min {
-	background-color: yellow;
-}
-
-.email.ng-valid {
-	background-color: lightgreen;
-}
-
-.email.ng-dirty.ng-invalid-required {
-	background-color: red;
+th, table {
+	margin-right: auto;
+	border: 2px solid black;
+	border-collapse: collapse;
+	padding: 15px;
 }
