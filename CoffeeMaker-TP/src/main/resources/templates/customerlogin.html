@@ -140,7 +140,6 @@
 			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
 			/*<![CDATA[*/ 
 		</script>
-		
 			
 		<div ng-app="myApp" ng-controller="populateCtrl">
 			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
@@ -152,24 +151,24 @@
 				<form ng-sumbit="submit()" name="customerLoginForm">
 					<table style="border: none; margin-left: auto; margin-right: auto;">
 						<tr>
-							<td>
+							<td style="padding: 0px">
 								<div style="text-align: right;">
 									<label>Email:</label>
 								</div>
 							</td>
-							<td>
+							<td style="padding: 0px">
 								<div>
 									<input type="email" required="true" ng-model="customer.email" name="email" placeholder="e.g. mocha@coffeemaker.com"/>
 								</div>
 							</td>
 						</tr>
 						<tr>
-							<td style="text-align: right;">
-								<div>
+							<td style="padding: 0px">
+								<div style="text-align: right;">
 									<label>Password:</label>
 								</div>
 							</td>
-							<td>
+							<td style="padding: 0px">
 								<div>
 									<input type="password" name="password" ng-model="password" required="true"/>
 								</div>
