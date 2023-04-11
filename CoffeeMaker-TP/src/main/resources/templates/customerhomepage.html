@@ -21,6 +21,7 @@
       		visibility: hidden;
       		opacity: 0;
       		transition: 0.35s;
+      		font-size: 24px;
       	}
       	#signoutPopup.active {
       		top: 50%;
@@ -111,16 +112,21 @@
 			<div class="holder" id="signoutPopup">
 				<p>Are you sure you would like to sign out?</p>
 				<br>
-				<popupButton href="/customerlogin" style="font-size: 20px">Sign Out</popupButton>
-				<popupButton href="#" style="font-size: 20px" onclick="toggle()">Cancel</popupButton>
+				<popupButton href="/customerlogin" onclick="goToLogin()">Sign Out</popupButton>
+				<popupButton href="#" onclick="toggle()">Cancel</popupButton>
 			</div>
 			<script type="text/javascript">
-				// signing out function
+				// make signout popup appear function
 				function toggle() {
 					var blur = document.getElementById('blur'); 
 					blur.classList.toggle('active');
 					var popup = document.getElementById('signoutPopup'); 
 					popup.classList.toggle('active');
+				}
+
+				// go to login page function
+				function goToLogin() {
+					window.location.href = "/customerlogin";
 				}
 			</script>
 			<!-- end of sign out popup -->
