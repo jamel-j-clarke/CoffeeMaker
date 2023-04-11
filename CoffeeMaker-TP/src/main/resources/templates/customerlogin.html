@@ -107,22 +107,6 @@
 				};
 				
 				$scope.password = '';
-			
-				$scope.encrypt = function() {
-					var pass=document.getElementById('password').value;
-					var hide=document.getElementById('hide').value;
-					if(pass=="") {
-						alert("Must Enter Password");
-						return false;
-					} else {
-						document.getElementById("hide").value = document.getElementById("password").value;
-						var hash = CryptoJS.MD5(pass);
-						document.getElementById('password').value=hash;
-						$scope.passwordAttempt = hash;
-						$scope.customer.email = document.getElementById('email').value;
-						return true;
-					}
-				}
 				
 				// successful customer login
 				$scope.toggle = function() {
@@ -141,26 +125,26 @@
 				}
 				
 				$scope.submit = function(){
-					$scope.passwordAttempt = $scope.password;
-					$http.get("/api/v1/customers/email/" + $scope.customer.email)
+					$scope.customer.password = $scope.password;
+					$http.post("/api/v1/customers/validate", $scope.customer)
 			            	.then(
-			            	function (response) {
-			            		$scope.customer = response.data;
+			            	function (success) {
+			            		$scope.customer = success.data;
 			            		$scope.success = true;
 
-			            		if ($scope.customer.password == $scope.passwordAttempt){
-			            			// Successful log in
-			            			sessionStorage.setItem("currentUserName", $scope.customer.name);
-						            $scope.toggle();
-						            $scope.reset();
-						        } else {
-						            $scope.invalidInfo=true;
-						        }	
-
+			            		// Successful log in
+			            		// sessionStorage.setItem("currentUserName", $scope.customer.name);
+						        $scope.toggle();
+						        $scope.reset();
 			            		/** sessionStorage.setItem("currentUserEmail", $scope.customer.email); */
 			            	},
 			            	function(failure){
-			            		$scope.newToggle();
+			            		if(failure.status == 404){
+			            			$scope.newToggle();
+			            		} else {
+			            			$scope.invalidInfo=true;
+			            		}
+			            		
 			                	/**alert("An account with that email does not exist. Click Sign Up to create an account.");
 			                	$scope.success = false;*/                
 			        		});

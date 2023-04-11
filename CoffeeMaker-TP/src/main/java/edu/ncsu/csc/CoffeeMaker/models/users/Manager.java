@@ -1,5 +1,8 @@
 package edu.ncsu.csc.CoffeeMaker.models.users;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 import javax.management.InvalidAttributeValueException;
 
 /**
@@ -25,8 +28,12 @@ public class Manager extends Employee {
      *
      * @throws InvalidAttributeValueException
      *             if the managers email is invalid
+     * @throws NoSuchAlgorithmException
+     *             if there is an error
+     * @throws InvalidKeySpecException
+     *             if there is an error
      */
-    public Manager () throws InvalidAttributeValueException {
+    public Manager () throws InvalidAttributeValueException, InvalidKeySpecException, NoSuchAlgorithmException {
         super( "m4n4g3r@csc326.edu", "Manager", "tuffyhunttalleyhill" );
     }
 
@@ -41,16 +48,16 @@ public class Manager extends Employee {
         return email.equals( e );
     }
 
-    /**
-     * Returns true if the password matches the manager's password
-     *
-     * @param p
-     *            the password to check
-     * @return true if the password matches
-     */
-    public static boolean checkPassword ( final String p ) {
-        return password.equals( p );
-    }
+    // /**
+    // * Returns true if the email is the manager's email
+    // *
+    // * @param e
+    // * the email to check
+    // * @return true if the email's match
+    // */
+    // public static boolean checkManPassword ( final String e ) {
+    // return email.equals( e );
+    // }
 
     // /**
     // * Adds ingredients to the inventory
