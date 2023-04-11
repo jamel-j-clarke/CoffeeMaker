@@ -11,6 +11,7 @@ body {
 
 header {
 	font-size: 56px;
+	text-align: center;
 }
 
 a, .a, button, input[type=submit] {
@@ -18,17 +19,22 @@ a, .a, button, input[type=submit] {
 	border: 2px solid #000000;
 	text-align: center;
 	text-decoration: none;
+	background: transparent;
 	color: black;
-	padding: 10px;
+	padding: 5px;
 	font-size: 36px;
-	width: 275px;
 	white-space: normal;
+}
+
+label {
+	font-size: 24px;
+	user-select: none;
 }
 
 .popupButton {
 	border-radius: 10px;
 	border: 2px solid #000000;
-	padding: 10px;
+	padding: 5px;
 	color: black;
 	font-size: 24px;
 	text-align: center;
@@ -54,7 +60,7 @@ div {
 	margin-bottom: 10px;
 	vertical-align: middle;
 	padding: 2px;
-	font-size: 30px;
+	font-size: 24px;
 	color: black;
 }
 
@@ -70,13 +76,16 @@ back {
 	left: 8px;
 	font-size: 60px;
 }
+back:hover {
+	color: black;
+}
 input[type=email], input[type=password] {
-	font-size: 30px;
+	font-size: 24px;
 	border-radius: 10px;
 	border: 2px solid #000000;
 	width: 350px;
 	padding: 5px;
 }
 input:invalid {
-		    border: 2px solid #FF0000;
-		}
+    border: 2px solid #FF0000;
+}

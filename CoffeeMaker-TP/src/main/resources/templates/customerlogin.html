@@ -6,62 +6,10 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="css/bootstrap.css" />
+	<link rel="stylesheet" href="css/app.css" />
     <style>
-		@font-face {
-  			font-family: 'Raleway', sans-serif;
-  			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
-		}
-		body {
-			background-color: rgb(207, 176, 145);
-		}
-        header {
-			font-size: 56px;
-		}
-        back {
-			position: absolute;
-			bottom: 8px;
-			left: 8px;
-			font-size: 60px;
-		}
-		input[type=email], input[type=password] {
-			font-size: 24px;
-			border-radius: 10px;
-			border: 2px solid #000000;
-			width: 350px;
-			padding: 5px;
-		}
-		a, input[type=submit] {
-			border-radius: 10px;
-			border: 2px solid #000000;
-			text-align: center;
-			text-decoration: none;
-			color: black;
-			padding: 5px;
-			font-size: 36px;
-		}
-		buttons {
-			font-size: clamp(3rem, 8vw, 8rem);
-			display: flex;
-			justify-content: center;
-			vertical-align: center;
-			padding: 5px;
-		}
-		.holder {
-       		text-align: center;
-			vertical-align: middle;
-			transition: 0.35s;
-		}
-		.holder#blur.active {
-			filter: blur(7px);
-		}
-		div {
-	        margin-bottom: 10px;
-			vertical-align: middle;
-			text-align: center;
-			font-size: 24px;
-			padding: 2px;
-      	}
-      	#popup, #newCustomerPopup {
+      	#popup, #newCustomerPopup, #guestPopup {
       		position: fixed;
       		top: 40%;
       		left: 50%;
@@ -74,18 +22,12 @@
       		opacity: 0;
       		transition: 0.35s;
       	}
-      	#popup.active, #newCustomerPopup.active {
+      	#popup.active, #newCustomerPopup.active, #guestPopup.active {
       		top: 50%;
       		visibility: visible;
       		opacity: 1;
       		transition: 0.35s;
       	}
-		input:invalid {
-		    border: 2px solid #FF0000;
-		}
-		* {
-			font-family: raleway;
-		}
 		
     </style>
 </head>
@@ -132,12 +74,20 @@
 					popup.classList.toggle('active');
 				}
 				
-				// customer doesn't exists function
+				// customer doesn't exists popup function
 				$scope.newToggle = function() {
 					var blur = document.getElementById('blur'); 
 					blur.classList.toggle('active');
 					var newCustomerPopup = document.getElementById('newCustomerPopup'); 
 					newCustomerPopup.classList.toggle('active');
+				}
+				
+				// continue as guest popup function
+				$scope.guestToggle = function() {
+					var blur = document.getElementById('blur'); 
+					blur.classList.toggle('active');
+					var guestPopup = document.getElementById('guestPopup');
+					guestPopup.classList.toggle('active');
 				}
 				
 				$scope.submit = function(){
@@ -166,9 +116,15 @@
 			        		});
 				}
 				
+				// go to homepage with name from guest popup
+				$scope.goToHomepage = function () {
+					sessionStorage.setItem("currentUserName", $scope.customer.name);
+					window.location.href = "/customerhomepage";
+					$scope.reset();
+				}
+				
 				$scope.reset = function(){
 					$scope.customer = {
-						id: '',
 						email: '',
 						name: '',
 						password: ''
@@ -179,11 +135,7 @@
 					}
 					
 					$scope.password = '';
-				
 				}
-				
-				
-		
 			});
 			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
 			/*<![CDATA[*/ 
@@ -226,39 +178,71 @@
 						</tr>
 					</table>
 					
-					<div class=buttons>
+					<!-- <div class=buttons> -->
 						<div>
-							<input type="submit" value="Login" class="a" ng-click="submit()" ng-disabled="customerLoginForm.$invalid"/>
+							<input type="submit" value="Login" ng-click="submit()" ng-disabled="customerLoginForm.$invalid"/>
 							 
-							<a href="/customersignup">Sign Up</a>
+							<button class="a" onclick="goToSignUp()">Sign Up</button>
 						</div>
-						<div>
-							<a href="/customerhomepage" style="font-size: 29px;">Continue as Guest</a>
-						</div>
-					</div>
+						
+					<!-- </div> -->
 				</form>
+				<div>
+					<button class="a" href="/customerhomepage" onclick="guestToggle()">Continue as Guest</button>
+				</div>
 				<div ng-show="invalidInfo">Incorrect email/password.</div>
 			</div>
+			
+			<!-- customer welcome popup -->
 			<div class="holder" id="popup">
 				<p>Hi {{customer.name}}! <br> You're now logged in.</p>
 				<br> <br> <br>
 				<a href="/customerhomepage" style="font-size: 20px">OK</a>
 			</div>
+			<!-- end customer welcome popup -->
+			
 			<!-- account doesn't exist popup -->
 			<div class="holder" id="newCustomerPopup">
 				<p>A customer account with this email does not exist.
 				<br>Would you like to sign up?</p>
 				<br><br>
-				<a href="/customersignup" style="font-size: 20px">Sign Up</a>
-				<a href="#" style="font-size: 20px" onclick="newToggle()">Cancel</a> 
+				<popupButton href="/customersignup" onclick="goToSignUp()">Sign Up</popupButton>
+				<popupButton href="#" style="font-size: 20px" onclick="newToggle()">Cancel</popupButton> 
 			</div>
+			<!-- end of account doesn't exist popup -->
+			
+			<!-- guest customer welcome popup -->
+			<div class="holder" id="guestPopup">
+				<p>Welcome! What's your name?</p>
+				<form name="guestForm">
+					<input type="text" required="true" ng-model="customer.name" name="name"/>
+					<br> <br>
+					<input type="submit" class="popupButton" style="font-size: 24px" value="OK" ng-click="goToHomepage()" ng-disabled="guestForm.$invalid"/>
+					<a class="popupButton" style="text-decoration: none" href="#" onclick="guestToggle()">Cancel</a> 
+				</form>
+			</div>
+			<!-- end of guest customer welcome popup -->
+			
 			<script type="text/javascript">
-				// customer account already exists function
+				// customer account already exists popup function
 				function newToggle() {
 					var blur = document.getElementById('blur'); 
 					blur.classList.toggle('active');
 					var newCustomerPopup = document.getElementById('newCustomerPopup');
 					newCustomerPopup.classList.toggle('active');
+				}
+				
+				// continue as guest popup function
+				function guestToggle() {
+					var blur = document.getElementById('blur'); 
+					blur.classList.toggle('active');
+					var guestPopup = document.getElementById('guestPopup');
+					guestPopup.classList.toggle('active');
+				}
+				
+				// go to sign up page function
+				function goToSignUp() {
+					window.location.href = "/customersignup";
 				}
 			</script>
             <a href="/index" style="border: none;">
