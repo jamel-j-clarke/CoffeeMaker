@@ -93,6 +93,12 @@ input[type=email], input[type=password], input[type=text] {
 input:invalid {
     border: 2px solid #FF0000;
 }
+input.ng-dirty.ng-invalid-min {
+	background-color: yellow;
+}
+input.ng-valid {
+	background-color: lightgreen;
+}
 img {
 	border-radius: 10px;
 	border: 2px solid #000000;
