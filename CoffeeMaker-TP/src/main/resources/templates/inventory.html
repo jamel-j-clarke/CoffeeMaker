@@ -21,19 +21,12 @@
 				ingredients: ''
 			};
 			
-			$scope.ingredient = {
-					name: '',
-					amount: ''
-			};
 			
-			$scope.newIngredient = {
-					newName: '',
-					newAmount: ''
-			};
 
 			$scope.getInventory = function() {
 				$http.get("/api/v1/inventory").then(function(response) {
 					$scope.inventory = response.data;
+					console.log($scope.inventory);
 				}, function(rejection) {
 					console.error("Error while getting Inventory");
 				})
@@ -41,7 +34,7 @@
 
 			$scope.updateIngredient = function() {
 				$scope.success = false;
-				console.log(ingredient);
+				console.log($scope.ingredient);
 				
 				if($scope.ingredient.amount > 0 && $scope.ingredient.name != ''){
 				
@@ -68,13 +61,13 @@
 			
 			$scope.addIngredient = function() {
 				$scope.success = false;
-				console.log(newIngredient);
+				console.log($scope.newIngredient);
 				
-				if($scope.newIngredient.newAmount > 0 && $scope.newIngredient.newName != ''){
-					$http.post("/api/v1/inventory/", $scope.newIngredient).then(
+				if($scope.newIngredient.amount > 0 && $scope.newIngredient.name != ''){
+					$http.post("/api/v1/inventory", $scope.newIngredient).then(
 							function(success) {
 								$scope.success = true;
-								
+								$scope.getInventory();
 							}, function(error) {
 							      if (error.status === 409) {
 							          alert("Cannot add duplicate ingredient. Try again.");
@@ -93,9 +86,15 @@
 
 			$scope.reset = function() {
 				$scope.ingredient = {
-					name : '',
-					amount : ''
-				}
+						name: '',
+						amount: ''
+				};
+				
+				$scope.newIngredient = {
+						name: '',
+						amount: ''
+				};
+				
 				if (undefined != $scope.addInventoryForm) {
 					$scope.addInventoryForm.$setPristine(); //reset Form
 				}
@@ -147,7 +146,7 @@
 													placeholder="Enter ingredient amount to add to inventory." required="0" min="1"/>
 				      				</div>
 									<div class="col-md-2">
-										<button class="button-sm" onclick="updateIngredient()" ng-disabled="addInventoryForm.$invalid">Update Inventory</button>	 
+										<input type="submit" style="font-size: 24px" value="Update Inventory" ng-disabled="addInventoryForm.$invalid"/>	 
 									</div>
 							    </div>
 							</div>
@@ -159,19 +158,19 @@
 								<div class="form-group col-md-12">
 								<label class="col-sm-2 label-sm">Name </label>
 				      				<div class="col-md-4">
-										<input type="text" ng-model="newIngredient.newName" name="newName"
+										<input type="text" ng-model="newIngredient.name" name="newName"
 													class="name form-control input-md-6"
 													placeholder="Enter ingredient name. No duplicate names." required>
 				      				</div>
 		
 									<label class="col-sm-1 label-sm">Amount</label>
 				      				<div class="col-md-2">
-				        					<input type="number" ng-model="newIngredient.newAmount" name="newAmount"
+				        					<input type="number" ng-model="newIngredient.amount" name="newAmount"
 													class="form-control input-md-6"
 													placeholder="Enter ingredient amount to add to inventory." required="0" min="1"/>
 				      				</div>
 									<div class="col-md-2">
-										<button class="button-sm" onclick="addIngredient()" ng-disabled="addInventoryForm.$invalid">Add Ingredient</button>	 
+										<input type="submit" style="font-size: 24px" value="Add Ingredient" ng-disabled="addInventoryForm.$invalid"/>	 
 									</div>
 							    </div>
 							</div>
