@@ -8,43 +8,13 @@
 	<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="css/bootstrap.css" />
 	<link rel="stylesheet" href="css/app.css" />
-<style>
-input.ng-valid {
-	background-color: lightgreen;
-}
-
-input.ng-dirty.ng-invalid-min {
-	background-color: yellow;
-}
-body {
-	background-color:rgb(207, 176, 145);
-}
-a {
-	border-radius: 10px;
-	border: 2px solid #000000;
-	text-align: center;
-	text-decoration: none;
-	color: black;
-	padding: 10px;
-	font-size: 36px;
-	white-space: normal;
-}
-back {
-	position: absolute;
-	bottom: 8px;
-	left: 8px;
-	font-size: 60px;
-}
-</style>
-
 </head>
-
 <body>
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
-	
-	<script>
-		/*<![CDATA[*/
+	<div layout:fragment="content">
+		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+		<script>
+		/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+		/*]]>*/
 		var app = angular.module('myApp', []);
 		app.controller('inventoryCtrl', function($scope, $http, $q) {
 			$scope.inventory = {
@@ -116,78 +86,72 @@ back {
 			$scope.getInventory();
 
 		});
+		/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
 		/*]]>*/
 	</script>
-
-
-
-	<div class="generic-container ng-cloak" ng-app="myApp"
-		ng-controller="inventoryCtrl as ctrl">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<span class="lead">Current Inventory</span>
-			</div>
-			
+	<div ng-app="myApp" ng-controller="inventoryCtrl as ctrl">
+		<header>Manage Inventory</header>
 			<br>
-				
-			<span ng-repeat="ingredient in inventory.ingredients">&emsp;{{ingredient.name}} :  &nbsp;{{ingredient.amount}}<br /></span>
-			
-			<br>
+		<div class="container">
+			<div class="panel">
 				<div class="panel-heading">
-					<span class="lead">Update Inventory</span>
-				</div>
-				<div class="formcontainer">
-					<form ng-submit="submit()" name="addInventoryForm"
-						class="form-horizontal">
-					<div class="row">
-						<div class="form-group col-md-12">
-							<label class="col-md-1 control-lable" for="ingredient">Select an Ingredient</label>
-		      				<div class="col-md-4">
-		      					<select ng-model="ingredient.name" name="ingredientname" ng-required="true" class="form-control input-md-6">
-			      					<option value="">Select an Ingredient</option>
-			      					<option ng-repeat="ingredient in inventory.ingredients" ng-value="ingredient.name">{{ingredient.name}}</option>	
-		      					</select>
-								<div class="has-error" ng-show="addInventoryForm.$dirty">
-									<span ng-show="addInventoryForm.ingredientname.$error.required">This
-										is a required field for adding to inventory.</span>
-								</div>
-		      				</div>
-
-							<label class="col-md-1 control-lable" for="amount">Amount</label>
-		      				<div class="col-md-2">
-		        					<input type="number" ng-model="ingredient.amount" name="amount"
-											class="form-control input-md-6"
-											placeholder="Enter ingredient amount to add to inventory." required="0" min="1"/>
-									<div class="has-error" ng-show="addInventoryForm.$dirty">
-										<span ng-show="addInventoryForm.amount.$error.required">This
-											is a required field for adding to inventory.<br></span> <span
-											ng-show="addInventoryForm.amount.$error.min">Amount must be greater than
-											0 for adding to inventory.</span>
-									</div>
-		      				</div>
-	           	
-							<div class="col-md-2">
-								<input type="submit" value="Update Ingredient"
-									class="btn btn-primary btn-sm"
-									ng-disabled="addInventoryForm.$invalid" />
-							</div>
-							<div class="col-md-2">
-								<button type="button" ng-click="reset()"
-									class="btn btn-warning btn-sm"
-									ng-disabled="addInventoryForm.$pristine">Reset Form</button>
-							</div>
-					    </div>
+					<span>Current Inventory</span>
+				</div>	
+					<div class="panel-body">			
+						<span ng-repeat="ingredient in inventory.ingredients">{{ingredient.name}} :  &nbsp;{{ingredient.amount}}<br /></span>
 					</div>
-
-					</form>
+				<div class="panel-heading-middle">
+					<span>Update Inventory</span>
 				</div>
-			<div class="panel-footer">
-				<div ng-show="success">Inventory Updated!</div>
+					<div class="panel-body">
+						<form ng-submit="submit()" name="addInventoryForm">
+							<div class="row justify-content-center">
+								<div class="form-group col-md-12">
+									<label class="col-md-1 control-lable" for="ingredient">Select an Ingredient</label>
+				      				<div class="col-md-4">
+				      					<select ng-model="ingredient.name" name="ingredientname" ng-required="true" class="form-control input-md-6">
+					      					<option value="">Select an Ingredient</option>
+					      					<option ng-repeat="ingredient in inventory.ingredients" ng-value="ingredient.name">{{ingredient.name}}</option>	
+				      					</select>
+										<div class="has-error" ng-show="addInventoryForm.$dirty">
+											<span ng-show="addInventoryForm.ingredientname.$error.required">This
+												is a required field for adding to inventory.</span>
+										</div>
+				      				</div>
+		
+									<label class="col-md-1 control-lable" for="amount">Amount</label>
+				      				<div class="col-md-2">
+				        					<input type="number" ng-model="ingredient.amount" name="amount"
+													class="form-control input-md-6"
+													placeholder="Enter ingredient amount to add to inventory." required="0" min="1"/>
+											<div class="has-error" ng-show="addInventoryForm.$dirty">
+												<span ng-show="addInventoryForm.amount.$error.required">This
+													is a required field for adding to inventory.<br></span> <span
+													ng-show="addInventoryForm.amount.$error.min">Amount must be greater than
+													0 for adding to inventory.</span>
+											</div>
+				      				</div>
+			           	
+		
+									<button style="width: 100%" onclick="submit()" ng-disabled="addInventoryForm.$invalid">Update Inventory</button>
+									<div class="col-md-2">
+										<button type="button" ng-click="reset()"
+											class="btn btn-warning btn-sm"
+											ng-disabled="addInventoryForm.$pristine">Reset Form</button>
+									</div>
+							    </div>
+							</div>
+						</form>
+					</div>
+				<div class="panel-footer">
+					<div ng-show="success">Inventory Updated!</div>
+				</div>	
 			</div>
 		</div>	
-	</div>
-		            <a href="/managerhomepage" style="border: none;">
-            	<back> ← </back>
-            </a>
+		<a href="/managerhomepage" style="border: none;">
+        	<back> ← </back>
+        </a>
+    </div>
+  </div>
 </body>
 </html>

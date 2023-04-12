@@ -92,6 +92,63 @@ th, table {
 	border-collapse: collapse;
 	padding: 15px;
 }
+.panel {
+	margin-bottom: 20px;
+	background-color: transparent;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+	border: 2px solid black;
+	border-collapse: collapse;
+}
+.panel-footer {
+	padding: 10px 15px;
+	border-top: 1px solid transparent;
+	background-color: transparent;
+	border-bottom-right-radius: 3px;
+	border-bottom-left-radius: 3px;
+}
+.panel-heading {
+	background-color: transparent;
+	padding: 10px 15px;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	border-bottom: 2px solid black;
+}
+.panel-heading-middle {
+	background-color: transparent;
+	padding: 10px 15px;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	border-bottom: 2px solid black;
+	border-top: 2px solid black;
+}
+
+.panel-heading>.dropdown .dropdown-toggle {
+	color: transparent;
+}
+
+.panel-title {
+	margin-top: 0;
+	margin-bottom: 0;
+	font-size: 16px;
+	color: transparent;
+}
+.panel-title>a, .panel-title>small, .panel-title>.small, .panel-title>small>a,
+	.panel-title>.small>a {
+	color: transparent;
+}
+.panel-footer {
+	padding: 10px 15px;
+	border-top: 1px solid transparent;
+	background-color: transparent;
+	border-bottom-right-radius: 3px;
+	border-bottom-left-radius: 3px;
+}
+.panel-body {
+	padding: 5px;
+}
 td {
 	padding: 10px;
 }
