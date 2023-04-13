@@ -1,8 +1,6 @@
 package edu.ncsu.csc.CoffeeMaker.models;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -32,9 +30,9 @@ public class Order extends DomainObject {
     /** The payment for the order */
     @Min ( 0 )
     private final long         payment;
-    /** The list of beverages in the order */
+    /** The beverage in the order */
     @OneToMany
-    private final List<Recipe> beverages;
+    private final Recipe       beverage;
     /** Representative of the current status of the order in the system */
     @Enumerated ( EnumType.STRING )
     private static OrderStatus orderStatus;
@@ -49,8 +47,8 @@ public class Order extends DomainObject {
      * @param payment
      *            the payment method for the order
      */
-    public Order ( final List<Recipe> beverages, final long payment, final Customer customer ) {
-        this.beverages = beverages;
+    public Order ( final Recipe beverage, final long payment, final Customer customer ) {
+        this.beverage = beverage;
         this.payment = payment;
         userId = (long) customer.getId();
         orderStatus = OrderStatus.NOT_STARTED;
@@ -62,7 +60,7 @@ public class Order extends DomainObject {
     public Order () {
         userId = 0;
         payment = 0;
-        beverages = new ArrayList<Recipe>();
+        beverage = null;
     }
 
     /**
@@ -72,6 +70,15 @@ public class Order extends DomainObject {
      */
     public long getPayment () {
         return payment;
+    }
+
+    /**
+     * Gets the beverage for the order
+     *
+     * @return beverage information for the order
+     */
+    public Recipe getRecipe () {
+        return beverage;
     }
 
     /**
@@ -115,6 +122,13 @@ public class Order extends DomainObject {
     }
 
     /**
+     * Cancels the order, moving its status to cancelled in the system
+     */
+    public void pickup () {
+        orderStatus = OrderStatus.PICKEDUP;
+    }
+
+    /**
      * Returns the current status of the given order
      *
      * @return the current order status
@@ -138,12 +152,12 @@ public class Order extends DomainObject {
             return false;
         }
         final Order other = (Order) obj;
-        if ( beverages == null ) {
-            if ( other.beverages != null ) {
+        if ( beverage == null ) {
+            if ( other.beverage != null ) {
                 return false;
             }
         }
-        else if ( !beverages.equals( other.beverages ) ) {
+        else if ( !beverage.equals( other.beverage ) ) {
             return false;
         }
         if ( id != other.id ) {

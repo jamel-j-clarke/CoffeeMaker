@@ -31,10 +31,31 @@ public class OrderService extends Service<Order, Long> {
 
     /**
      * OrderRepository that is only meant to be a temporary repository for the
+     * employee user to access not started orders and not to save the orders in
+     * a separate location. No tags necessary
+     */
+    private OrderRepository incompleteOrders;
+
+    /**
+     * OrderRepository that is only meant to be a temporary repository for the
+     * employee user to access inprogress orders and not to save the orders in a
+     * separate location. No tags necessary
+     */
+    private OrderRepository inprogressOrders;
+
+    /**
+     * OrderRepository that is only meant to be a temporary repository for the
      * employee user to access completed orders and not to save the orders in a
      * separate location. No tags necessary
      */
     private OrderRepository completedOrders;
+
+    /**
+     * OrderRepository that is only meant to be a temporary repository for the
+     * employee user to access picked up orders and not to save the orders in a
+     * separate location. No tags necessary
+     */
+    private OrderRepository pickedUpOrders;
 
     /**
      * Gets the current order repository
@@ -62,6 +83,104 @@ public class OrderService extends Service<Order, Long> {
             }
         }
         return completedOrders;
+    }
+
+    /**
+     * Returns a repository of not started orders
+     *
+     * @return a repository of not started orders
+     */
+    public JpaRepository<Order, Long> getincompleteOrders () {
+        // Ensures we are working with an empty temp repository for the time
+        // being
+        incompleteOrders.deleteAll();
+        final List<Order> tempOrders = orderRepository.findAll();
+        for ( int i = 0; i < tempOrders.size(); i++ ) {
+            if ( tempOrders.get( i ).getStatus().equals( OrderStatus.NOT_STARTED ) ) {
+                incompleteOrders.save( tempOrders.get( i ) );
+            }
+        }
+        return incompleteOrders;
+    }
+
+    /**
+     * Returns a repository of inprogress orders
+     *
+     * @return a repository of inprogress orders
+     */
+    public JpaRepository<Order, Long> getIncompleteOrders () {
+        // Ensures we are working with an empty temp repository for the time
+        // being
+        inprogressOrders.deleteAll();
+        final List<Order> tempOrders = orderRepository.findAll();
+        for ( int i = 0; i < tempOrders.size(); i++ ) {
+            if ( tempOrders.get( i ).getStatus().equals( OrderStatus.IN_PROGRESS ) ) {
+                inprogressOrders.save( tempOrders.get( i ) );
+            }
+        }
+        return inprogressOrders;
+    }
+
+    /**
+     * Returns a repository of picked up orders
+     *
+     * @return a repository of picked up orders
+     */
+    public JpaRepository<Order, Long> getPickedupOrders () {
+        // Ensures we are working with an empty temp repository for the time
+        // being
+        pickedUpOrders.deleteAll();
+        final List<Order> tempOrders = orderRepository.findAll();
+        for ( int i = 0; i < tempOrders.size(); i++ ) {
+            if ( tempOrders.get( i ).getStatus().equals( OrderStatus.PICKEDUP ) ) {
+                pickedUpOrders.save( tempOrders.get( i ) );
+            }
+        }
+        return pickedUpOrders;
+    }
+
+    /**
+     * Returns all records of this type that exist in the database. If you want
+     * more precise ways of retrieving an individual record (or collection of
+     * records) see `findBy(Example)`
+     *
+     * @return All records stored in the database.
+     */
+    public List<Order> findIncompleteOrders () {
+        return incompleteOrders.findAll();
+    }
+
+    /**
+     * Returns all records of this type that exist in the database. If you want
+     * more precise ways of retrieving an individual record (or collection of
+     * records) see `findBy(Example)`
+     *
+     * @return All records stored in the database.
+     */
+    public List<Order> findInprogressOrders () {
+        return inprogressOrders.findAll();
+    }
+
+    /**
+     * Returns all records of this type that exist in the database. If you want
+     * more precise ways of retrieving an individual record (or collection of
+     * records) see `findBy(Example)`
+     *
+     * @return All records stored in the database.
+     */
+    public List<Order> findCompletedOrders () {
+        return completedOrders.findAll();
+    }
+
+    /**
+     * Returns all records of this type that exist in the database. If you want
+     * more precise ways of retrieving an individual record (or collection of
+     * records) see `findBy(Example)`
+     *
+     * @return All records stored in the database.
+     */
+    public List<Order> findPickedUpOrders () {
+        return pickedUpOrders.findAll();
     }
 
     /**
