@@ -122,7 +122,7 @@
 					<span><strong>Current Inventory</strong></span>
 				</div>	
 					<div class="panel-body">			
-						<span ng-repeat="ingredient in inventory.ingredients">&nbsp;{{ingredient.name}} :  &nbsp;{{ingredient.amount}}<br /></span>
+						<span ng-repeat="ingredient in inventory.ingredients">&nbsp;<strong>{{ingredient.name}} : </strong>  &nbsp;{{ingredient.amount}}<br /></span>
 					</div>
 				<div class="panel-heading-middle">
 					<span><strong>Update Inventory</strong></span>
@@ -145,8 +145,8 @@
 													class="form-control input-md-6"
 													placeholder="Enter ingredient amount to add to inventory." required="0" min="1"/>
 				      				</div>
-									<div class="col-md-2">
-										<input type="submit" style="font-size: 24px" value="Update Inventory" ng-disabled="addInventoryForm.$invalid"/>	 
+									<div class="col-md-3">
+										<input type="submit" value="Update Inventory" ng-disabled="addInventoryForm.$invalid" style="width: 70%;"/>	 
 									</div>
 							    </div>
 							</div>
@@ -169,16 +169,16 @@
 													class="form-control input-md-6"
 													placeholder="Enter ingredient amount to add to inventory." required="0" min="1"/>
 				      				</div>
-									<div class="col-md-2">
-										<input type="submit" style="font-size: 24px" value="Add Ingredient" ng-disabled="addInventoryForm.$invalid"/>	 
+									<div class="col-md-3">
+										<input type="submit" value="Add Ingredient" ng-disabled="addInventoryForm.$invalid" style="width: 70%;"/>	 
 									</div>
 							    </div>
 							</div>
 						</form>
 						</div>
+						<div class="panel-footer">
+						<footer ng-show="success">Inventory Updated!</footer>
 					</div>
-				<div class="panel-footer">
-					<div ng-show="success">Inventory Updated!</div>
 				</div>	
 			</div>
 		</div>	
