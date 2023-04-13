@@ -1,105 +1,114 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Manager Homepage</title>
+<title>Manager Home</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+	href="https://fonts.googleapis.com/css2?family=Raleway&display=swap"
+	rel="stylesheet">
 <link rel="stylesheet" href="css/bootstrap.css" />
 <link rel="stylesheet" href="css/app.css" />
-<style>
-		@font-face {
-  			font-family: 'Raleway', sans-serif;
-  			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
-		}
-		body {
-				background-color:rgb(207, 176, 145);
-		}
-		header {
-			font-size: 56px;
-		}
-		* {
-			font-family: raleway;
-		}
-		a, button {
-			border-radius: 10px;
-			border: 2px solid #000000;
-			text-align: center;
-			text-decoration: none;
-			color: black;
-			padding: 10px;
-			font-size: 36px;
-			width: 275px;
-			white-space: normal;
-		}
-</style>
-
-
 </head>
-<body>  
+<body>
+	<div layout:fragment="content">
+		<script
+			src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+		<script>
+			/*<![CDATA[*/
+			var app = angular.module('myApp', []);
+			app.controller('populateCtrl', function($scope, $http, $q) {
+				$scope.signout = function() {
+					// update later to signout user of system instead of clearing
+					window.location.href = "/index";
+				}
+			});
+
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*]]>*/
+		</script>
+		<div ng-app="myApp" ng-controller="populateCtrl as ctrl">
+			<button style="position: absolute; top: 8px; right: 8px;" onclick="toggle()">Sign Out</button>
+			<div class="holder" id="blur">
+				<div>
+					<header>Manager Homepage</header>
 				</div>
-			<button style="position: absolute; top: 8px; right: 8px;">Sign Out</button>
-			<br>
-    <div class="row text-center">
-        	<h1>Manager Homepage</h1>
-	<br>
-	<br>
-    </div>
-	
- <div class="container">
-  <div class="row text-center" style="margin-top: 20px;">	
-  <div class="btn-group btn-group-vertical" style="margin-right: 70px;">  
-    <div class="col-md-12">
-	    <a href="/inventory">
-            <button class="btn btn-default btn-sm" style="font-size: 30px">Update Inventory</button>
-        </a>
+				<br>
+				<table style="border: none; text-align: center">
+					<tr>
+						<td>
+							<button style="width: 100%" onclick="goToUpdateInventory()" class="page-button">Manage Inventory</button>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button style="width: 100%" onclick="goToAddRecipe()" class="page-button">Manage Recipse</button>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button style="width: 100%" onclick="goToBaristaRegistration()" class="page-button">Barista Registration</button>
+						</td>
+					</tr>
+					
+				</table>
+			</div>
+			
+			<!-- sign out popup -->
+			<div class="holder" id="signoutPopup">
+				<p>Are you sure you would like to sign out?</p>
+				<br>
+				<popupButton href="/stafflogin" onclick="goToLogin()">Sign Out</popupButton>
+				<popupButton href="#" onclick="toggle()">Cancel</popupButton>
+			</div>
+			<!-- end of sign out popup -->
+			
+			<script type="text/javascript">
+				// make signout popup appear function
+				function toggle() {
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var signoutPopup = document.getElementById('signoutPopup');
+					signoutPopup.classList.toggle('active');
+				}
+				
+				// go to login page function
+				function goToLogin() {
+					window.location.href = "/stafflogin";
+				}
+				
+				// go to update inventory page function
+				function goToUpdateInventory() {
+					window.location.href = "/inventory";
+				}
+				
+				// go to add an ingredient page function
+				function goToAddIngredient() {
+					window.location.href = "/ingredient";
+				}
+				
+				// go to edit a recipe page function
+				function goToEditRecipe() {
+					window.location.href = "/editrecipe";
+				}
+				
+				// go to delete a recipe function
+				function goToDeleteRecipe() {
+					window.location.href = "/deleterecipe";
+				}
+				
+				// go to add a recipe function
+				function goToAddRecipe() {
+					window.location.href = "/recipe";
+				}				
+				
+				// go to barista registration function
+				function goToBaristaRegistration() {
+					window.location.href = "/baristaregister";
+				}
+			</script>
+		</div>
 	</div>
-  </div>
-  
-  <div class="btn-group btn-group-vertical" style="margin-left: 70px;">  
-    <div class="col-md-12">
-	     <a href="/editrecipe">
-            <button class="btn btn-default btn-sm" style="font-size: 30px">Edit Recipe</button>
-        </a>
-	</div>
-  </div>
-  </div>
-  
-    <div class="row text-center" style="margin-top: 60px;">
-  <div class="btn-group btn-group-vertical" style="margin-right: 70px;">  
-    <div class="col-md-12">
-	     <a href="/recipe">
-            <button class="btn btn-default btn-sm" style="font-size: 30px">Add a Recipe</button>
-        </a>
-	</div>
-  </div>
-  
-  <div class="btn-group btn-group-vertical" style="margin-left: 70px;">  
-    <div class="col-md-12">
-	    <a href="/baristaregister">
-            <button class="btn btn-default btn-sm" style="font-size: 30px">Barista Creation</button>
-        </a>
-	</div>
-  </div>
-  </div>
-  
-    <div class="row text-center" style="margin-top: 40px;">	
-  <div class="btn-group btn-group-vertical" style="margin-right: 70px;">  
-    <div class="col-md-12">
-	    <a href="/deleterecipe">
-            <button class="btn btn-default btn-sm" style="font-size: 30px">Delete Recipe</button>
-        </a>
-	</div>
-  </div>
-  
-  <div class="btn-group btn-group-vertical" style="margin-left: 70px;">  
-    <div class="col-md-12">
-	     <a href="/ingredient">
-            <button class="btn btn-default btn-sm" style="font-size: 30px">Add an Ingredient</button>
-        </a>
-	</div>
-  </div>
-  </div>
-  
-</div>
-	
 </body>
 </html>
