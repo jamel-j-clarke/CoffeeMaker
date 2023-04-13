@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import edu.ncsu.csc.CoffeeMaker.models.Order;
 import edu.ncsu.csc.CoffeeMaker.models.OrderStatus;
+import edu.ncsu.csc.CoffeeMaker.repositories.CustomerRepository;
 import edu.ncsu.csc.CoffeeMaker.repositories.OrderRepository;
 
 /**
@@ -27,35 +28,42 @@ public class OrderService extends Service<Order, Long> {
      * on Order model.
      */
     @Autowired
-    private OrderRepository orderRepository;
+    private OrderRepository    orderRepository;
 
     /**
      * OrderRepository that is only meant to be a temporary repository for the
      * employee user to access not started orders and not to save the orders in
      * a separate location. No tags necessary
      */
-    private OrderRepository incompleteOrders;
+    private OrderRepository    incompleteOrders;
 
     /**
      * OrderRepository that is only meant to be a temporary repository for the
      * employee user to access inprogress orders and not to save the orders in a
      * separate location. No tags necessary
      */
-    private OrderRepository inprogressOrders;
+    private OrderRepository    inprogressOrders;
 
     /**
      * OrderRepository that is only meant to be a temporary repository for the
      * employee user to access completed orders and not to save the orders in a
      * separate location. No tags necessary
      */
-    private OrderRepository completedOrders;
+    private OrderRepository    completedOrders;
 
     /**
      * OrderRepository that is only meant to be a temporary repository for the
      * employee user to access picked up orders and not to save the orders in a
      * separate location. No tags necessary
      */
-    private OrderRepository pickedUpOrders;
+    private OrderRepository    pickedUpOrders;
+
+    /**
+     * CustomerRepository that is only meant to be a temporary repository for
+     * the employee user to access picked up orders and not to save the orders
+     * in a separate location. No tags necessary
+     */
+    private CustomerRepository customers;
 
     /**
      * Gets the current order repository
@@ -137,6 +145,24 @@ public class OrderService extends Service<Order, Long> {
             }
         }
         return pickedUpOrders;
+    }
+
+    /**
+     * Returns all records of this type that exist in the database. If you want
+     * more precise ways of retrieving an individual record (or collection of
+     * records) see `findBy(Example)`
+     *
+     * @return All records stored in the database.
+     */
+    public List<Order> findCustomerOrders ( final String email ) {
+        final List<Order> tempOrders = orderRepository.findAll();
+        final List<Order> customerOrders = orderRepository.findAll();
+        for ( int i = 0; i < tempOrders.size(); i++ ) {
+            if ( tempOrders.get( i ).getUserEmail() == email ) {
+                customerOrders.add( tempOrders.get( i ) );
+            }
+        }
+        return customerOrders;
     }
 
     /**

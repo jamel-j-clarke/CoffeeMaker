@@ -37,7 +37,7 @@ public class Order extends DomainObject {
     @Enumerated ( EnumType.STRING )
     private static OrderStatus orderStatus;
     /** The id of the user placing the order */
-    private final long         userId;
+    private final String       userEmail;
 
     /**
      * Constructs a new Order
@@ -50,7 +50,7 @@ public class Order extends DomainObject {
     public Order ( final Recipe beverage, final long payment, final Customer customer ) {
         this.beverage = beverage;
         this.payment = payment;
-        userId = (long) customer.getId();
+        userEmail = customer.getEmail();
         orderStatus = OrderStatus.NOT_STARTED;
     }
 
@@ -58,7 +58,7 @@ public class Order extends DomainObject {
      * Constructs a default order
      */
     public Order () {
-        userId = 0;
+        userEmail = "";
         payment = 0;
         beverage = null;
     }
@@ -92,12 +92,12 @@ public class Order extends DomainObject {
     }
 
     /**
-     * Gets the id of the user who placed the order
+     * Gets the email of the user who placed the order
      *
-     * @return userId of the user who placed the order
+     * @return userEmail of the user who placed the order
      */
-    public long getUserId () {
-        return userId;
+    public String getUserEmail () {
+        return userEmail;
     }
 
     /**

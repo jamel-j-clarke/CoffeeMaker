@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import edu.ncsu.csc.CoffeeMaker.models.Order;
 import edu.ncsu.csc.CoffeeMaker.models.OrderStatus;
+import edu.ncsu.csc.CoffeeMaker.models.users.Customer;
+import edu.ncsu.csc.CoffeeMaker.services.CustomerService;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
 import edu.ncsu.csc.CoffeeMaker.services.OrderService;
 
@@ -30,7 +32,6 @@ import edu.ncsu.csc.CoffeeMaker.services.OrderService;
  * to JSON
  *
  * @author Jonathan Kurian
- * @author Erin Grouge
  *
  */
 @SuppressWarnings ( { "unchecked", "rawtypes" } )
@@ -52,6 +53,13 @@ public class APIOrderController extends APIController {
     private InventoryService inventoryService;
 
     /**
+     * OrderService object, to be autowired in by Spring to allow for
+     * manipulating the User model
+     */
+    @Autowired
+    private CustomerService  customerService;
+
+    /**
      * REST API method to provide GET access to all orders in the system
      *
      * @return JSON representation of all users
@@ -59,6 +67,16 @@ public class APIOrderController extends APIController {
     @GetMapping ( BASE_PATH + "/orders" )
     public List<Order> getOrders () {
         return orderService.findAll();
+    }
+
+    /**
+     * REST API method to provide GET access to all orders in the system
+     *
+     * @return JSON representation of all users
+     */
+    @GetMapping ( BASE_PATH + "/orders/{email}" )
+    public List<Order> getCustomerOrders ( @PathVariable final String email ) {
+        return orderService.findCustomerOrders( email );
     }
 
     /**
@@ -152,7 +170,7 @@ public class APIOrderController extends APIController {
      */
     @PostMapping ( BASE_PATH + "/orders" )
     public ResponseEntity createOrder ( @RequestBody final Order order ) {
-
+        final Customer cust = customerService.findByEmail( order.getUserEmail() );
         orderService.save( order );
         return new ResponseEntity( successResponse( order.getId() + " successfully created" ), HttpStatus.OK );
 
@@ -293,7 +311,9 @@ public class APIOrderController extends APIController {
         }
 
         if ( order.getStatus() == OrderStatus.NOT_STARTED ) {
-            orderService.delete( order );
+            final String userEmail = order.getUserEmail();
+            final Customer cust = customerService.findByEmail( userEmail );
+            cust.orders.
 
             return new ResponseEntity( successResponse( order + " was deleted successfully" ), HttpStatus.OK );
         }
