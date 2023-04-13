@@ -1,13 +1,17 @@
 package edu.ncsu.csc.CoffeeMaker.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 import javax.management.InvalidAttributeValueException;
 import javax.transaction.Transactional;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,17 +52,22 @@ public class CustomerTest {
      *
      * @throws InvalidAttributeValueException
      *             if the user has invalid input
+     * @throws NoSuchAlgorithmException
+     *             if there is an error
+     * @throws InvalidKeySpecException
+     *             if there is an error
      */
     @Test
     @Transactional
-    public void testCustomer () throws InvalidAttributeValueException {
-        // Employee #1
+    public void testCustomer ()
+            throws InvalidAttributeValueException, InvalidKeySpecException, NoSuchAlgorithmException {
+        // Customer #1
 
         final Customer erin = new Customer( "erin@gmail.com", "Erin Grouge", "erin'spassword" );
         // Check that fields were set properly
         assertEquals( "erin@gmail.com", erin.getEmail() );
         assertEquals( "Erin Grouge", erin.getName() );
-        assertEquals( "erin'spassword", erin.getPassword() );
+        assertTrue( erin.checkPassword( "erin'spassword" ) );
 
         service.save( erin );
 
@@ -73,22 +82,22 @@ public class CustomerTest {
         assertEquals( serviceEmailErin, erin );
         assertEquals( "erin@gmail.com", serviceEmailErin.getEmail() );
         assertEquals( "Erin Grouge", serviceEmailErin.getName() );
-        assertEquals( "erin'spassword", serviceEmailErin.getPassword() );
+        assertTrue( erin.checkPassword( "erin'spassword" ) );
         assertEquals( id, (long) serviceEmailErin.getId() );
 
         assertEquals( serviceIdErin, erin );
         assertEquals( "erin@gmail.com", serviceIdErin.getEmail() );
         assertEquals( "Erin Grouge", serviceIdErin.getName() );
-        assertEquals( "erin'spassword", serviceIdErin.getPassword() );
+        assertTrue( erin.checkPassword( "erin'spassword" ) );
         assertEquals( id, (long) serviceIdErin.getId() );
 
-        // Employee #2
+        // Customer #2
 
         final Customer emma = new Customer( "emma@gmail.com", "Emma Holincheck", "emma'spassword" );
         // Check that fields were set properly
-        Assertions.assertEquals( "emma@gmail.com", emma.getEmail() );
-        Assertions.assertEquals( "Emma Holincheck", emma.getName() );
-        Assertions.assertEquals( "emma'spassword", emma.getPassword() );
+        assertEquals( "emma@gmail.com", emma.getEmail() );
+        assertEquals( "Emma Holincheck", emma.getName() );
+        assertTrue( emma.checkPassword( "emma'spassword" ) );
 
         service.save( emma );
 
@@ -103,22 +112,22 @@ public class CustomerTest {
         assertEquals( serviceEmailEmma, emma );
         assertEquals( "emma@gmail.com", serviceEmailEmma.getEmail() );
         assertEquals( "Emma Holincheck", serviceEmailEmma.getName() );
-        assertEquals( "emma'spassword", serviceEmailEmma.getPassword() );
+        assertTrue( serviceEmailEmma.checkPassword( "emma'spassword" ) );
         assertEquals( id, (long) serviceEmailEmma.getId() );
 
         assertEquals( serviceIdEmma, emma );
         assertEquals( "emma@gmail.com", serviceIdEmma.getEmail() );
         assertEquals( "Emma Holincheck", serviceIdEmma.getName() );
-        assertEquals( "emma'spassword", serviceIdEmma.getPassword() );
+        assertTrue( serviceIdEmma.checkPassword( "emma'spassword" ) );
         assertEquals( id, (long) serviceIdEmma.getId() );
 
-        // Employee #3
+        // Customer #3
 
         final Customer jonathan = new Customer( "jonathan@gmail.com", "Jonathan Kurian", "jonathan'spassword" );
         // Check that fields were set properly
         assertEquals( "jonathan@gmail.com", jonathan.getEmail() );
         assertEquals( "Jonathan Kurian", jonathan.getName() );
-        assertEquals( "jonathan'spassword", jonathan.getPassword() );
+        assertTrue( jonathan.checkPassword( "jonathan'spassword" ) );
 
         service.save( jonathan );
 
@@ -133,13 +142,13 @@ public class CustomerTest {
         assertEquals( serviceEmailJonathan, jonathan );
         assertEquals( "jonathan@gmail.com", serviceEmailJonathan.getEmail() );
         assertEquals( "Jonathan Kurian", serviceEmailJonathan.getName() );
-        assertEquals( "jonathan'spassword", serviceEmailJonathan.getPassword() );
+        assertTrue( jonathan.checkPassword( "jonathan'spassword" ) );
         assertEquals( id, (long) serviceEmailJonathan.getId() );
 
         assertEquals( serviceIdJonathan, jonathan );
         assertEquals( "jonathan@gmail.com", serviceIdJonathan.getEmail() );
         assertEquals( "Jonathan Kurian", serviceIdJonathan.getName() );
-        assertEquals( "jonathan'spassword", serviceIdJonathan.getPassword() );
+        assertTrue( jonathan.checkPassword( "jonathan'spassword" ) );
         assertEquals( id, (long) serviceIdJonathan.getId() );
 
         // Check that there are 3 employees
@@ -162,15 +171,19 @@ public class CustomerTest {
      *
      * @throws InvalidAttributeValueException
      *             if input is invalid
+     * @throws NoSuchAlgorithmException
+     *             if there is an error
+     * @throws InvalidKeySpecException
+     *             if there is an error
      */
     @Test
     @Transactional
-    public void testUpdate () throws InvalidAttributeValueException {
+    public void testUpdate () throws InvalidAttributeValueException, InvalidKeySpecException, NoSuchAlgorithmException {
         final Customer jonathan = new Customer( "jonathan@gmail.com", "Jonathan Kurian", "jonathan'spassword" );
         // Check that fields were set properly
         assertEquals( "jonathan@gmail.com", jonathan.getEmail() );
         assertEquals( "Jonathan Kurian", jonathan.getName() );
-        assertEquals( "jonathan'spassword", jonathan.getPassword() );
+        assertTrue( jonathan.checkPassword( "jonathan'spassword" ) );
 
         service.save( jonathan );
 
@@ -183,7 +196,7 @@ public class CustomerTest {
         // Check fields updated appropriately - email should not change
         assertEquals( "jonathan@gmail.com", jonathan.getEmail() );
         assertEquals( "Jon Kurian", jonathan.getName() );
-        assertEquals( "jon'spassword", jonathan.getPassword() );
+        assertTrue( jonathanUpdate.checkPassword( "jon'spassword" ) );
         assertEquals( id, jonathan.getId() ); // id should not change
 
         // Save
@@ -194,7 +207,7 @@ public class CustomerTest {
         // Check fields updated appropriately - email should not change
         assertEquals( "jonathan@gmail.com", serviceJonUpdated.getEmail() );
         assertEquals( "Jon Kurian", serviceJonUpdated.getName() );
-        assertEquals( "jon'spassword", serviceJonUpdated.getPassword() );
+        assertTrue( serviceJonUpdated.checkPassword( "jon'spassword" ) );
         assertEquals( id, serviceJonUpdated.getId() ); // id should not change
 
         // Check that only 1 Jonathan exists
@@ -203,10 +216,15 @@ public class CustomerTest {
 
     /**
      * Tests error checking for invalid input
+     *
+     * @throws NoSuchAlgorithmException
+     *             if there is an error
+     * @throws InvalidKeySpecException
+     *             if there is an error
      */
     @Test
     @Transactional
-    public void testInvalidInput () {
+    public void testInvalidInput () throws InvalidKeySpecException, NoSuchAlgorithmException {
 
         // Empty email
         try {
@@ -329,5 +347,24 @@ public class CustomerTest {
             assertEquals( "Invalid Input", e.getMessage() );
         }
 
+    }
+
+    /**
+     * Checks the user's password against the one passed
+     *
+     * @throws InvalidAttributeValueException
+     *             if there is an error
+     * @throws InvalidKeySpecException
+     *             if there is an error
+     * @throws NoSuchAlgorithmException
+     *             if there is an error
+     */
+    @Test
+    @Transactional
+    public void testCheckPassword ()
+            throws InvalidAttributeValueException, InvalidKeySpecException, NoSuchAlgorithmException {
+        final Customer customer = new Customer( "customer@gmail.com", "Customer", "password" );
+        assertTrue( customer.checkPassword( "password" ) );
+        assertFalse( customer.checkPassword( "passwOrd" ) );
     }
 }

@@ -1,5 +1,7 @@
 package edu.ncsu.csc.CoffeeMaker.models.users;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 import javax.management.InvalidAttributeValueException;
@@ -34,9 +36,13 @@ public class Customer extends User {
      *            the customers password
      * @throws InvalidAttributeValueException
      *             if the customers email is invalid
+     * @throws NoSuchAlgorithmException
+     *             if there is an error
+     * @throws InvalidKeySpecException
+     *             if there is an error
      */
     public Customer ( final String email, final String name, final String password )
-            throws InvalidAttributeValueException {
+            throws InvalidAttributeValueException, InvalidKeySpecException, NoSuchAlgorithmException {
         super( email, name, password );
     }
 
