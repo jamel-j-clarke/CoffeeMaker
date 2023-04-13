@@ -140,7 +140,7 @@ public class OrderService extends Service<Order, Long> {
         pickedUpOrders.deleteAll();
         final List<Order> tempOrders = orderRepository.findAll();
         for ( int i = 0; i < tempOrders.size(); i++ ) {
-            if ( tempOrders.get( i ).getStatus().equals( OrderStatus.PICKEDUP ) ) {
+            if ( tempOrders.get( i ).getStatus().equals( OrderStatus.PICKED_UP ) ) {
                 pickedUpOrders.save( tempOrders.get( i ) );
             }
         }

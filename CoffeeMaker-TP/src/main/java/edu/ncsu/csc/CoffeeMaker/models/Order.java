@@ -125,7 +125,7 @@ public class Order extends DomainObject {
      * Cancels the order, moving its status to cancelled in the system
      */
     public void pickup () {
-        orderStatus = OrderStatus.PICKEDUP;
+        orderStatus = OrderStatus.PICKED_UP;
     }
 
     /**

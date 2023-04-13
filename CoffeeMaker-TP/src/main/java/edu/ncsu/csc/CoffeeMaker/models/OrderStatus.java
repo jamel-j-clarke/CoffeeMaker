@@ -7,5 +7,5 @@ package edu.ncsu.csc.CoffeeMaker.models;
  * @version 03/30/2023
  */
 public enum OrderStatus {
-    NOT_STARTED, IN_PROGRESS, DONE, CANCELLED, PICKEDUP
+    NOT_STARTED, IN_PROGRESS, DONE, CANCELLED, PICKED_UP
 }
