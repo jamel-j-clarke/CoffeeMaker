@@ -7,5 +7,14 @@ package edu.ncsu.csc.CoffeeMaker.models;
  * @version 03/30/2023
  */
 public enum OrderStatus {
-    NOT_STARTED, IN_PROGRESS, DONE, CANCELLED
+    /** When an order has not been started */
+    NOT_STARTED,
+    /** When an order is in the progress of being made */
+    IN_PROGRESS,
+    /** When an order is complete */
+    DONE,
+    /** When an order has been cancelled */
+    CANCELLED,
+    /** When an order has been picked up by the customer */
+    PICKED_UP
 }

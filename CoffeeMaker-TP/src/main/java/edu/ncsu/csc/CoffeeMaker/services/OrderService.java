@@ -64,15 +64,4 @@ public class OrderService extends Service<Order, Long> {
         return completedOrders;
     }
 
-    /**
-     * Find an order with the provided id
-     *
-     * @param id
-     *            id of the order to find
-     * @return found order, null if none
-     */
-    public Order findById ( final long id ) {
-        return orderRepository.findById( id );
-    }
-
 }

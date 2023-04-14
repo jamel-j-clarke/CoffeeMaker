@@ -12,15 +12,5 @@ import edu.ncsu.csc.CoffeeMaker.models.Order;
  *
  */
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    /**
-     * Finds an Order object with the provided id. Spring will generate code to
-     * make this happen.
-     *
-     * @param id
-     *            of the order
-     *
-     * @return Found order, null if none.
-     */
-    Order findById ( long id );
 
 }

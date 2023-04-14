@@ -1,28 +1,25 @@
 package edu.ncsu.csc.CoffeeMaker.models;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Min;
-
-import edu.ncsu.csc.CoffeeMaker.models.users.Customer;
 
 /**
  * The order object that tracks the recipes in the order for the user
  *
  * @author Emma Holincheck
  * @author Erin Grouge
- * @version 04/04/2023
+ * @version 04/13/2023
  *
  */
 @Entity
+@Table ( name = "orders" )
 public class Order extends DomainObject {
 
     /** The id of the order */
@@ -31,28 +28,29 @@ public class Order extends DomainObject {
     private Long               id;
     /** The payment for the order */
     @Min ( 0 )
-    private final long         payment;
+    private final Integer      payment;
     /** The list of beverages in the order */
-    @OneToMany
-    private final List<Recipe> beverages;
+    private final String       beverage;
     /** Representative of the current status of the order in the system */
     @Enumerated ( EnumType.STRING )
     private static OrderStatus orderStatus;
     /** The id of the user placing the order */
-    private final long         userId;
+    private final String       userEmail;
 
     /**
      * Constructs a new Order
      *
-     * @param beverages
-     *            the list of beverages in the order
+     * @param beverage
+     *            the beverages in the order
      * @param payment
      *            the payment method for the order
+     * @param email
+     *            the email of the customer that ordered the beverage.
      */
-    public Order ( final List<Recipe> beverages, final long payment, final Customer customer ) {
-        this.beverages = beverages;
+    public Order ( final String beverage, final Integer payment, final String email ) {
+        this.beverage = beverage;
         this.payment = payment;
-        userId = (long) customer.getId();
+        userEmail = email;
         orderStatus = OrderStatus.NOT_STARTED;
     }
 
@@ -60,9 +58,9 @@ public class Order extends DomainObject {
      * Constructs a default order
      */
     public Order () {
-        userId = 0;
+        userEmail = "";
         payment = 0;
-        beverages = new ArrayList<Recipe>();
+        beverage = "";
     }
 
     /**
@@ -70,7 +68,7 @@ public class Order extends DomainObject {
      *
      * @return payment information for the order
      */
-    public long getPayment () {
+    public Integer getPayment () {
         return payment;
     }
 
@@ -85,12 +83,21 @@ public class Order extends DomainObject {
     }
 
     /**
+     * Returns the beverage ordered
+     *
+     * @return beverage
+     */
+    public String getBeverage () {
+        return this.beverage;
+    }
+
+    /**
      * Gets the id of the user who placed the order
      *
      * @return userId of the user who placed the order
      */
-    public long getUserId () {
-        return userId;
+    public String getUserEmail () {
+        return userEmail;
     }
 
     /**
@@ -112,6 +119,13 @@ public class Order extends DomainObject {
      */
     public void cancel () {
         orderStatus = OrderStatus.CANCELLED;
+    }
+
+    /**
+     * Cancels the order, moving its status to cancelled in the system
+     */
+    public void pickup () {
+        orderStatus = OrderStatus.PICKED_UP;
     }
 
     /**
@@ -138,12 +152,12 @@ public class Order extends DomainObject {
             return false;
         }
         final Order other = (Order) obj;
-        if ( beverages == null ) {
-            if ( other.beverages != null ) {
+        if ( beverage == null ) {
+            if ( other.beverage != null ) {
                 return false;
             }
         }
-        else if ( !beverages.equals( other.beverages ) ) {
+        else if ( !beverage.equals( other.beverage ) ) {
             return false;
         }
         if ( id != other.id ) {
