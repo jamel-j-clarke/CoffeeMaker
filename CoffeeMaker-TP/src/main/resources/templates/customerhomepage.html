@@ -8,6 +8,12 @@
 	<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="css/bootstrap.css" />
 	<link rel="stylesheet" href="css/app.css" />
+	<style>
+		th, table {
+			margin-right: 20px;
+			margin-left: 60px;
+		}
+</style>
 </head>
 <body>
 	<div layout:fragment="content">
@@ -56,36 +62,54 @@
 					$scope.reset();	
 					window.location.href = "/index";
 				}
+				
+				$scope.cancel = function(){  
+					// implement
+					$scope.reset();	
+					$console.log("Implement cancelling an order");
+				}
+				
+				$scope.pickup = function(){  
+					// implement
+					$scope.reset();	
+					$console.log("Implement a popup for an order");
+				}
 			});
 			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
 			/*]]>*/
 		</script>
 		<div ng-app="myApp" ng-controller="populateCtrl">
 			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
-			<button style="position: absolute; top: 8px; right: 8px;" onclick="toggle()">Sign Out</button>
-			<div class="holder" style="text-align: left" id="blur">
+			<button style="position: absolute; top: 8px; right: 8px;" onclick="toggle()">Sign Out</button>			
+			<div class="form-group">
 				<form ng-submit="submit()" name="customerHomepageForm">
 				<div>
 					<header>Hey {{name}},</header>
 				</div>
 				<br>
-				<div>
-					Current Orders:
-					<table>
-						<colgroup>
-							<col style="width: 200px"/>
-							<col style="width: 550px"/>
-							<col style="width: 250px"/>
-						</colgroup>
-						<tr>
-							<th>Order #:</th>
-							<th>Drink:</th>
-							<th>Status:</th>
-						</tr>
-					</table>
-				</div>
-				</form>
+			<div class="table-header">Current Orders:</div>	
+			<div class="button-group">
+				<table>
+					<colgroup>
+						<col style="width: 200px"/>
+						<col style="width: 550px"/>
+						<col style="width: 250px"/>
+					</colgroup>
+					<tr>
+						<th>Order #:</th>
+						<th>Drink:</th>
+						<th>Status:</th>
+					</tr>
+				</table>
+			<button ng-click="cancel()" ng-disabled="customerHomepageForm.$pristine" class="button-side">Cancel</button>
+				<button ng-click="pickup()"
+									ng-disabled="customerHomepageForm.$pristine" class="button-side">Pickup</button>
 			</div>
+					</form>
+				</div>
+				</div>
+
+
 			
 			<!--  sign out popup -->
 			<div class="holder" id="signoutPopup">

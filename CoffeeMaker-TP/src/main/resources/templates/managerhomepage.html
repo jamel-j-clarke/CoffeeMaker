@@ -43,12 +43,17 @@
 					</tr>
 					<tr>
 						<td>
-							<button style="width: 100%" onclick="goToAddRecipe()" class="page-button">Manage Recipse</button>
+							<button style="width: 100%" onclick="goToAddRecipe()" class="page-button">Manage Recipe</button>
 						</td>
 					</tr>
 					<tr>
 						<td>
 							<button style="width: 100%" onclick="goToBaristaRegistration()" class="page-button">Barista Registration</button>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button style="width: 100%" onclick="goToOrderHistory()" class="page-button">Order History</button>
 						</td>
 					</tr>
 					
@@ -106,6 +111,11 @@
 				// go to barista registration function
 				function goToBaristaRegistration() {
 					window.location.href = "/baristaregister";
+				}
+				
+				// go to order history function
+				function goToOrderHistory() {
+					window.location.href = "/orderhistory";
 				}
 			</script>
 		</div>
