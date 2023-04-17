@@ -4,7 +4,8 @@ package edu.ncsu.csc.CoffeeMaker.models;
  * Creates the Enums for the order status in the system
  *
  * @author Emma Holincheck
- * @version 03/30/2023
+ * @author Erin Grouge
+ * @version 04/17/2023
  */
 public enum OrderStatus {
     /** When an order has not been started */
@@ -14,7 +15,5 @@ public enum OrderStatus {
     /** When an order is complete */
     DONE,
     /** When an order has been cancelled */
-    CANCELLED,
-    /** When an order has been picked up by the customer */
-    PICKED_UP
+    CANCELLED
 }

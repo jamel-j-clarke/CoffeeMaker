@@ -15,7 +15,7 @@ import javax.validation.constraints.Min;
  *
  * @author Emma Holincheck
  * @author Erin Grouge
- * @version 04/13/2023
+ * @version 04/17/2023
  *
  */
 @Entity
@@ -25,17 +25,19 @@ public class Order extends DomainObject {
     /** The id of the order */
     @Id
     @GeneratedValue
-    private Long               id;
+    private Long          id;
     /** The payment for the order */
     @Min ( 0 )
-    private final Integer      payment;
+    private final Integer payment;
     /** The list of beverages in the order */
-    private final String       beverage;
+    private final String  beverage;
     /** Representative of the current status of the order in the system */
     @Enumerated ( EnumType.STRING )
-    private static OrderStatus orderStatus;
+    private OrderStatus   status;
     /** The id of the user placing the order */
-    private final String       userEmail;
+    private final String  userEmail;
+    /** Whether or not the order has been picked up */
+    private boolean       pickedUp;
 
     /**
      * Constructs a new Order
@@ -51,7 +53,8 @@ public class Order extends DomainObject {
         this.beverage = beverage;
         this.payment = payment;
         userEmail = email;
-        orderStatus = OrderStatus.NOT_STARTED;
+        status = OrderStatus.NOT_STARTED;
+        pickedUp = false;
     }
 
     /**
@@ -102,30 +105,63 @@ public class Order extends DomainObject {
 
     /**
      * Starts the order and moves its status to in progress in the system
+     *
+     * @return true if the order can be started, false if not.
      */
-    public void start () {
-        orderStatus = OrderStatus.IN_PROGRESS;
+    public boolean start () {
+        if ( status == OrderStatus.NOT_STARTED ) {
+            status = OrderStatus.IN_PROGRESS;
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**
-     * Completes the order, moving its status to done in the system
+     * Completes the order, moving its status to done in the system.
+     *
+     * @return true if the order can be completed, false if not.
      */
-    public void complete () {
-        orderStatus = OrderStatus.DONE;
+    public boolean complete () {
+        if ( status == OrderStatus.IN_PROGRESS ) {
+            status = OrderStatus.DONE;
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**
      * Cancels the order, moving its status to cancelled in the system
      */
     public void cancel () {
-        orderStatus = OrderStatus.CANCELLED;
+        status = OrderStatus.CANCELLED;
     }
 
     /**
      * Cancels the order, moving its status to cancelled in the system
+     *
+     * @return true if the order can be picked up, false if not.
      */
-    public void pickup () {
-        orderStatus = OrderStatus.PICKED_UP;
+    public boolean pickup () {
+        if ( status == OrderStatus.DONE ) {
+            pickedUp = true;
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
+     * Returns true if the order has been picked up, false if not.
+     *
+     * @return pickedUp
+     */
+    public boolean hasBeenPickedUp () {
+        return pickedUp;
     }
 
     /**
@@ -134,7 +170,7 @@ public class Order extends DomainObject {
      * @return the current order status
      */
     public OrderStatus getStatus () {
-        return orderStatus;
+        return status;
     }
 
     /**

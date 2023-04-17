@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 
 import javax.management.InvalidAttributeValueException;
 import javax.transaction.Transactional;
@@ -31,6 +32,7 @@ import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
  * This tests the Order class and its methods.
  *
  * @author Erin Grouge
+ * @version 04/17/2023
  *
  */
 @ExtendWith ( SpringExtension.class )
@@ -85,7 +87,6 @@ public class OrderTest {
     public void testOrder () throws InvalidAttributeValueException, InvalidKeySpecException, NoSuchAlgorithmException {
         assertEquals( 0, service.count() );
 
-        final Recipe mocha = recService.findByName( "Mocha" );
         final Order order1 = new Order( "Mocha", 8, "etgrouge@ncsu.edu" );
         assertEquals( OrderStatus.NOT_STARTED, order1.getStatus() );
         assertEquals( 8, order1.getPayment() );
@@ -109,20 +110,23 @@ public class OrderTest {
 
         order1.complete();
         assertEquals( OrderStatus.DONE, order1.getStatus() );
+        assertFalse( order1.hasBeenPickedUp() );
         service.save( order1 );
 
         serviceOrder1 = service.findById( (Long) order1.getId() );
         assertEquals( OrderStatus.DONE, serviceOrder1.getStatus() );
+        assertFalse( serviceOrder1.hasBeenPickedUp() );
 
         order1.pickup();
-        assertEquals( OrderStatus.PICKED_UP, order1.getStatus() );
+        assertEquals( OrderStatus.DONE, order1.getStatus() );
+        assertTrue( order1.hasBeenPickedUp() );
         service.save( order1 );
 
         serviceOrder1 = service.findById( (Long) order1.getId() );
-        assertEquals( OrderStatus.PICKED_UP, serviceOrder1.getStatus() );
+        assertEquals( OrderStatus.DONE, serviceOrder1.getStatus() );
+        assertTrue( serviceOrder1.hasBeenPickedUp() );
 
         // Order 2
-        final Recipe chai = recService.findByName( "Chai" );
         final Order order2 = new Order( "Chai", 7, "egrouge@ncsu.edu" );
         assertEquals( OrderStatus.NOT_STARTED, order2.getStatus() );
         assertEquals( 7, order2.getPayment() );
@@ -160,14 +164,11 @@ public class OrderTest {
     @Transactional
     public void testCustomerOrders ()
             throws InvalidAttributeValueException, InvalidKeySpecException, NoSuchAlgorithmException {
-        final Recipe mocha = recService.findByName( "Mocha" );
         final Order order1 = new Order( "Mocha", 8, "etgrouge@ncsu.edu" );
 
-        final Recipe chai = recService.findByName( "Chai" );
         final Order order2 = new Order( "Chai", 7, "etgrouge@ncsu.edu" );
 
         // Not the same user
-        final Recipe coffee = recService.findByName( "Coffee" );
         final Order order3 = new Order( "Coffee", 7, "egrouge@ncsu.edu" );
 
         final Customer customer = new Customer( "etgrouge@ncsu.edu", "Erin", "password" );
@@ -194,5 +195,114 @@ public class OrderTest {
 
         assertEquals( 1, customer.getOrders().size() );
         assertEquals( order2, customer.getOrders().get( 0 ) );
+    }
+
+    /**
+     * Tests the service methods of retrieving orders by status.
+     */
+    @Test
+    // @Transactional
+    public void testGetOrders () {
+        // Make orders
+        final Order order1 = new Order( "Mocha", 8, "etgrouge@ncsu.edu" );
+
+        final Order order2 = new Order( "Chai", 7, "etgrouge@ncsu.edu" );
+
+        final Order order3 = new Order( "Coffee", 7, "egrouge@ncsu.edu" );
+
+        service.save( order1 );
+        service.save( order2 );
+        service.save( order3 );
+
+        // List<Order> notStarted = service.getIncompleteOrders();
+        // List<Order> inProgress = service.getInProgressOrders();
+        // List<Order> complete = service.getCompletedOrders();
+        List<Order> notStarted = service.findByStatus( OrderStatus.NOT_STARTED );
+        List<Order> inProgress = service.findByStatus( OrderStatus.IN_PROGRESS );
+        List<Order> complete = service.findByStatus( OrderStatus.DONE );
+        assertEquals( 3, notStarted.size() );
+        assertTrue( notStarted.contains( order1 ) );
+        assertTrue( notStarted.contains( order2 ) );
+        assertTrue( notStarted.contains( order3 ) );
+        assertEquals( 0, inProgress.size() );
+        assertEquals( 0, complete.size() );
+
+        // Start order1
+        order1.start();
+        service.save( order1 );
+
+        notStarted = service.findByStatus( OrderStatus.NOT_STARTED );
+        inProgress = service.findByStatus( OrderStatus.IN_PROGRESS );
+        complete = service.findByStatus( OrderStatus.DONE );
+        assertEquals( 2, notStarted.size() );
+        assertTrue( notStarted.contains( order2 ) );
+        assertTrue( notStarted.contains( order3 ) );
+        assertEquals( 1, inProgress.size() );
+        assertTrue( inProgress.contains( order1 ) );
+        assertEquals( 0, complete.size() );
+
+        // Start order2
+        order2.start();
+        service.save( order2 );
+
+        notStarted = service.findByStatus( OrderStatus.NOT_STARTED );
+        inProgress = service.findByStatus( OrderStatus.IN_PROGRESS );
+        complete = service.findByStatus( OrderStatus.DONE );
+        assertEquals( 1, notStarted.size() );
+        assertTrue( notStarted.contains( order3 ) );
+        assertEquals( 2, inProgress.size() );
+        assertTrue( inProgress.contains( order1 ) );
+        assertTrue( inProgress.contains( order2 ) );
+        assertEquals( 0, complete.size() );
+
+        // Complete order1
+        order1.complete();
+        service.save( order1 );
+
+        notStarted = service.findByStatus( OrderStatus.NOT_STARTED );
+        inProgress = service.findByStatus( OrderStatus.IN_PROGRESS );
+        complete = service.findByStatus( OrderStatus.DONE );
+        assertEquals( 1, notStarted.size() );
+        assertTrue( notStarted.contains( order3 ) );
+        assertEquals( 1, inProgress.size() );
+        assertTrue( inProgress.contains( order2 ) );
+        assertEquals( 1, complete.size() );
+        assertTrue( complete.contains( order1 ) );
+
+        // Pick up order1 - still returned in the completed order list so
+        // nothing changes
+        order1.pickup();
+        service.save( order1 );
+
+        notStarted = service.findByStatus( OrderStatus.NOT_STARTED );
+        inProgress = service.findByStatus( OrderStatus.IN_PROGRESS );
+        complete = service.findByStatus( OrderStatus.DONE );
+        assertEquals( 1, notStarted.size() );
+        assertTrue( notStarted.contains( order3 ) );
+        assertEquals( 1, inProgress.size() );
+        assertTrue( inProgress.contains( order2 ) );
+        assertEquals( 1, complete.size() );
+        assertTrue( complete.contains( order1 ) );
+
+        // Cancel order3
+        order3.cancel();
+        service.save( order3 );
+        notStarted = service.findByStatus( OrderStatus.NOT_STARTED );
+        inProgress = service.findByStatus( OrderStatus.IN_PROGRESS );
+        complete = service.findByStatus( OrderStatus.DONE );
+        assertEquals( 0, notStarted.size() );
+        assertEquals( 1, inProgress.size() );
+        assertTrue( inProgress.contains( order2 ) );
+        assertEquals( 1, complete.size() );
+        assertTrue( complete.contains( order1 ) );
+
+        // Check Invalid status changes
+        assertFalse( order3.complete() ); // Has not been started
+        assertFalse( order3.pickup() ); // Has not been started
+        assertFalse( order2.pickup() ); // Has not been completed
+        assertFalse( order2.start() ); // Has already been started
+        assertFalse( order1.start() ); // Has been completed and picked up
+        assertFalse( order1.complete() ); // Has been completed and picked up
+
     }
 }
