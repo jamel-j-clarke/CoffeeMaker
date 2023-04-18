@@ -76,8 +76,8 @@
 			/*]]>*/
 		</script>
 		<div ng-app="myApp" ng-controller="populateCtrl">
-			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
-			<button class="signout" onclick="toggle()">Sign Out</button>			
+			<button class="signout" onclick="toggle()">Sign Out</button>
+			<div class="holder" id="blur">			
 				<form ng-submit="submit()" name="customerHomepageForm">
 				<div>
 					<header>Hey {{name}},</header>
@@ -103,10 +103,8 @@
 					class="button-side" style="	width: 180px; height: 50px;">Pickup</button>
 			</div>
 				</form>
+				</div>
 		</div>
-
-
-			
 			<!--  sign out popup -->
 			<div class="holder" id="signoutPopup">
 				<p>Are you sure you would like to sign out?</p>
