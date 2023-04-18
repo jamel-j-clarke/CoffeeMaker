@@ -7,6 +7,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/bootstrap.css" />
 <link rel="stylesheet" href="css/app.css" />
+	<style>
+		th, table {
+			margin-right: 20px;
+			margin-left: 60px;
+		}
+	</style>
 </head>
 <body>
 	<div layout:fragment="content">
@@ -19,85 +25,84 @@
 					// update later to signout user of system instead of clearing
 					window.location.href = "/index";
 				}
+				
+				$http.get("/api/v1/orders").then(function(response) {
+					$scope.orders = response.data;
+				});
 			});
 			/*]]>*/
 		</script>
-
-		<div ng-app="myApp" ng-controller="populateCtrl as ctrl">
-			<button style="position: absolute; top: 8px; right: 8px;" onclick="toggle()">Sign Out</button>
+		<div ng-app="myApp" ng-controller="populateCtrl">
+			<button class="signout" onclick="toggle()">Sign Out</button>
 			<div class="holder" id="blur">
 				<div>
 					<header>Barista Homepage</header>
 				</div>
-				<br> <br>
-				
-				<form ng-submit="submit()" name="baristaHomepageForm" class="form-horizontal">
-					<div class="row text-center">
-						<br> <br>
-					</div>
+				<form ng-submit="submit()" name="baristaHomepageForm">
 					<!-- current orders table -->
-					<div class="row">
-						<label class="col-lg-12 control-lable" for="list" style="font-size: 15px">Current Orders:</label>
-						<div class="col-md-6">
-							<table class="table table-striped">
-								<thead>
-									<tr>
-										<th>Order #</th>
-										<th>Recipe Info</th>
-										<th>Status</th>
-										<th>Completed</th>
+					<div class="table-header">Current Orders:</div>	
+					<div class="button-group">
+							<table>
+								<colgroup>
+									<col style="width: 200px"/>
+									<col style="width: 550px"/>
+									<col style="width: 250px"/>
+									<col style="width: 200px"/>
+								</colgroup>
+								<tr>
+									<th>Order #</th>
+									<th>Recipe Info</th>
+									<th>Status</th>
+									<th>Completed</th>
+								</tr>
+									<tr ng-repeat="order in orders">
+										<td>{{order.id}}</td>
+										<td>{{order.beverage.name}}</td>
+										<td>button to be implemented</td>
+										<td>
+											<label> 
+												<input type="radio" name="name" ng-model="$parent.completed" value="{{order.completed}}">
+											</label>
+										</td>
 									</tr>
-								</thead>
-								<tbody>
-									<tr ng-repeat="ingredient in ingredients">
-										<td>{{ ingredient.amount }}</td>
-										<td>{{ ingredient.name }}</td>
-										<td>button</td>
-										<td><label> <input type="radio" name="name"
-												ng-model="$parent.name" value="{{ingredient.name}}">
-										</label></td>
-									</tr>
-								</tbody>
 							</table>
-						</div>
-						
-						<div class="form-actions floatRight">
-							<button type="button" ng-click="submit()" class="btn btn-default btn-sm" ng-disabled="!canSubmit">Complete Order</button>
-						</div>
-					</div>
-	
-					<!-- all orders table -->
-					<div class="row">
-						<label class="col-lg-12 control-lable" for="list"
-							style="font-size: 15px">All Orders:</label>
-						<div class="col-md-6">
-							<table class="table table-striped">
-								<thead>
-									<tr>
-										<th>Fulfill</th>
-										<th>Order #</th>
-										<th>Recipe Info</th>
-										<th>Status</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr ng-repeat="ingredient in ingredients">
-										<td><label> <input type="radio" name="name"
-												ng-model="$parent.name" value="{{ingredient.name}}">
-										</label></td>
-										<td>{{ ingredient.name }}</td>
-										<td>{{ ingredient.amount }}</td>
-										<td>button</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-						<div class="form-actions floatRight">
-							<button type="button" ng-click="submit()" class="btn btn-default btn-sm" ng-disabled="!canSubmit">Fulfill Order</button>
-						</div>
+								<button ng-click="cancel()" ng-disabled="baristaHomepageForm.$pristine" 
+									class="button-side" style="	width: 225px; height: 50px;">Complete Order</button>
 					</div>
 					<br>
-				</form>
+					<br>
+					<!-- all orders table -->
+					<div class="table-header">All Orders:</div>	
+					<div class="button-group">
+							<table>
+								<colgroup>
+									<col style="width: 200px"/>
+									<col style="width: 550px"/>
+									<col style="width: 250px"/>
+									<col style="width: 200px"/>
+								</colgroup>
+								<tr>
+									<th>Fulfill</th>
+									<th>Order #</th>
+									<th>Recipe Info</th>
+									<th>Status</th>
+								</tr>
+									<tr ng-repeat="order in orders">
+										<td>
+											<label> 
+												<input type="radio" name="name" ng-model="$parent.completed" value="{{order.completed}}">
+											</label>
+										</td>
+										<td>{{order.id}}</td>
+										<td>{{order.beverage.name}}</td>
+										<td>button to be implementedp for status</td>
+									</tr>
+							</table>
+							<button ng-click="cancel()" ng-disabled="baristaHomepageForm.$pristine" 
+								class="button-side" style="	width: 225px; height: 50px;">Fulfill Order</button>
+					</div>
+					</form>
+					</div>
 			</div>
 			<!-- sign out popup -->
 			<div class="holder" id="signoutPopup">
@@ -123,6 +128,5 @@
 				}
 			</script>
 		</div>
-	</div>
 </body>
 </html>

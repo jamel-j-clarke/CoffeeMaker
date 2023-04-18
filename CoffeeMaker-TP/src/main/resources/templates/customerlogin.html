@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title>Welcome Customer!</title>
+	<title>Welcome Customer</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -160,41 +160,44 @@
 						<tr>
 							<td style="padding: 0px">
 								<div style="text-align: right;">
-									<label>Email:</label>
+									<label>Email: &nbsp;</label>
 								</div>
 							</td>
 							<td style="padding: 0px">
 								<div>
-									<input type="email" required="true" ng-model="customer.email" name="email" placeholder="e.g. mocha@coffeemaker.com"/>
+									<input type="email" required="true" ng-model="customer.email" name="email" 
+									placeholder="e.g. mocha@coffeemaker.com" style="border-radius: 7px;"/>
 								</div>
 							</td>
 						</tr>
 						<tr>
 							<td style="padding: 0px">
 								<div style="text-align: right;">
-									<label>Password:</label>
+									<label>Password: &nbsp;</label>
 								</div>
 							</td>
 							<td style="padding: 0px">
 								<div>
-									<input type="password" name="password" ng-model="password" required="true"/>
+									<input type="password" name="password" ng-model="password" required="true" style="border-radius: 7px;"/>
 								</div>
 							</td>
 							
 						</tr>
 					</table>
-					
 					<!-- <div class=buttons> -->
 						<div>
-							<input type="submit" value="Login" ng-click="submit()" ng-disabled="customerLoginForm.$invalid"/>
+							<input type="submit" value="Login" ng-click="submit()" ng-disabled="customerLoginForm.$invalid"
+							 style="width: 110px; height: 40px; font-size: 22px; margin-right: 7px; font-weight: bold; margin-top: 10px;"/>
 							 
-							<button class="a" onclick="goToSignUp()">Sign Up</button>
+							<button class="a" onclick="goToSignUp()" 
+								style="width: 120px; height: 40px; font-size: 22px; margin-left: 7px; font-weight: bold;">Sign Up</button>
 						</div>
 						
 					<!-- </div> -->
 				</form>
 				<div>
-					<button class="a" href="/customerhomepage" onclick="guestToggle()">Continue as Guest</button>
+					<button class="a" href="/customerhomepage" onclick="guestToggle()" 
+					style="width: 240px; height: 40px; font-size: 22px; font-weight: bolder;">Continue as Guest</button>
 				</div>
 				<div ng-show="invalidInfo">Incorrect email/password.</div>
 			</div>

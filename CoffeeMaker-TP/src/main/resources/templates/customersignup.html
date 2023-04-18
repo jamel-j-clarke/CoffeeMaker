@@ -153,51 +153,53 @@
 									<!-- name elements -->
 									<tr>
 										<td style="text-align: right;">
-											<label>Preferred Name:</label>
+											<label>Preferred Name:  &nbsp;</label>
 										</td>
 										<td>
-											<input type="text" required="true" ng-model="customer.name"/>
+											<input type="text" required="true" ng-model="customer.name"
+												style="border-radius: 7px;"/>
 										</td>
 									</tr>
 									
 									<!-- email elements -->
 									<tr>
 										<td style="text-align: right;">
-											<label>Email:</label>
+											<label>Email:  &nbsp;</label>
 										</td>
 										<td>
-											<input type="email" required="true" placeholder="e.g. mocha@coffeemaker.com" ng-model="customer.email"/>
+											<input type="email" required="true" placeholder="e.g. mocha@coffeemaker.com" ng-model="customer.email"
+												style="border-radius: 7px;"/>
 										</td>
 									</tr>
 									
 									<!-- password elements -->
 									<tr>
 										<td style="text-align: right;">
-											<label>Password:</label>
+											<label>Password:  &nbsp;</label>
 										</td>
 										<td>
-											<input type="password" required="true" ng-model="passwordVerification.password"/>
+											<input type="password" required="true" ng-model="passwordVerification.password"
+												style="border-radius: 7px;"/>
 										</td>
 									</tr>
 									
 									<!-- repeat password elements -->
 									<tr>
 										<td style="text-align: right;">
-											<label>Repeat Password:</label>
+											<label>Repeat Password:  &nbsp;</label>
 										</td>
 										<td>
-											<input type="password" required="true" ng-model="passwordVerification.repeatPassword"/>
+											<input type="password" required="true" ng-model="passwordVerification.repeatPassword"
+												style="border-radius: 7px;"/>
 										</td>
 									</tr>
 								</table>
 							</td>
-							
-							<!-- holds button to submit the form --> 
-							<td>
-								<input type="submit" value="Sign Up" class="a" ng-disabled="customerSignUpForm.$invalid"/>
-							</td>
 						</tr>
 					</table>
+					<!-- holds button to submit the form --> 
+					<input type="submit" value="Sign Up" class="a" ng-disabled="customerSignUpForm.$invalid"
+						style="width: 150px; height: 40px; font-size: 22px; font-weight: bold; margin-top: 10px;"/>
 				</form>
 				<div ng-show="notmatching">Passwords do not match.</div>
             </div>
