@@ -16,7 +16,8 @@ import edu.ncsu.csc.CoffeeMaker.repositories.OrderRepository;
  * Order Service
  *
  * @author Emma Holincheck
- * @version 04/04/2023
+ * @author Erin Grouge
+ * @version 04/17/2023
  *
  */
 @Component
@@ -29,12 +30,29 @@ public class OrderService extends Service<Order, Long> {
     @Autowired
     private OrderRepository orderRepository;
 
-    /**
-     * OrderRepository that is only meant to be a temporary repository for the
-     * employee user to access completed orders and not to save the orders in a
-     * separate location. No tags necessary
-     */
-    private OrderRepository completedOrders;
+    // /**
+    // * OrderRepository, to be autowired in by Spring and provide CRUD
+    // operations
+    // * on Order model.
+    // */
+    // @Autowired
+    // private OrderRepository inProgressOrders;
+    //
+    // /**
+    // * OrderRepository, to be autowired in by Spring and provide CRUD
+    // operations
+    // * on Order model.
+    // */
+    // @Autowired
+    // private OrderRepository completedOrders;
+    //
+    // /**
+    // * OrderRepository, to be autowired in by Spring and provide CRUD
+    // operations
+    // * on Order model.
+    // */
+    // @Autowired
+    // private OrderRepository incompletedOrders;
 
     /**
      * Gets the current order repository
@@ -47,32 +65,14 @@ public class OrderService extends Service<Order, Long> {
     }
 
     /**
-     * Returns a repository of only completed orders
+     * Find orders with the provided status
      *
-     * @return a repository of only completed orders
+     * @param status
+     *            status of the orders to find
+     * @return found orders, null if none
      */
-    public JpaRepository<Order, Long> getCompletedOrders () {
-        // Ensures we are working with an empty temp repository for the time
-        // being
-        completedOrders.deleteAll();
-        final List<Order> tempOrders = orderRepository.findAll();
-        for ( int i = 0; i < tempOrders.size(); i++ ) {
-            if ( tempOrders.get( i ).getStatus().equals( OrderStatus.DONE ) ) {
-                completedOrders.save( tempOrders.get( i ) );
-            }
-        }
-        return completedOrders;
-    }
-
-    /**
-     * Find an order with the provided id
-     *
-     * @param id
-     *            id of the order to find
-     * @return found order, null if none
-     */
-    public Order findById ( final long id ) {
-        return orderRepository.findById( id );
+    public List<Order> findByStatus ( final OrderStatus status ) {
+        return orderRepository.findByStatus( status );
     }
 
 }
