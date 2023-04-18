@@ -32,6 +32,8 @@ import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
  * This tests the Order class and its methods.
  *
  * @author Erin Grouge
+ * @author Emma Holincheck
+ *
  * @version 04/17/2023
  *
  */
@@ -198,10 +200,48 @@ public class OrderTest {
     }
 
     /**
+     * Tests the Equals method in Order to ensure the correct logic was
+     * implemented
+     */
+    @Test
+    @Transactional
+    public void testEquivalentOrders () {
+        final Order order1 = new Order( "Coffee", 7, "echolinc@ncsu.edu" );
+        final Order order2 = new Order( "Coffee", 7, "echolinc@ncsu.edu" );
+        // Test null case in the equals method
+        final Order order3 = new Order( null, null, null );
+        final Order order4 = new Order( "Mocha", 7, "egrouge@ncsu.edu" );
+        final Order order5 = new Order( "Mocha", 9, "egrouge@ncsu.edu" );
+        final Order order6 = new Order( "Mocha", 9, "echolinc@ncsu.edu" );
+
+        // Assert that two object that have yet to be committed to the database
+        // are considered equal
+        assertTrue( order1.equals( order2 ) );
+        assertTrue( order2.equals( order1 ) );
+
+        // Tests that a null order returns false for equals
+        assertFalse( order1.equals( order3 ) );
+        // Tests that name of beverage differences return false for equals
+        assertFalse( order2.equals( order4 ) );
+        // Test that payment differences return false for equals
+        assertFalse( order4.equals( order5 ) );
+        // Tests that email differences return false for equals
+        assertFalse( order5.equals( order6 ) );
+        // Save the orders to the repository to then test that the equals method
+        // will work when comparing identical order contents placed at different
+        // times by the same user
+        service.save( order1 );
+        service.save( order2 );
+        final Order order1B = service.findById( (long) order1.getId() );
+        final Order order2B = service.findById( (long) order2.getId() );
+        assertFalse( order1B.equals( order2B ) );
+        assertFalse( order2B.equals( order1B ) );
+        
+     /**
      * Tests the service methods of retrieving orders by status.
      */
     @Test
-    // @Transactional
+    @Transactional
     public void testGetOrders () {
         // Make orders
         final Order order1 = new Order( "Mocha", 8, "etgrouge@ncsu.edu" );

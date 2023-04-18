@@ -196,6 +196,9 @@ public class Order extends DomainObject {
         else if ( !beverage.equals( other.beverage ) ) {
             return false;
         }
+        if ( !userEmail.equals( other.userEmail ) ) {
+            return false;
+        }
         if ( id != other.id ) {
             return false;
         }
