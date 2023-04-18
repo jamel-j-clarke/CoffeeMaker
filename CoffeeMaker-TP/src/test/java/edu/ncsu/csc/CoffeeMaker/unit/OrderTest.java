@@ -236,7 +236,8 @@ public class OrderTest {
         final Order order2B = service.findById( (long) order2.getId() );
         assertFalse( order1B.equals( order2B ) );
         assertFalse( order2B.equals( order1B ) );
-        
+    }
+    
      /**
      * Tests the service methods of retrieving orders by status.
      */
