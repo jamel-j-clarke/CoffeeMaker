@@ -200,6 +200,18 @@ public class MappingController {
     }
 
     /**
+     * On a GET request to /orderhistory, the UserController will return
+     * /src/main/resources/templates/orderhistory.html.
+     *
+     * @param model
+     *            undrelying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/orderhistory", "/orderhistory.html" } )
+    public String orderHistoryForm ( final Model model ) {
+        return "orderhistory";
+    }
+    
      * On a GET request to /ordersummary, the UserController will return
      * /src/main/resources/templates/ordersummary.html.
      *
