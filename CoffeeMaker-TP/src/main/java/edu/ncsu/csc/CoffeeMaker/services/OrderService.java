@@ -17,7 +17,8 @@ import edu.ncsu.csc.CoffeeMaker.repositories.OrderRepository;
  * Order Service
  *
  * @author Emma Holincheck
- * @version 04/04/2023
+ * @author Erin Grouge
+ * @version 04/17/2023
  *
  */
 @Component
@@ -212,12 +213,12 @@ public class OrderService extends Service<Order, Long> {
     /**
      * Find an order with the provided id
      *
-     * @param id
-     *            id of the order to find
-     * @return found order, null if none
+     * @param status
+     *            status of the orders to find
+     * @return found orders, null if none
      */
-    public Order findById ( final long id ) {
-        return orderRepository.findById( id );
+    public List<Order> findByStatus ( final OrderStatus status ) {
+        return orderRepository.findByStatus( status );
     }
 
 }
