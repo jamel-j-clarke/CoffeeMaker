@@ -105,13 +105,35 @@ div {
 	font-size: 24px;
 	color: black;
 }
-
 th, table {
 	margin-right: auto;
 	margin-left: auto;
 	border: 2px solid black;
 	border-collapse: collapse;
 	padding: 15px;
+}
+.button-group {
+	display: flex;
+	justify-content: space-between;
+	margin-left: 20px;
+	margin-right: 60px;
+	margin-bottom: 10px;
+}
+.button-side {
+	width: 8%; 
+	height: 10%;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	font-size:  25px;
+}
+.button-group button {
+	margin-left: 10px;
+}
+.table-header {
+	margin-bottom: 10px;
+	margin-left: 20px;
+	font-size: 35px;
+	font-weight: 500;
 }
 .panel {
 	margin-bottom: 1px;
