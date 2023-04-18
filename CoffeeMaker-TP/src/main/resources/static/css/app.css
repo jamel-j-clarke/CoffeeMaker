@@ -198,9 +198,11 @@ back {
 	bottom: 8px;
 	left: 8px;
 	font-size: 60px;
+	user-select: none;
 }
 back:hover {
 	color: black;
+	cursor: pointer;
 }
 .reset {
 	position: absolute;

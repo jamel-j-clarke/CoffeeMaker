@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Make an Order</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="css/app.css" />
+<style>
+body {
+	background-color:rgb(203, 195, 227);
+}
+</style>
+</head>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<body>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+
+		var app = angular.module('myApp', []);
+		app.controller('recipesCtrl', function($scope, $http, $q) {
+			$http.get("/api/v1/recipes").then(function(response) {
+				$scope.recipes = response.data;
+			});
+
+			$scope.make = function() {
+				var amtPaid = $scope.amtPaid;
+				var name = $scope.name;
+				$scope.submissionFailure = false;
+				$scope.submissionSuccess = false;
+				$http.post("/api/v1/makecoffee/" + name, amtPaid).then(
+						function(response) {
+							$scope.change = response.data.message;
+							$scope.submissionSuccess = true;
+						}, function(errResponse) {
+							console.log(errResponse);
+							$scope.submissionFailure = true;
+							$scope.error = "Error while making recipe";
+						});
+
+			}
+			
+			$scope.submit = function() {
+				$scope.make();
+				$scope.amtPaid = '';
+			}
+			
+			$scope.onHome = function() {
+				window.location.href = "/index";
+			}
+			
+			$scope.onAddRecipe = function() {
+				window.location.href = "/recipe";
+			}
+		});
+
+		/*]]>*/
+	</script>
+
+	<div ng-app="myApp" ng-controller="orderCtrl">
+			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
+			<div class="holder" id="blur">
+				<div>
+					<header>What would you like to drink {{name}}?</header>
+				</div>
+				<br>
+				<form ng-submit="submit()" name="orderDrinkForm">
+					<table style="border: none;">
+						<tr>
+							<!-- drink options -->
+							
+							<td>
+								<div style="height:600px; overflow:auto">
+									<table>
+										<colgroup>
+											<col style="width:5%"/>
+											<col style="width:40%"/>
+											<col style="width:40%"/>
+											<col style="width:15%"/>
+										</colgroup>
+										<thead>
+											<tr>
+												<th></th>
+												<th>Drink Name:</th>
+												<th>Ingredients:</th>
+												<th>Price:</th>
+											</tr>
+										</thead>
+										<tr ng-repeat="recipe in recipes" style="height: 100px">
+											<td style="border: 2px solid #000000;"><input type="radio" required="true"/></td>
+											<td style="border: 2px solid #000000;">{{recipe.name}}</td>
+											<td style="border: 2px solid #000000;">{{recipe.description}}</td>
+											<td style="border: 2px solid #000000;">{{recipe.price}}</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							
+							<!-- total and order button -->
+							<td style="vertical-align: middle">
+								<table style="border: none;">
+									<tr>
+										<td style="text-align: right">Total:</td>
+										<td style="border: 2px solid #000000;">{{price}}</td>
+									</tr>
+									<tr>
+										<td colspan="2">
+											<input type="submit" style="font-size:36px; padding:20px; width:100%" value="Order" ng-disabled="orderDrinkForm.$invalid"/>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+			
+           	<back style="text-decoration: none" onclick="goToCustomerHome()"> ← </back>
+           	
+           	<script>
+           		// go to customer homepage function
+           		function goToCustomerHome() {
+           			window.location.href = "/customerhomepage";
+           		}
+           	</script>
+		</div>
+	</div>
+
+</body>
+</html>
