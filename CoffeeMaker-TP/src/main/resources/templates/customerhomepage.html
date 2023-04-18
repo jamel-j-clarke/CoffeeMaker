@@ -10,8 +10,11 @@
 	<link rel="stylesheet" href="css/app.css" />
 	<style>
 		th, table {
-			margin-right: 20px;
-			margin-left: 60px;
+			margin-right: 1px;
+			margin-left: 50px;
+			border: 2px solid black;
+			border-collapse: collapse;
+			padding: 15px;
 		}
 </style>
 </head>
@@ -57,12 +60,6 @@
 					}
 				}
 				
-				$scope.signout = function(){  
-					// update later to signout user of system instead of clearing
-					$scope.reset();	
-					window.location.href = "/index";
-				}
-				
 				$scope.cancel = function(){  
 					// implement
 					$scope.reset();	
@@ -79,9 +76,8 @@
 			/*]]>*/
 		</script>
 		<div ng-app="myApp" ng-controller="populateCtrl">
-			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
-			<button style="position: absolute; top: 8px; right: 8px;" onclick="toggle()">Sign Out</button>			
-			<div class="form-group">
+			<button class="signout" onclick="toggle()">Sign Out</button>
+			<div class="holder" id="blur">			
 				<form ng-submit="submit()" name="customerHomepageForm">
 				<div>
 					<header>Hey {{name}},</header>
@@ -92,7 +88,7 @@
 				<table>
 					<colgroup>
 						<col style="width: 200px"/>
-						<col style="width: 550px"/>
+						<col style="width: 500px"/>
 						<col style="width: 250px"/>
 					</colgroup>
 					<tr>
@@ -101,16 +97,14 @@
 						<th>Status:</th>
 					</tr>
 				</table>
-			<button ng-click="cancel()" ng-disabled="customerHomepageForm.$pristine" class="button-side">Cancel</button>
-				<button ng-click="pickup()"
-									ng-disabled="customerHomepageForm.$pristine" class="button-side">Pickup</button>
+				<button ng-click="cancel()" ng-disabled="customerHomepageForm.$pristine" 
+					class="button-side" style="	width: 180px; height: 50px;">Cancel</button>
+				<button ng-click="pickup()" ng-disabled="customerHomepageForm.$pristine" 
+					class="button-side" style="	width: 180px; height: 50px;">Pickup</button>
 			</div>
-					</form>
+				</form>
 				</div>
-				</div>
-
-
-			
+		</div>
 			<!--  sign out popup -->
 			<div class="holder" id="signoutPopup">
 				<p>Are you sure you would like to sign out?</p>
@@ -138,6 +132,5 @@
 			
 			<button style="position: absolute; bottom: 8px; right: 8px;">Order Beverage</button>
 		</div>
-	</div>
 </body>
 </html>

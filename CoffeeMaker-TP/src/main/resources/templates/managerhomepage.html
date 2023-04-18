@@ -29,31 +29,31 @@
 			/*]]>*/
 		</script>
 		<div ng-app="myApp" ng-controller="populateCtrl as ctrl">
-			<button style="position: absolute; top: 8px; right: 8px;" onclick="toggle()">Sign Out</button>
+			<button class="signout" onclick="toggle()">Sign Out</button>
 			<div class="holder" id="blur">
 				<div>
 					<header>Manager Homepage</header>
 				</div>
 				<br>
-				<table style="border: none; text-align: center">
+				<table style="border: none; text-align: center; margin-right: 725px;">
 					<tr>
 						<td>
-							<button style="width: 100%" onclick="goToUpdateInventory()" class="page-button">Manage Inventory</button>
+							<button style="width: 110%" onclick="goToUpdateInventory()" class="page-button">Manage Inventory</button>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<button style="width: 100%" onclick="goToAddRecipe()" class="page-button">Manage Recipes</button>
+							<button style="width: 110%" onclick="goToAddRecipe()" class="page-button">Manage Recipes</button>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<button style="width: 100%" onclick="goToBaristaRegistration()" class="page-button">Barista Registration</button>
+							<button style="width: 110%" onclick="goToBaristaRegistration()" class="page-button">Barista Registration</button>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<button style="width: 100%" onclick="goToOrderHistory()" class="page-button">Order History</button>
+							<button style="width: 110%" onclick="goToOrderHistory()" class="page-button">Order History</button>
 						</td>
 					</tr>
 					
@@ -86,21 +86,6 @@
 				// go to update inventory page function
 				function goToUpdateInventory() {
 					window.location.href = "/inventory";
-				}
-				
-				// go to add an ingredient page function
-				function goToAddIngredient() {
-					window.location.href = "/ingredient";
-				}
-				
-				// go to edit a recipe page function
-				function goToEditRecipe() {
-					window.location.href = "/editrecipe";
-				}
-				
-				// go to delete a recipe function
-				function goToDeleteRecipe() {
-					window.location.href = "/deleterecipe";
 				}
 				
 				// go to add a recipe function

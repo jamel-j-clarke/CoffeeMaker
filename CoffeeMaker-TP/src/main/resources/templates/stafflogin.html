@@ -147,33 +147,36 @@
 						<tr>
 							<td style="padding: 0px">
 								<div style="text-align: right;">
-									<label>Email:</label>
+									<label>Email: &nbsp;</label>
 								</div>
 							</td>
 							<td style="padding: 0px">
 								<div>
-									<input type="email" required="true" ng-model="employee.email" name="email" placeholder="e.g. mocha@coffeemaker.com"/>
+									<input type="email" required="true" ng-model="employee.email" name="email" 
+										placeholder="e.g. mocha@coffeemaker.com" style="border-radius: 7px;"/>
 								</div>
 							</td>
 						</tr>
 						<tr>
 							<td style="padding: 0px" >
 								<div style="text-align: right;">
-									<label>Password:</label>
+									<label>Password: &nbsp;</label>
 								</div>
 							</td>
 							<td style="padding: 0px">
 								<div>
-									<input type="password" name="password" ng-model="password" required="true"/>
+									<input type="password" name="password" ng-model="password" 
+										required="true" style="border-radius: 7px;"/>
 								</div>
 							</td>
 							
 						</tr>
 					</table>
 					
-					<div class=buttons>
+					<div class="buttons">
 						<div>
-							<input type="submit" value="Login" class="a" ng-click="submit()" ng-disabled="employeeLoginForm.$invalid"/>
+							<input type="submit" value="Login" class="a" ng-click="submit()" ng-disabled="employeeLoginForm.$invalid" 
+								style="width: 110px; height: 40px; font-size: 22px; font-weight: bold; margin-top: 10px"/>
 						</div>
 					</div>
 				</form>
