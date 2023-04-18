@@ -46,11 +46,11 @@
 						<!-- the message -->
 						<td style="text-align: center; width: 50%">
 							Thank you for your order! <br><br> You are Order#{{order.id}}. You can
-							view the status of your order on the home page. You may cancel your order
-							as long as its status is still "Not Started". And once your order's status
+							view the status of your order on the home page. <br> You may cancel your order
+							as long as its status is still "Not Started". <br> And once your order's status
 							is "Ready", then you may pick up your order.
 						</td>
-						
+					
 						<!-- the receipt and view orders button -->
 						<td style="text-align: center">
 							
@@ -63,7 +63,7 @@
 								
 								<!-- line item -->
 								<tr>
-									<td>1 {{order.recipe}}</td>
+									<td>{{order.recipe}}</td>
 									<td>${{price}}.00</td>
 								</tr>
 								
@@ -76,17 +76,6 @@
 									<td>${{price}}.00</td>
 								</tr>
 								
-								<!-- payment -->
-								<tr>
-									<td>Payment</td>
-									<td>${{payment}}.00</td>
-								</tr>
-								
-								<!-- change -->
-								<tr>
-									<td>Change</td>
-									<td>${{change}}.00</td>
-								</tr>
 							</table>
 							
 							<!-- button -->
