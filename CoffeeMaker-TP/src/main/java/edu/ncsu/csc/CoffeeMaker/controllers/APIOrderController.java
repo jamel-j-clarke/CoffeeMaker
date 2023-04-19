@@ -17,12 +17,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.ncsu.csc.CoffeeMaker.models.Inventory;
 import edu.ncsu.csc.CoffeeMaker.models.Order;
 import edu.ncsu.csc.CoffeeMaker.models.OrderStatus;
+import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 import edu.ncsu.csc.CoffeeMaker.models.users.Customer;
 import edu.ncsu.csc.CoffeeMaker.services.CustomerService;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
 import edu.ncsu.csc.CoffeeMaker.services.OrderService;
+import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 
 /**
  * This is the controller that holds the REST endpoints that handle CRUD
@@ -32,7 +35,7 @@ import edu.ncsu.csc.CoffeeMaker.services.OrderService;
  * to JSON
  *
  * @author Jonathan Kurian
- *
+ * @author Erin Grouge
  */
 @SuppressWarnings ( { "unchecked", "rawtypes" } )
 @RestController
@@ -60,6 +63,13 @@ public class APIOrderController extends APIController {
     private CustomerService  customerService;
 
     /**
+     * OrderService object, to be autowired in by Spring to allow for
+     * manipulating the User model
+     */
+    @Autowired
+    private RecipeService    recipeService;
+
+    /**
      * REST API method to provide GET access to all orders in the system
      *
      * @return JSON representation of all users
@@ -72,50 +82,55 @@ public class APIOrderController extends APIController {
     /**
      * REST API method to provide GET access to all orders in the system
      *
+     * @param email
+     *            the user's email
+     *
      * @return JSON representation of all users
      */
-    @GetMapping ( BASE_PATH + "/orders/{email}" )
+    @GetMapping ( BASE_PATH + "/orders/customer/{email}" )
     public List<Order> getCustomerOrders ( @PathVariable final String email ) {
-        return orderService.findCustomerOrders( email );
+        final Customer cust = customerService.findByEmail( email );
+        return cust.getOrders();
     }
 
     /**
-     * REST API method to provide GET access to a specific order, as indicated
-     * by the path variable provided (the id of the order desired)
+     * REST API method to provide GET access to incomplete orders
      *
-     * @param id
-     *            order id
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/orders/incomplete" )
     public List<Order> getIncompleteOrders () {
-        return orderService.findIncompleteOrders();
+        return orderService.findByStatus( OrderStatus.NOT_STARTED );
     }
 
     /**
-     * REST API method to provide GET access to a specific order, as indicated
-     * by the path variable provided (the id of the order desired)
+     * REST API method to provide GET access to orders in progress
      *
-     * @param id
-     *            order id
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/orders/inprogress" )
-    public List<Order> getInprogressOrder () {
-        return orderService.findInprogressOrders();
+    public List<Order> getInprogressOrders () {
+        return orderService.findByStatus( OrderStatus.IN_PROGRESS );
     }
 
     /**
-     * REST API method to provide GET access to a specific order, as indicated
-     * by the path variable provided (the id of the order desired)
+     * REST API method to provide GET access to completed orders
      *
-     * @param id
-     *            order id
      * @return response to the request
      */
     @GetMapping ( BASE_PATH + "/orders/completed" )
-    public List<Order> getCompletedOrder () {
-        return orderService.findCompletedOrders();
+    public List<Order> getCompletedOrders () {
+        return orderService.findByStatus( OrderStatus.DONE );
+    }
+
+    /**
+     * REST API method to provide GET access to picked up orders
+     *
+     * @return response to the request
+     */
+    @GetMapping ( BASE_PATH + "/orders/pickedup" )
+    public List<Order> getPickedUpOrders () {
+        return orderService.findByStatus( OrderStatus.PICKED_UP );
     }
 
     /**
@@ -124,19 +139,6 @@ public class APIOrderController extends APIController {
      *
      * @param id
      *            order id
-     * @return response to the request
-     */
-    @GetMapping ( BASE_PATH + "/orders/pickedup" )
-    public List<Order> getPickedUpOrder () {
-        return orderService.findPickedUpOrders();
-    }
-
-    /**
-     * REST API method to provide GET access to a specific order, as indicated
-     * by the path variable provided (the id of the order desired)
-     *
-     * @param email
-     *            order email
      * @return response to the request
      * @throws InvalidAttributeValueException
      *             if there is an error
@@ -172,7 +174,8 @@ public class APIOrderController extends APIController {
     public ResponseEntity createOrder ( @RequestBody final Order order ) {
         final Customer cust = customerService.findByEmail( order.getUserEmail() );
         orderService.save( order );
-        return new ResponseEntity( successResponse( order.getId() + " successfully created" ), HttpStatus.OK );
+        cust.orderBeverage( order );
+        return new ResponseEntity( order, HttpStatus.OK );
 
     }
 
@@ -205,7 +208,8 @@ public class APIOrderController extends APIController {
                     HttpStatus.BAD_REQUEST );
         }
 
-        else if ( inventoryService.getInventory().enoughIngredients( currOrder.getRecipe() ) ) {
+        else if ( inventoryService.getInventory()
+                .enoughIngredients( recipeService.findByName( currOrder.getRecipe() ) ) ) {
             currOrder.start();
             orderService.save( currOrder );
             return new ResponseEntity( successResponse( currOrder.getId() + " was successfully started" ),
@@ -243,15 +247,30 @@ public class APIOrderController extends APIController {
             return new ResponseEntity( errorResponse( "Order with the id " + id + " does not exist" ),
                     HttpStatus.NOT_FOUND );
         }
-        if ( currOrder.getStatus() != OrderStatus.IN_PROGRESS ) {
-            return new ResponseEntity( errorResponse( "Order with the id " + id + " cannot be completed" ),
+
+        final Recipe rec = recipeService.findByName( currOrder.getRecipe() );
+        if ( rec == null ) {
+            return new ResponseEntity( errorResponse( "Order with the recipe " + rec.getName() + " does not exist" ),
                     HttpStatus.NOT_FOUND );
         }
-        else {
+        final Inventory inv = inventoryService.getInventory();
+
+        if ( currOrder.getStatus() != OrderStatus.IN_PROGRESS ) {
+            return new ResponseEntity( errorResponse( "Order with the id " + id + " cannot be completed" ),
+                    HttpStatus.BAD_REQUEST );
+        }
+        else if ( inventoryService.getInventory().enoughIngredients( rec ) ) {
+            inv.useIngredients( rec );
+            inventoryService.save( inv );
             currOrder.complete();
             orderService.save( currOrder );
             return new ResponseEntity( successResponse( currOrder.getId() + " was successfully completed" ),
                     HttpStatus.OK );
+        }
+
+        else {
+            return new ResponseEntity( errorResponse( currOrder.getId() + " does not have enough ingredients" ),
+                    HttpStatus.BAD_REQUEST );
         }
 
     }
@@ -280,9 +299,9 @@ public class APIOrderController extends APIController {
             return new ResponseEntity( errorResponse( "Order with the id " + id + " does not exist" ),
                     HttpStatus.NOT_FOUND );
         }
-        if ( currOrder.getStatus() != OrderStatus.NOT_STARTED ) {
+        if ( currOrder.getStatus() != OrderStatus.DONE ) {
             return new ResponseEntity( errorResponse( "Order with the id " + id + " cannot be picked  up" ),
-                    HttpStatus.NOT_FOUND );
+                    HttpStatus.BAD_REQUEST );
         }
         else {
             currOrder.pickup();
@@ -303,8 +322,8 @@ public class APIOrderController extends APIController {
      * @return Success if the user could be deleted; an error if the user does
      *         not exist
      */
-    @DeleteMapping ( BASE_PATH + "/orders/{id}" )
-    public ResponseEntity cancelOrder ( @PathVariable final long id ) {
+    @DeleteMapping ( BASE_PATH + "/orders/customer/{id}" )
+    public ResponseEntity cancelCustomerOrder ( @PathVariable final long id ) {
         final Order order = orderService.findById( id );
         if ( null == order ) {
             return new ResponseEntity( errorResponse( "No order found for id " + id ), HttpStatus.NOT_FOUND );
@@ -313,13 +332,44 @@ public class APIOrderController extends APIController {
         if ( order.getStatus() == OrderStatus.NOT_STARTED ) {
             final String userEmail = order.getUserEmail();
             final Customer cust = customerService.findByEmail( userEmail );
-            cust.orders.
-
+            cust.cancelOrder( order );
+            orderService.delete( order );
             return new ResponseEntity( successResponse( order + " was deleted successfully" ), HttpStatus.OK );
         }
 
         else {
-            return new ResponseEntity( errorResponse( order + " was cannotbe cancelled" ), HttpStatus.NOT_ACCEPTABLE );
+            return new ResponseEntity( errorResponse( order + " was cannot be cancelled" ), HttpStatus.NOT_ACCEPTABLE );
+        }
+
+    }
+
+    /**
+     * REST API method to allow deleting a Order from the CoffeeMaker's
+     * Database, by making a DELETE request to the API endpoint and indicating
+     * the user to delete (as a path variable)
+     *
+     * @param id
+     *            The id of the user to delete
+     * @return Success if the user could be deleted; an error if the user does
+     *         not exist
+     */
+    @DeleteMapping ( BASE_PATH + "/orders/employee/{id}" )
+    public ResponseEntity cancelEmployeeOrder ( @PathVariable final long id ) {
+        final Order order = orderService.findById( id );
+        if ( null == order ) {
+            return new ResponseEntity( errorResponse( "No order found for id " + id ), HttpStatus.NOT_FOUND );
+        }
+
+        if ( order.getStatus() == OrderStatus.NOT_STARTED || order.getStatus() == OrderStatus.IN_PROGRESS ) {
+            final String userEmail = order.getUserEmail();
+            final Customer cust = customerService.findByEmail( userEmail );
+            cust.cancelOrder( order );
+            orderService.delete( order );
+            return new ResponseEntity( successResponse( order + " was deleted successfully" ), HttpStatus.OK );
+        }
+
+        else {
+            return new ResponseEntity( errorResponse( order + " was cannot be cancelled" ), HttpStatus.NOT_ACCEPTABLE );
         }
 
     }

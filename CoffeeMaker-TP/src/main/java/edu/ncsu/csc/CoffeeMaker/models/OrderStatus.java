@@ -15,7 +15,7 @@ public enum OrderStatus {
     /** When an order is complete */
     DONE,
     /** When an order has been cancelled */
-    CANCELLED
+    CANCELLED,
     /** When an order has been picked up */
     PICKED_UP
 }

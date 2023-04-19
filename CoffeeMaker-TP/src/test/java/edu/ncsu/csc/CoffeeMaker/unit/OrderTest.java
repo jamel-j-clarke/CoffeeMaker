@@ -112,21 +112,17 @@ public class OrderTest {
 
         order1.complete();
         assertEquals( OrderStatus.DONE, order1.getStatus() );
-        assertFalse( order1.hasBeenPickedUp() );
         service.save( order1 );
 
         serviceOrder1 = service.findById( (Long) order1.getId() );
         assertEquals( OrderStatus.DONE, serviceOrder1.getStatus() );
-        assertFalse( serviceOrder1.hasBeenPickedUp() );
 
         order1.pickup();
-        assertEquals( OrderStatus.DONE, order1.getStatus() );
-        assertTrue( order1.hasBeenPickedUp() );
+        assertEquals( OrderStatus.PICKED_UP, order1.getStatus() );
         service.save( order1 );
 
         serviceOrder1 = service.findById( (Long) order1.getId() );
-        assertEquals( OrderStatus.DONE, serviceOrder1.getStatus() );
-        assertTrue( serviceOrder1.hasBeenPickedUp() );
+        assertEquals( OrderStatus.PICKED_UP, serviceOrder1.getStatus() );
 
         // Order 2
         final Order order2 = new Order( "Chai", 7, "egrouge@ncsu.edu" );
@@ -208,37 +204,33 @@ public class OrderTest {
     public void testEquivalentOrders () {
         final Order order1 = new Order( "Coffee", 7, "echolinc@ncsu.edu" );
         final Order order2 = new Order( "Coffee", 7, "echolinc@ncsu.edu" );
-        // Test null case in the equals method
-        final Order order3 = new Order( null, null, null );
-        final Order order4 = new Order( "Mocha", 7, "egrouge@ncsu.edu" );
-        final Order order5 = new Order( "Mocha", 9, "egrouge@ncsu.edu" );
-        final Order order6 = new Order( "Mocha", 9, "echolinc@ncsu.edu" );
-
-        // Assert that two object that have yet to be committed to the database
-        // are considered equal
-        assertTrue( order1.equals( order2 ) );
-        assertTrue( order2.equals( order1 ) );
-
-        // Tests that a null order returns false for equals
-        assertFalse( order1.equals( order3 ) );
-        // Tests that name of beverage differences return false for equals
-        assertFalse( order2.equals( order4 ) );
-        // Test that payment differences return false for equals
-        assertFalse( order4.equals( order5 ) );
-        // Tests that email differences return false for equals
-        assertFalse( order5.equals( order6 ) );
-        // Save the orders to the repository to then test that the equals method
-        // will work when comparing identical order contents placed at different
-        // times by the same user
+        final Order order3 = new Order( "Mocha", 7, "echolinc@ncsu.edu" );
+        final Order order4 = new Order( null, null, null );
         service.save( order1 );
         service.save( order2 );
+        service.save( order3 );
+
         final Order order1B = service.findById( (long) order1.getId() );
         final Order order2B = service.findById( (long) order2.getId() );
+        final Order order3B = service.findById( (long) order3.getId() );
+
+        // Local copy equals service copy
+        assertTrue( order1.equals( order1B ) );
+        assertTrue( order2.equals( order2B ) );
+        assertTrue( order3.equals( order3B ) );
+
+        // Service copies are not equal
         assertFalse( order1B.equals( order2B ) );
         assertFalse( order2B.equals( order1B ) );
+        assertFalse( order2B.equals( order3B ) );
+        assertFalse( order3B.equals( order1B ) );
+
+        // Not equal to null
+        assertFalse( order1.equals( order4 ) );
+        assertFalse( order1B.equals( order4 ) );
     }
-    
-     /**
+
+    /**
      * Tests the service methods of retrieving orders by status.
      */
     @Test
@@ -261,12 +253,14 @@ public class OrderTest {
         List<Order> notStarted = service.findByStatus( OrderStatus.NOT_STARTED );
         List<Order> inProgress = service.findByStatus( OrderStatus.IN_PROGRESS );
         List<Order> complete = service.findByStatus( OrderStatus.DONE );
+        List<Order> pickedUp = service.findByStatus( OrderStatus.PICKED_UP );
         assertEquals( 3, notStarted.size() );
         assertTrue( notStarted.contains( order1 ) );
         assertTrue( notStarted.contains( order2 ) );
         assertTrue( notStarted.contains( order3 ) );
         assertEquals( 0, inProgress.size() );
         assertEquals( 0, complete.size() );
+        assertEquals( 0, pickedUp.size() );
 
         // Start order1
         order1.start();
@@ -275,12 +269,14 @@ public class OrderTest {
         notStarted = service.findByStatus( OrderStatus.NOT_STARTED );
         inProgress = service.findByStatus( OrderStatus.IN_PROGRESS );
         complete = service.findByStatus( OrderStatus.DONE );
+        pickedUp = service.findByStatus( OrderStatus.PICKED_UP );
         assertEquals( 2, notStarted.size() );
         assertTrue( notStarted.contains( order2 ) );
         assertTrue( notStarted.contains( order3 ) );
         assertEquals( 1, inProgress.size() );
         assertTrue( inProgress.contains( order1 ) );
         assertEquals( 0, complete.size() );
+        assertEquals( 0, pickedUp.size() );
 
         // Start order2
         order2.start();
@@ -289,12 +285,14 @@ public class OrderTest {
         notStarted = service.findByStatus( OrderStatus.NOT_STARTED );
         inProgress = service.findByStatus( OrderStatus.IN_PROGRESS );
         complete = service.findByStatus( OrderStatus.DONE );
+        pickedUp = service.findByStatus( OrderStatus.PICKED_UP );
         assertEquals( 1, notStarted.size() );
         assertTrue( notStarted.contains( order3 ) );
         assertEquals( 2, inProgress.size() );
         assertTrue( inProgress.contains( order1 ) );
         assertTrue( inProgress.contains( order2 ) );
         assertEquals( 0, complete.size() );
+        assertEquals( 0, pickedUp.size() );
 
         // Complete order1
         order1.complete();
@@ -303,12 +301,14 @@ public class OrderTest {
         notStarted = service.findByStatus( OrderStatus.NOT_STARTED );
         inProgress = service.findByStatus( OrderStatus.IN_PROGRESS );
         complete = service.findByStatus( OrderStatus.DONE );
+        pickedUp = service.findByStatus( OrderStatus.PICKED_UP );
         assertEquals( 1, notStarted.size() );
         assertTrue( notStarted.contains( order3 ) );
         assertEquals( 1, inProgress.size() );
         assertTrue( inProgress.contains( order2 ) );
         assertEquals( 1, complete.size() );
         assertTrue( complete.contains( order1 ) );
+        assertEquals( 0, pickedUp.size() );
 
         // Pick up order1 - still returned in the completed order list so
         // nothing changes
@@ -318,12 +318,14 @@ public class OrderTest {
         notStarted = service.findByStatus( OrderStatus.NOT_STARTED );
         inProgress = service.findByStatus( OrderStatus.IN_PROGRESS );
         complete = service.findByStatus( OrderStatus.DONE );
+        pickedUp = service.findByStatus( OrderStatus.PICKED_UP );
         assertEquals( 1, notStarted.size() );
         assertTrue( notStarted.contains( order3 ) );
         assertEquals( 1, inProgress.size() );
         assertTrue( inProgress.contains( order2 ) );
-        assertEquals( 1, complete.size() );
-        assertTrue( complete.contains( order1 ) );
+        assertEquals( 0, complete.size() );
+        assertEquals( 1, pickedUp.size() );
+        assertTrue( pickedUp.contains( order1 ) );
 
         // Cancel order3
         order3.cancel();
@@ -331,11 +333,13 @@ public class OrderTest {
         notStarted = service.findByStatus( OrderStatus.NOT_STARTED );
         inProgress = service.findByStatus( OrderStatus.IN_PROGRESS );
         complete = service.findByStatus( OrderStatus.DONE );
+        pickedUp = service.findByStatus( OrderStatus.PICKED_UP );
         assertEquals( 0, notStarted.size() );
         assertEquals( 1, inProgress.size() );
         assertTrue( inProgress.contains( order2 ) );
-        assertEquals( 1, complete.size() );
-        assertTrue( complete.contains( order1 ) );
+        assertEquals( 0, complete.size() );
+        assertEquals( 1, pickedUp.size() );
+        assertTrue( pickedUp.contains( order1 ) );
 
         // Check Invalid status changes
         assertFalse( order3.complete() ); // Has not been started
