@@ -36,8 +36,6 @@ public class Order extends DomainObject {
     private OrderStatus   status;
     /** The id of the user placing the order */
     private final String  userEmail;
-    /** Whether or not the order has been picked up */
-    private boolean       pickedUp;
 
     /**
      * Constructs a new Order
@@ -54,7 +52,6 @@ public class Order extends DomainObject {
         this.payment = payment;
         userEmail = email;
         status = OrderStatus.NOT_STARTED;
-        pickedUp = false;
     }
 
     /**
@@ -73,6 +70,15 @@ public class Order extends DomainObject {
      */
     public Integer getPayment () {
         return payment;
+    }
+
+    /**
+     * Gets the beverage for the order
+     *
+     * @return beverage information for the order
+     */
+    public String getRecipe () {
+        return beverage;
     }
 
     /**
@@ -95,9 +101,9 @@ public class Order extends DomainObject {
     }
 
     /**
-     * Gets the id of the user who placed the order
+     * Gets the email of the user who placed the order
      *
-     * @return userId of the user who placed the order
+     * @return userEmail of the user who placed the order
      */
     public String getUserEmail () {
         return userEmail;
@@ -147,21 +153,12 @@ public class Order extends DomainObject {
      */
     public boolean pickup () {
         if ( status == OrderStatus.DONE ) {
-            pickedUp = true;
+            status = OrderStatus.PICKED_UP;
             return true;
         }
         else {
             return false;
         }
-    }
-
-    /**
-     * Returns true if the order has been picked up, false if not.
-     *
-     * @return pickedUp
-     */
-    public boolean hasBeenPickedUp () {
-        return pickedUp;
     }
 
     /**
@@ -196,16 +193,27 @@ public class Order extends DomainObject {
         else if ( !beverage.equals( other.beverage ) ) {
             return false;
         }
-        if ( !userEmail.equals( other.userEmail ) ) {
+        if ( userEmail == null ) {
+            if ( other.userEmail != null ) {
+                return false;
+            }
+        }
+        else if ( !userEmail.equals( other.userEmail ) ) {
             return false;
         }
-        if ( id != other.id ) {
+        if ( (long) id != (long) other.id ) {
             return false;
         }
-        if ( payment != other.payment ) {
+        if ( (int) payment != (int) other.payment ) {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString () {
+        return "Order " + id + " of " + beverage + " for $" + payment + " placed by " + userEmail + " has status "
+                + status;
     }
 
 }

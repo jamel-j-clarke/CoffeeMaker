@@ -30,30 +30,6 @@ public class OrderService extends Service<Order, Long> {
     @Autowired
     private OrderRepository orderRepository;
 
-    // /**
-    // * OrderRepository, to be autowired in by Spring and provide CRUD
-    // operations
-    // * on Order model.
-    // */
-    // @Autowired
-    // private OrderRepository inProgressOrders;
-    //
-    // /**
-    // * OrderRepository, to be autowired in by Spring and provide CRUD
-    // operations
-    // * on Order model.
-    // */
-    // @Autowired
-    // private OrderRepository completedOrders;
-    //
-    // /**
-    // * OrderRepository, to be autowired in by Spring and provide CRUD
-    // operations
-    // * on Order model.
-    // */
-    // @Autowired
-    // private OrderRepository incompletedOrders;
-
     /**
      * Gets the current order repository
      *
