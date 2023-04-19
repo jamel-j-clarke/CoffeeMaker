@@ -38,12 +38,17 @@
 				<table style="border: none; text-align: center; margin-right: 630px;">
 					<tr>
 						<td>
-							<button style="width: 110%" onclick="goToUpdateInventory()" class="page-button">Manage Inventory</button>
+							<button style="width: 110%" onclick="goToAddRecipe()" class="page-button">Add Recipe</button>
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<button style="width: 110%" onclick="goToAddRecipe()" class="page-button">Manage Recipes</button>
+							<button style="width: 110%" onclick="goToAddRecipe()" class="page-button">Edit Recipe</button>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button style="width: 110%" onclick="goToAddRecipe()" class="page-button">Delete Recipe</button>
 						</td>
 					</tr>
 					<tr>
@@ -52,11 +57,18 @@
 						</td>
 					</tr>
 					<tr>
+
+					</tr>
+					<tr>
+						<td>
+							<button style="width: 110%" onclick="goToUpdateInventory()" class="page-button">Manage Inventory</button>
+						</td>
+					</tr>
+					<tr>
 						<td>
 							<button style="width: 110%" onclick="goToOrderHistory()" class="page-button">Order History</button>
 						</td>
 					</tr>
-					
 				</table>
 			</div>
 			
@@ -91,7 +103,16 @@
 				// go to add a recipe function
 				function goToAddRecipe() {
 					window.location.href = "/recipe";
-				}				
+				}
+				
+				// go to add a recipe function
+				function goToDeleteRecipe() {
+					window.location.href = "/deleterecipe";
+				}
+				// go to add a recipe function
+				function goToEditRecipe() {
+					window.location.href = "/editrecipe";
+				}
 				
 				// go to barista registration function
 				function goToBaristaRegistration() {
