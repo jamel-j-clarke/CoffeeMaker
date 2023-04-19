@@ -3,115 +3,127 @@
 <head>
 <title>Manager Home</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+	href="https://fonts.googleapis.com/css2?family=Raleway&display=swap"
+	rel="stylesheet">
 <link rel="stylesheet" href="css/bootstrap.css" />
 <link rel="stylesheet" href="css/app.css" />
-<style>
-		@font-face {
-  			font-family: 'Raleway', sans-serif;
-  			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
-		}
-		body {
-				background-color:rgb(207, 176, 145);
-		}
-		header {
-			font-size: 56px;
-		}
-		* {
-			font-family: raleway;
-		}
-		a, button {
-			border-radius: 10px;
-			border: 2px solid #000000;
-			text-align: center;
-			text-decoration: none;
-			color: black;
-			padding: 10px;
-			font-size: 36px;
-			width: 275px;
-			white-space: normal;
-		}
-</style>
-
-
 </head>
-<body>  
-  <div layout:fragment="content">
-    <script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
-	<script>
-	/*<![CDATA[*/
-	var app = angular.module('myApp', []);
-		app.controller('populateCtrl', function($scope, $http, $q) {
-			$scope.signout = function(){  
-				// update later to signout user of system instead of clearing
-				window.location.href = "/index";
-			}
-		});
-	
-		/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */ 
-		/*]]>*/
-	</script>
-	    <div class="row text-center">
-        	<h1>Manager Homepage</h1>
-	<br>
-	<br>
-    </div>
-		<div ng-app="myApp"
-		ng-controller="populateCtrl as ctrl">
-				<form ng-submit="submit()" name="baristaHomepageForm"
-					class="form-horizontal">
-    			<input type="submit" class="a" style="position: absolute; top: 15px; right: 15px;" value="Signout"  ng-click="signout()"/>
-			<br>
-	
-  <div class="row text-center" style="margin-top: 20px;">	
-  <div class="btn-group btn-group-vertical" style="margin-right: 70px;">  
-    <div class="col-md-12">
-	    <a href="/inventory">Update Inventory
-        </a>
-	</div>
-  </div>
-  
-  <div class="btn-group btn-group-vertical" style="margin-left: 70px;">  
-    <div class="col-md-12">
-	     <a href="/editrecipe">Edit Recipe
-        </a>
-	</div>
-  </div>
-  </div>
-  
-    <div class="row text-center" style="margin-top: 60px;">
-  <div class="btn-group btn-group-vertical" style="margin-right: 70px;">  
-    <div class="col-md-12">
-	     <a href="/recipe">Add a Recipe
-        </a>
-	</div>
-  </div>
-  
-  <div class="btn-group btn-group-vertical" style="margin-left: 70px;">  
-    <div class="col-md-12">
-	    <a href="/baristaregister">Barista Creation
-        </a>
-	</div>
-  </div>
-  </div>
-  
-    <div class="row text-center" style="margin-top: 40px;">	
-  <div class="btn-group btn-group-vertical" style="margin-right: 70px;">  
-    <div class="col-md-12">
-	    <a href="/deleterecipe">Delete Recipe
-        </a>
-	</div>
-  </div>
-  
-  <div class="btn-group btn-group-vertical" style="margin-left: 70px;">  
-    <div class="col-md-12">
-	     <a href="/ingredient">Add an Ingredient
-        </a>
-	</div>
-  </div>
-  </div>
- 
-</form>
-	</div>
+<body>
+	<div layout:fragment="content">
+		<script
+			src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+		<script>
+			/*<![CDATA[*/
+			var app = angular.module('myApp', []);
+			app.controller('populateCtrl', function($scope, $http, $q) {
+				$scope.signout = function() {
+					// update later to signout user of system instead of clearing
+					window.location.href = "/index";
+				}
+			});
+
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*]]>*/
+		</script>
+		<div ng-app="myApp" ng-controller="populateCtrl as ctrl">
+			<button class="signout" onclick="toggle()">Sign Out</button>
+			<div class="holder" id="blur">
+				<div>
+					<header>Manager Homepage</header>
+				</div>
+				<br>
+				<table style="border: none; text-align: center; margin-right: 630px;">
+					<tr>
+						<td>
+							<button style="width: 110%" onclick="goToAddRecipe()" class="page-button">Add Recipe</button>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button style="width: 110%" onclick="goToEditRecipe()" class="page-button">Edit Recipe</button>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button style="width: 110%" onclick="goToDeleteRecipe()" class="page-button">Delete Recipe</button>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button style="width: 110%" onclick="goToBaristaRegistration()" class="page-button">Barista Registration</button>
+						</td>
+					</tr>
+					<tr>
+					</tr>
+					<tr>
+						<td>
+							<button style="width: 110%" onclick="goToUpdateInventory()" class="page-button">Manage Inventory</button>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button style="width: 110%" onclick="goToOrderHistory()" class="page-button">Order History</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+			
+			<!-- sign out popup -->
+			<div class="holder" id="signoutPopup">
+				<p>Are you sure you would like to sign out?</p>
+				<br>
+				<popupButton href="/stafflogin" onclick="goToLogin()">Sign Out</popupButton>
+				<popupButton href="#" onclick="toggle()">Cancel</popupButton>
+			</div>
+			<!-- end of sign out popup -->
+			
+			<script type="text/javascript">
+				// make signout popup appear function
+				function toggle() {
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var signoutPopup = document.getElementById('signoutPopup');
+					signoutPopup.classList.toggle('active');
+				}
+				
+				// go to login page function
+				function goToLogin() {
+					window.location.href = "/stafflogin";
+				}
+				
+				// go to update inventory page function
+				function goToUpdateInventory() {
+					window.location.href = "/inventory";
+				}
+				
+				// go to add a recipe function
+				function goToAddRecipe() {
+					window.location.href = "/recipe";
+				}
+				
+				// go to add a recipe function
+				function goToDeleteRecipe() {
+					window.location.href = "/deleterecipe";
+				}
+				// go to add a recipe function
+				function goToEditRecipe() {
+					window.location.href = "/editrecipe";
+				}
+				
+				// go to barista registration function
+				function goToBaristaRegistration() {
+					window.location.href = "/baristaregister";
+				}
+				
+				// go to order history function
+				function goToOrderHistory() {
+					window.location.href = "/orderhistory";
+				}
+			</script>
+		</div>
 	</div>
 </body>
 </html>

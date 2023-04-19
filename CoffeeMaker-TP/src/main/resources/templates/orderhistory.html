@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Order History</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+	href="https://fonts.googleapis.com/css2?family=Raleway&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+	<div layout:fragment="content">
+		<script
+			src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+		<script>
+			/*<![CDATA[*/
+			var app = angular.module('myApp', []);
+			app.controller('populateCtrl', function($scope, $http, $q) {
+
+				// get all orders
+				$http.get("/api/v1/orders").then(function(response) {
+					$scope.orders = response.data;
+				});
+				
+			});
+
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*]]>*/
+		</script>
+		<div ng-app="myApp" ng-controller="populateCtrl as ctrl">
+			
+			<div class="holder" >
+				<div>
+					<header>Order History</header>
+				</div>
+				<br>
+				<table style="border: none">
+					<tr>
+						<td style="width: 50%">
+							<input type="text" id="customerFilter" onkeyup="filterByCustomer()" placeholder="Filter by customer names..."/>
+						</td>
+						<td style="width: 50%">
+							<input type="text" id="drinkFilter" onkeyup="filterByDrink()" placeholder="Filter by drink names..."/>
+						</td>
+					</tr>
+				</table>
+				
+				<table>
+					<tr>
+						<th style="width:15%">Order #:</th>
+						<th style="width:35%">Customer Name:</th>
+						<th style="width:35%">Drink:</th>
+						<th style="width:15%">Total:</th>
+					</tr>
+					<tr ng-repeat="order in orders">
+						<td>{{order.id}}</td>
+						<td>{{order.customer.name}}</td>
+						<td>{{order.beverage.name}}</td>
+						<td>{{order.beverage.total}}</td>
+					</tr>
+				</table>
+			</div>
+			<a href="/managerhomepage" style="border: none;">
+            	<back> ← </back>
+            </a>
+            
+            <!-- filter functions -->
+            <script>
+	            // filter by customer name function
+	           	function filterByCustomer() {
+	           		
+	           	}
+	           	
+	           	// filter by drink name function
+	           	function filterByDrink() {
+	           		
+	           	}
+           	</script>
+		</div>
+	</div>
+</body>
+</html>

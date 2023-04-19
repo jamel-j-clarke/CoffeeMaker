@@ -3,56 +3,12 @@
 <head>
 	<title>Sign Up</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="css/bootstrap.css" />
+	<link rel="stylesheet" href="css/app.css" />
     <style>
-		@font-face {
-  			font-family: 'Raleway', sans-serif;
-  			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
-		}
-		body {
-			background-color: rgb(207, 176, 145);
-		}
-        header {
-			font-size: 56px;
-		}
-        back {
-			position: absolute;
-			bottom: 8px;
-			left: 8px;
-			font-size: 60px;
-		}
-		input[type=email], input[type=password], input[type=text] {
-			font-size: 24px;
-			border-radius: 10px;
-			border: 2px solid #000000;
-			width: 350px;
-			padding: 5px;
-		}
-		a, input[type=submit] {
-			border-radius: 10px;
-			border: 2px solid #000000;
-			text-align: center;
-			text-decoration: none;
-			color: black;
-			padding: 10px;
-			font-size: 36px;
-			width: 125px;
-			white-space: normal;
-		}
-		.holder {
-       		text-align: center;
-			vertical-align: middle;
-			transition: 0.35s;
-		}
-		.holder#blur.active {
-			filter: blur(7px);
-		}
-		div {
-	        margin-bottom: 10px;
-			vertical-align: middle;
-			text-align: center;
-			font-size: 24px;
-			padding: 2px;
-      	}
       	#popup, #duplicateCustomerPopup {
       		position: fixed;
       		top: 40%;
@@ -72,17 +28,6 @@
       		opacity: 1;
       		transition: 0.35s;
       	}
-		table {
-			border: none;
-			margin-left: auto;
-			margin-right: auto;
-		}
-		* {
-			font-family: raleway;
-		}
-		input:invalid {
-		    border: 2px solid #FF0000;
-		}
     </style>
 </head>
 <body>
@@ -200,60 +145,73 @@
 				</div>
 				<br>
 				<form ng-submit="submit()" name="customerSignUpForm">
-					<table>
+					<table style="border: none">
 						<tr>
 							<!-- holds actual table with fields that are a part of the form --> 
 							<td>
-								<table>
+								<table style="border: none">
+									<!-- name elements -->
 									<tr>
 										<td style="text-align: right;">
-											<label>Preferred Name:</label>
+											<label>Preferred Name:  &nbsp;</label>
 										</td>
 										<td>
-											<input type="text" required="true" ng-model="customer.name"/>
+											<input type="text" required="true" ng-model="customer.name"
+												style="border-radius: 7px;"/>
 										</td>
 									</tr>
+									
+									<!-- email elements -->
 									<tr>
 										<td style="text-align: right;">
-											<label>Email:</label>
+											<label>Email:  &nbsp;</label>
 										</td>
 										<td>
-											<input type="email" required="true" placeholder="e.g. mocha@coffeemaker.com" ng-model="customer.email"/>
+											<input type="email" required="true" placeholder="e.g. mocha@coffeemaker.com" ng-model="customer.email"
+												style="border-radius: 7px;"/>
 										</td>
 									</tr>
+									
+									<!-- password elements -->
 									<tr>
 										<td style="text-align: right;">
-											<label>Password:</label>
+											<label>Password:  &nbsp;</label>
 										</td>
 										<td>
-											<input type="password" required="true" ng-model="passwordVerification.password"/>
+											<input type="password" required="true" ng-model="passwordVerification.password"
+												style="border-radius: 7px;"/>
 										</td>
 									</tr>
+									
+									<!-- repeat password elements -->
 									<tr>
 										<td style="text-align: right;">
-											<label>Repeat Password:</label>
+											<label>Repeat Password:  &nbsp;</label>
 										</td>
 										<td>
-											<input type="password" required="true" ng-model="passwordVerification.repeatPassword"/>
+											<input type="password" required="true" ng-model="passwordVerification.repeatPassword"
+												style="border-radius: 7px;"/>
 										</td>
 									</tr>
 								</table>
 							</td>
-							<!-- holds button to submit the form --> 
-							<td>
-								<input type="submit" value="Sign Up" class="a" ng-disabled="customerSignUpForm.$invalid"/>
-							</td>
 						</tr>
 					</table>
+					<!-- holds button to submit the form --> 
+					<input type="submit" value="Sign Up" class="a" ng-disabled="customerSignUpForm.$invalid"
+						style="width: 150px; height: 40px; font-size: 22px; font-weight: bold; margin-top: 10px;"/>
 				</form>
 				<div ng-show="notmatching">Passwords do not match.</div>
             </div>
+            
             <!-- welcome message popup -->
             <div class="holder" id="popup">
 				<p>Your account has been created. <br> <br> Welcome to the CoffeeMaker Rewards Club {{customer.name}}!
 				<br> <br> <br>
 				<a href="/customerhomepage" style="font-size: 20px">OK</a>
 			</div>
+			<!-- end of welcome message popup -->
+			
 			<!-- account already exists popup -->
 			<div class="holder" id="duplicateCustomerPopup">
 				<p>A customer account with this email already exists.
@@ -262,8 +220,10 @@
 				<a href="/customerlogin" style="font-size: 20px">Login</a>
 				<a href="#" style="font-size: 20px" onclick="dupeToggle()">Cancel</a> 
 			</div>
+			<!-- end of account already exists popup -->
+			
 			<script type="text/javascript">
-				// customer account already exists function
+				// customer account already exists popup function
 				function dupeToggle() {
 					var blur = document.getElementById('blur'); 
 					blur.classList.toggle('active');

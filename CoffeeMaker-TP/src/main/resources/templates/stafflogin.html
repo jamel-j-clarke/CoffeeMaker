@@ -2,65 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <title>Staff Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="css/app.css" />
 <style>
-		@font-face {
-  			font-family: 'Raleway', sans-serif;
-  			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
-		}
-		body {
-				background-color:rgb(207, 176, 145);
-		}
-		header {
-			font-size: 56px;
-		}
-        back {
-			position: absolute;
-			bottom: 8px;
-			left: 8px;
-			font-size: 60px;
-		}
-		input[type=email], input[type=password] {
-			font-size: 24px;
-			border-radius: 10px;
-			border: 2px solid #000000;
-			width: 350px;
-			padding: 5px;
-		}
-		a, input[type=submit] {
-			border-radius: 10px;
-			border: 2px solid #000000;
-			text-align: center;
-			text-decoration: none;
-			color: black;
-			padding: 5px;
-			font-size: 36px;
-		}
-		buttons {
-			font-size: clamp(3rem, 8vw, 8rem);
-			display: flex;
-			justify-content: center;
-			vertical-align: center;
-			padding: 5px;
-		}
-		.holder {
-       		text-align: center;
-			vertical-align: middle;
-			transition: 0.35s;
-		}
-		.holder#blur.active {
-			filter: blur(7px);
-		}
-		div {
-	        margin-bottom: 10px;
-			vertical-align: middle;
-			text-align: center;
-			font-size: 24px;
-			padding: 2px;
-      	}
-      	#popup {
+		
+      	#popup, #manpopup {
       		position: fixed;
       		top: 40%;
       		left: 50%;
@@ -73,37 +23,12 @@
       		opacity: 0;
       		transition: 0.35s;
       	}
-      	#popup.active {
+      	#popup.active, #manpopup.active {
       		top: 50%;
       		visibility: visible;
       		opacity: 1;
       		transition: 0.35s;
       	}
-      	#manpopup {
-      		position: fixed;
-      		top: 40%;
-      		left: 50%;
-      		transform: translate(-50%, -50%);
-      		width: 600px;
-      		padding: 50px;
-      		box-shadow: 0 5px 30px rgba(0,0,0,.3);
-      		background: #FFF;
-      		visibility: hidden;
-      		opacity: 0;
-      		transition: 0.35s;
-      	}
-      	#manpopup.active {
-      		top: 50%;
-      		visibility: visible;
-      		opacity: 1;
-      		transition: 0.35s;
-      	}
-		input:invalid {
-		    border: 2px solid #FF0000;
-		}
-		* {
-			font-family: raleway;
-		}
 
 </style>
 </head>
@@ -206,48 +131,51 @@
 				<form ng-sumbit="submit()" name="employeeLoginForm">
 					<table style="border: none; margin-left: auto; margin-right: auto;">
 						<tr>
-							<td>
+							<td style="padding: 0px">
 								<div style="text-align: right;">
-									<label>Email:</label>
+									<label>Email: &nbsp;</label>
 								</div>
 							</td>
-							<td>
+							<td style="padding: 0px">
 								<div>
-									<input type="email" required="true" ng-model="employee.email" name="email" placeholder="e.g. mocha@coffeemaker.com"/>
+									<input type="email" required="true" ng-model="employee.email" name="email" 
+										placeholder="e.g. mocha@coffeemaker.com" style="border-radius: 7px;"/>
 								</div>
 							</td>
 						</tr>
 						<tr>
-							<td style="text-align: right;">
-								<div>
-									<label>Password:</label>
+							<td style="padding: 0px" >
+								<div style="text-align: right;">
+									<label>Password: &nbsp;</label>
 								</div>
 							</td>
-							<td>
+							<td style="padding: 0px">
 								<div>
-									<input type="password" name="password" ng-model="password" required="true"/>
+									<input type="password" name="password" ng-model="password" 
+										required="true" style="border-radius: 7px;"/>
 								</div>
 							</td>
 							
 						</tr>
 					</table>
 					
-					<div class=buttons>
+					<div class="buttons">
 						<div>
-							<input type="submit" value="Login" class="a" ng-click="submit()" ng-disabled="employeeLoginForm.$invalid"/>
+							<input type="submit" value="Login" class="a" ng-click="submit()" ng-disabled="employeeLoginForm.$invalid" 
+								style="width: 110px; height: 40px; font-size: 22px; font-weight: bold; margin-top: 10px"/>
 						</div>
 					</div>
 				</form>
 			</div>
 			<div class="holder" id="popup">
 				<p>Hi {{employee.name}}! <br> You're now logged in.</p>
-				<br> <br> <br>
-				<a href="/baristahomepage" style="font-size: 20px">OK</a>
+				<br> <br>
+				<a href="/baristahomepage" class="popupButton" style="text-decoration: none">OK</a>
 			</div>
 			<div class="holder" id="manpopup">
 				<p>Hi {{employee.name}}! <br> You're now logged in as Manager.</p>
-				<br> <br> <br>
-				<a href="/managerhomepage" style="font-size: 20px">OK</a>
+				<br> <br>
+				<a href="/managerhomepage" class="popupButton" style="text-decoration: none">OK</a>
 			</div>
             <a href="/index" style="border: none;">
             	<back> ← </back>
