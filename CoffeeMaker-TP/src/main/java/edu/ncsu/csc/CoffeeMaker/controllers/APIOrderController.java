@@ -175,7 +175,7 @@ public class APIOrderController extends APIController {
         final Customer cust = customerService.findByEmail( order.getUserEmail() );
         orderService.save( order );
         cust.orderBeverage( order );
-        return new ResponseEntity( order, HttpStatus.OK );
+        return new ResponseEntity( order.getId(), HttpStatus.OK );
 
     }
 

@@ -118,8 +118,11 @@ public class APIIOrderTest {
         // Post Order 1
         final Order o1 = new Order( r1.getName(), 10, cust1.getEmail() );
 
-        mvc.perform( post( "/api/v1/orders" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( o1 ) ) ).andExpect( status().isOk() );
+        final String strid1 = mvc
+                .perform( post( "/api/v1/orders" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( o1 ) ) )
+                .andDo( print() ).andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
+        final long id1 = Long.parseLong( strid1 );
 
         // Check that it is saved in service
         assertEquals( 1, service.count() );
@@ -142,8 +145,11 @@ public class APIIOrderTest {
         // Post Order 1
         final Order o2 = new Order( r2.getName(), 2, cust2.getEmail() );
 
-        mvc.perform( post( "/api/v1/orders" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( o2 ) ) ).andExpect( status().isOk() );
+        final String strid2 = mvc
+                .perform( post( "/api/v1/orders" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( o2 ) ) )
+                .andDo( print() ).andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
+        final long id2 = Long.parseLong( strid2 );
 
         // Check that it is saved in service
         assertEquals( 2, service.count() );
@@ -200,8 +206,11 @@ public class APIIOrderTest {
         // Post Order 1
         final Order o1 = new Order( r1.getName(), 10, cust1.getEmail() );
 
-        mvc.perform( post( "/api/v1/orders" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( o1 ) ) ).andExpect( status().isOk() );
+        final String strid1 = mvc
+                .perform( post( "/api/v1/orders" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( o1 ) ) )
+                .andDo( print() ).andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
+        final long id1 = Long.parseLong( strid1 );
 
         final String orders = mvc.perform( get( "/api/v1/orders" ) ).andDo( print() ).andExpect( status().isOk() )
                 .andReturn().getResponse().getContentAsString();
@@ -222,7 +231,7 @@ public class APIIOrderTest {
         assertFalse( picOrders.contains( "Mocha" ) );
 
         // Start Order
-        mvc.perform( put( "/api/v1/orders/start/" + o1.getId() ).contentType( MediaType.APPLICATION_JSON ) )
+        mvc.perform( put( "/api/v1/orders/start/" + id1 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isOk() );
 
         incOrders = mvc.perform( get( "/api/v1/orders/incomplete" ) ).andDo( print() ).andExpect( status().isOk() )
@@ -239,7 +248,7 @@ public class APIIOrderTest {
         assertFalse( picOrders.contains( "Mocha" ) );
 
         // Complete Order
-        mvc.perform( put( "/api/v1/orders/complete/" + o1.getId() ).contentType( MediaType.APPLICATION_JSON ) )
+        mvc.perform( put( "/api/v1/orders/complete/" + id1 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isOk() );
 
         incOrders = mvc.perform( get( "/api/v1/orders/incomplete" ) ).andDo( print() ).andExpect( status().isOk() )
@@ -256,7 +265,7 @@ public class APIIOrderTest {
         assertFalse( picOrders.contains( "Mocha" ) );
 
         // Pick Up Order
-        mvc.perform( put( "/api/v1/orders/pickup/" + o1.getId() ).contentType( MediaType.APPLICATION_JSON ) )
+        mvc.perform( put( "/api/v1/orders/pickup/" + id1 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isOk() );
 
         incOrders = mvc.perform( get( "/api/v1/orders/incomplete" ) ).andDo( print() ).andExpect( status().isOk() )
@@ -294,33 +303,36 @@ public class APIIOrderTest {
         // Post Order 1
         final Order o2 = new Order( r2.getName(), 2, cust2.getEmail() );
 
-        mvc.perform( post( "/api/v1/orders" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( o2 ) ) ).andExpect( status().isOk() );
+        final String strid2 = mvc
+                .perform( post( "/api/v1/orders" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( o2 ) ) )
+                .andDo( print() ).andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
+        final long id2 = Long.parseLong( strid2 );
 
         // Cannot be completed bc order has not been started
-        mvc.perform( put( "/api/v1/orders/complete/" + o2.getId() ).contentType( MediaType.APPLICATION_JSON ) )
+        mvc.perform( put( "/api/v1/orders/complete/" + id2 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isBadRequest() );
-        mvc.perform( put( "/api/v1/orders/pickup/" + o2.getId() ).contentType( MediaType.APPLICATION_JSON ) )
+        mvc.perform( put( "/api/v1/orders/pickup/" + id2 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isBadRequest() );
 
         // Start order
-        mvc.perform( put( "/api/v1/orders/start/" + o2.getId() ).contentType( MediaType.APPLICATION_JSON ) )
+        mvc.perform( put( "/api/v1/orders/start/" + id2 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isOk() );
 
         // Cannot be completed bc order has not been completed
-        mvc.perform( put( "/api/v1/orders/start/" + o2.getId() ).contentType( MediaType.APPLICATION_JSON ) )
+        mvc.perform( put( "/api/v1/orders/start/" + id2 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isBadRequest() );
-        mvc.perform( put( "/api/v1/orders/pickup/" + o2.getId() ).contentType( MediaType.APPLICATION_JSON ) )
+        mvc.perform( put( "/api/v1/orders/pickup/" + id2 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isBadRequest() );
 
         // Complete order
-        mvc.perform( put( "/api/v1/orders/complete/" + o2.getId() ).contentType( MediaType.APPLICATION_JSON ) )
+        mvc.perform( put( "/api/v1/orders/complete/" + id2 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isOk() );
 
         // Cannot be completed bc order is ready for pickup
-        mvc.perform( put( "/api/v1/orders/start/" + o2.getId() ).contentType( MediaType.APPLICATION_JSON ) )
+        mvc.perform( put( "/api/v1/orders/start/" + id2 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isBadRequest() );
-        mvc.perform( put( "/api/v1/orders/complete/" + o2.getId() ).contentType( MediaType.APPLICATION_JSON ) )
+        mvc.perform( put( "/api/v1/orders/complete/" + id2 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isBadRequest() );
 
     }
@@ -345,8 +357,11 @@ public class APIIOrderTest {
         // Post Order 1
         final Order o1 = new Order( r1.getName(), 10, cust1.getEmail() );
 
-        mvc.perform( post( "/api/v1/orders" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( o1 ) ) ).andExpect( status().isOk() );
+        String strid1 = mvc
+                .perform( post( "/api/v1/orders" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( o1 ) ) )
+                .andDo( print() ).andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
+        long id1 = Long.parseLong( strid1 );
 
         final Customer cust2 = new Customer( "cust2@gmail.com", "Cust 2", "password2" );
         customerService.save( cust2 );
@@ -360,52 +375,58 @@ public class APIIOrderTest {
         // Post Order 1
         final Order o2 = new Order( r2.getName(), 2, cust2.getEmail() );
 
-        mvc.perform( post( "/api/v1/orders" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( o2 ) ) ).andExpect( status().isOk() );
+        final String strid2 = mvc
+                .perform( post( "/api/v1/orders" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( o2 ) ) )
+                .andDo( print() ).andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
+        final long id2 = Long.parseLong( strid2 );
 
         assertEquals( 2, service.count() );
 
         // Delete order1 because it has not been started.
-        mvc.perform( delete( "/api/v1/orders/customer/" + o1.getId() ) ).andExpect( status().isOk() );
+        mvc.perform( delete( "/api/v1/orders/customer/" + id1 ) ).andExpect( status().isOk() );
 
         assertEquals( 1, service.count() );
 
         // Start order 2
-        mvc.perform( put( "/api/v1/orders/start/" + o2.getId() ).contentType( MediaType.APPLICATION_JSON ) )
+        mvc.perform( put( "/api/v1/orders/start/" + id2 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isOk() );
 
         // Customer cannot delete started order.
-        mvc.perform( delete( "/api/v1/orders/customer/" + o2.getId() ) ).andExpect( status().isNotAcceptable() );
+        mvc.perform( delete( "/api/v1/orders/customer/" + id2 ) ).andExpect( status().isNotAcceptable() );
         assertEquals( 1, service.count() );
 
         // But an employee can
-        mvc.perform( delete( "/api/v1/orders/employee/" + o2.getId() ) ).andExpect( status().isOk() );
+        mvc.perform( delete( "/api/v1/orders/employee/" + id2 ) ).andExpect( status().isOk() );
 
         // But not a completed or picked up order
-        mvc.perform( post( "/api/v1/orders" ).contentType( MediaType.APPLICATION_JSON )
-                .content( TestUtils.asJsonString( o1 ) ) ).andExpect( status().isOk() );
+        strid1 = mvc
+                .perform( post( "/api/v1/orders" ).contentType( MediaType.APPLICATION_JSON )
+                        .content( TestUtils.asJsonString( o1 ) ) )
+                .andDo( print() ).andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
+        id1 = Long.parseLong( strid1 );
         assertEquals( 1, service.count() );
 
-        mvc.perform( put( "/api/v1/orders/start/" + o1.getId() ).contentType( MediaType.APPLICATION_JSON ) )
+        mvc.perform( put( "/api/v1/orders/start/" + id1 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isOk() );
 
-        mvc.perform( put( "/api/v1/orders/complete/" + o1.getId() ).contentType( MediaType.APPLICATION_JSON ) )
+        mvc.perform( put( "/api/v1/orders/complete/" + id1 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isOk() );
 
         // Will not work
-        mvc.perform( delete( "/api/v1/orders/employee/" + o1.getId() ) ).andExpect( status().isNotAcceptable() );
+        mvc.perform( delete( "/api/v1/orders/employee/" + id1 ) ).andExpect( status().isNotAcceptable() );
         assertEquals( 1, service.count() );
 
-        mvc.perform( put( "/api/v1/orders/pickup/" + o1.getId() ).contentType( MediaType.APPLICATION_JSON ) )
+        mvc.perform( put( "/api/v1/orders/pickup/" + id1 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isOk() );
 
         // Will not work
-        mvc.perform( delete( "/api/v1/orders/employee/" + o1.getId() ) ).andExpect( status().isNotAcceptable() );
+        mvc.perform( delete( "/api/v1/orders/employee/" + id1 ) ).andExpect( status().isNotAcceptable() );
         assertEquals( 1, service.count() );
 
         // Deleting an order that does not exist
-        mvc.perform( delete( "/api/v1/orders/employee/" + o2.getId() ) ).andExpect( status().isNotFound() );
-        mvc.perform( delete( "/api/v1/orders/customer/" + o2.getId() ) ).andExpect( status().isNotFound() );
+        mvc.perform( delete( "/api/v1/orders/employee/123456" ) ).andExpect( status().isNotFound() );
+        mvc.perform( delete( "/api/v1/orders/customer/123456" ) ).andExpect( status().isNotFound() );
 
     }
 
