@@ -4,6 +4,19 @@
 <title>Add a Recipe</title>
 <link rel="stylesheet" href="css/bootstrap.css" />
 <link rel="stylesheet" href="css/app.css" />
+<style>
+	th, table {
+	margin-right: auto;
+	margin-left: auto;
+	border: 2px solid black;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	border-collapse: collapse;
+	padding: 15px;
+	font-size: 22px;
+	width: 200px;
+}
+</style>
 </head>
 <body>
 	<script
@@ -91,7 +104,7 @@
 				} else {
 					$scope.reset();
 				}
-				
+				$scope.success = true;
 			}
 
 			$scope.addRecipe = function() {
@@ -263,13 +276,10 @@
 								ng-disabled="addRecipeForm.$pristine">Create Recipe</button>
 						</div>
 					</div>
-
-				<br>
-				
 				<div ng-hide="!canAdd">
 						<div class="form-group col-md-12">
-							<label class="col-md-1 label-sm" for="ingredient">Select an Ingredient</label>
-		      				<div class="col-md-4">
+							<label class="col-md-3 label-sm" for="ingredient">Choose Ingredient</label>
+		      				<div class="col-md-3">
 		      					<select ng-model="ingredient.name" name="ingredientname" class="form-control input-md-6">
 			      					<option value="">Select an ingredient</option>
 			      					<option ng-repeat="ingredient in inventory" ng-value="ingredient.name">{{ingredient.name}}</option>	
@@ -281,7 +291,7 @@
 		      				</div>
 
 							<label class="col-md-1 label-sm" for="amount">Amount</label>
-		      				<div class="col-md-2">
+		      				<div class="col-md-3">
 		        					<input type="number" ng-model="ingredient.amount" name="amount"
 											class="form-control input-md-6"
 											placeholder="Enter ingredient amount used by recipe." required="0" min="1"/>
@@ -290,30 +300,21 @@
 											0 for adding an ingredient to recipe.</span>
 									</div>
 		      				</div>
-		      				
-		      				<div class="form-actions floatRight">
-							<!-- instead of reset, a more custom reset so that name and price stay -->
-							<div class="col-md-4">
-								<button type="button" ng-click="addIngredient()"
-									class="btn btn-success btn-sm"
-									ng-disabled="!canAdd">Add Ingredient to Recipe</button>
-								</div>
-							</div>
-	           	 
+								<button type="button" ng-click="addIngredient()" style="font-size: 19px; height: 30px; width: 150px; padding: 1px; margin-left: 10px;" 
+									ng-disabled="!canAdd">Add Ingredient</button>
+           	 
 					    </div>
 
-					<div ng-hide="ingredients.length < 1">
-						<div class="row">
-							<label class="col-lg-12 control-lable" for="list" style="font-size: 15px">Ingredient List</label>
-                              <div class="col-md-6">
-                              <table class="table table-striped">
-                                <thead>
+					 <div ng-hide="ingredients.length < 1">
+					 <label class="panel-heading" for="list" style="border-bottom: 2px solid transparent;">Ingredient List</label>
+						<div class="row">	
+						<div class="button-group">
+                              <table class="table">
                                   <tr>
                                     <th>Edit/Delete</th>
                                     <th>Name</th>
                                     <th>Amount</th>
                                   </tr>
-                                </thead>
                                 <tbody>
                                   <tr ng-repeat="ingredient in ingredients">
                                      <td>
@@ -327,19 +328,12 @@
                                 </tbody>
                               </table>
                               </div>
-                    	</div>
-                    </div>
-                    
-                    <div ng-if="ingredients.length > 0">
-                    	<div class="row" >
-                    		<div class="col-sm-1">
-								<button type="button" ng-click="del()"
-									class="btn btn-warning btn-sm"
+                                                  		<div class="col-sm-1">
+								<button type="button" ng-click="del()" style="height: 35px; width: 80px; padding: 1px;"
 									ng-disabled="addRecipeForm.$pristine">   Delete   </button>
 							</div>
 							<div class="col-sm-1">
-								<button type="button" ng-click="edit()"
-									class="btn btn-warning btn-sm"
+								<button type="button" ng-click="edit()" style="height: 35px; width: 60px; padding: 1px;"
 									ng-disabled="addRecipeForm.$pristine">    Edit    </button>
 							</div>
 							<div class="col-sm-3">
@@ -351,6 +345,9 @@
 											must be greater than 0 for ingredient in recipe.</span>
 								</div>
 							</div>
+                    	</div>
+                    	
+                    	<div class="row" >
 		      			</div>
 					</div>
 				</div>
