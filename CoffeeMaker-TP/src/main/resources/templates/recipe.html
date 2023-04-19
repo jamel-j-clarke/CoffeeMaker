@@ -17,9 +17,8 @@
 </style>
 </head>
 <body>
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
-
+	<div layout:fragment="content">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
 	<script>
 		/*<![CDATA[*/
 		var app = angular.module('myApp', []);
@@ -230,8 +229,7 @@
 
 
 
-	<div ng-app="myApp" class="generic-container ng-cloak"
-		ng-controller="recipesCtrl as ctrl">
+	<div ng-app="myApp" ng-controller="recipesCtrl as ctrl">
 				<header>Add a Recipe</header>
 			<br>
 		<div class="container">
@@ -240,10 +238,8 @@
 			<div class="panel-heading">
 				<span><strong>Create a Recipe</strong></span>
 			</div>
-
-			<div class="formcontainer">
-				<form ng-submit="submit()" name="addRecipeForm"
-					class="form-horizontal">
+			<div class="panel-body">
+				<form ng-submit="submit()" name="addRecipeForm">
 					<div class="row justify-content-center">
 						<div class="form-group col-md-12">
 							<label class="col-sm-1 label-sm" style="margin-left: 10px;" for="file">Name</label>
@@ -298,7 +294,7 @@
 											0 for adding an ingredient to recipe.</span>
 									</div>
 		      				</div>
-								<button type="button" ng-click="addIngredient()" style="font-size: 19px; height: 30px; width: 150px; padding: 1px; margin-left: 10px;" 
+								<button type="button" ng-click="addIngredient()" style="font-size: 20px; height: 30px; width: 150px; padding: 1px; margin-left: 10px;" 
 									ng-disabled="!canAdd">Add Ingredient</button>
            	 
 					    </div>
@@ -363,8 +359,8 @@
 						</div>
 					</div>
 					
-				</form>
-			</div>		
+				</form>	
+				</div>
 			
 			<div class="panel-footer">
 				<div ng-show="success">Recipe Created!</div>
@@ -382,6 +378,6 @@
 	</div>
 
 
-
+</div>
 </body>
 </html>

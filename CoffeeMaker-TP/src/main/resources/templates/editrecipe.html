@@ -253,18 +253,17 @@
 
 	<div class="generic-container ng-cloak" ng-app="myApp"
 		ng-controller="recipesCtrl as ctrl">
-		<div class="panel panel-default">
+		<div class="container">
+		<div class="form-group">
+		<div class="panel">
 			<div class="panel-heading">
-				<span class="lead">Edit Recipe</span>
+				<span><strong>Edit a Recipe</strong></span>
 			</div>
-			
 			<div class="formcontainer">
 				<form ng-submit="submit()" name="editRecipeForm"
 					class="form-horizontal">
-			
-					<div class="row">
 						<div class="form-group col-md-12">
-							<label class="col-md-2 control-lable" for="ingredient">Select a Recipe to Edit:</label>
+							<label class="col-md-3 label-sm" for="ingredient">Select a Recipe to Edit:</label>
 		      				<div class="col-md-6">
 		      					<select ng-model="recipe.name" name="recipename" ng-required="true" class="form-control input-md-6">
 			      					<option value="">Select a Recipe</option>
@@ -277,19 +276,15 @@
 		      				</div>						
 						
 							<div class="col-md-1">
-									<button type="button" ng-click="selectRecipe()"
-										class="btn btn-success btn-sm"
+									<button type="button" ng-click="selectRecipe()" style="font-size: 20px; height: 35px; width: 150px; padding: 1px; margin-left: 10px;"
 										ng-disabled="editRecipeForm.recipename.$error.required">Select Recipe</button>
 							
 							</div>
 						</div>
-					</div>
 					
 					<div ng-hide="!selected">
-						<div class="row">
-							<div class="form-group col-md-12">
-							<label class="col-md-2 control-lable" for="price">Price: </label>
-							<div class="col-md-6">
+							<label class="col-md-3 label-sm" for="price">Price: </label>
+							<div class="col-md-5">
 								<input type="number" ng-model="recipe.price" name="price"
 									class="price form-control input-sm"
 									placeholder="Enter recipe price. Must be positive whole number (USD)." required="0" min="0"/>
@@ -303,24 +298,22 @@
 							<div class="col-md-1">
 							<!-- instead of reset, a more custom reset so that name and price stay -->
 								<button type="button" ng-click="editRecipe()"
-									class="btn btn-success btn-sm" 
-									ng-disabled="editRecipeForm.price.$error.min">Edit Price</button>
+									ng-disabled="editRecipeForm.price.$error.min"
+									style="height: 35px; width: 100px; padding: 1px; position: absolute;">Edit Price</button>
 							</div>
-							</div>
-						</div>
 					
 					
 						<div class="row">
 							<div class="form-group col-md-12">
-								<label class="col-md-2 control-lable" for="ingredient">Select an Ingredient to Add:</label>
-		      					<div class="col-md-4">
+								<label class="col-md-2 label-sm" for="ingredient">Add Ingredient:</label>
+		      					<div class="col-md-3">
 		      						<select ng-model="ingredient.name" name="ingredientname" ng-required="true" class="form-control input-md-6">
 			      						<option value="">Select an Ingredient</option>
 			      						<option ng-repeat="ingredient in inventory" ng-value="ingredient.name">{{ingredient.name}}</option>	
 		      						</select>
 		      					</div>
 
-								<label class="col-md-1 control-lable" for="amount">Amount:</label>
+								<label class="col-md-1 label-sm" for="amount">Amount:</label>
 		      					<div class="col-md-3">
 		        						<input type="number" ng-model="ingredient.amount" name="amount"
 											class="form-control input-md-6"
@@ -330,28 +323,20 @@
 												0 for adding an ingredient to recipe.</span>
 										</div>
 		      					</div>
-		      					
-		      					<div class="form-actions floatRight">
-									<div class="col-md-4">
-										<button type="button" ng-click="addIngredient()"
-											class="btn btn-success btn-sm" 
-											ng-disabled="editRecipeForm.amount.$error.min" >Add Ingredient</button>
-									</div>
-								</div>
+		      						<button type="button" ng-click="addIngredient()"
+										ng-disabled="editRecipeForm.amount.$error.min" >Add Ingredient</button>
 	           	 			</div>
 					    </div>
 					
-						<div class="row">
-							<label class="col-lg-12 control-lable" for="list" style="font-size: 15px">Ingredient List</label>
-                              <div class="col-md-6">
-                              <table class="table table-striped">
-                                <thead>
+						<label class="panel-heading" for="list" style="border-bottom: 2px solid transparent;">Ingredient List</label>
+						<div class="row">	
+						<div class="button-group">
+                              <table class="table">
                                   <tr>
                                     <th>Edit/Delete</th>
                                     <th>Name</th>
                                     <th>Amount</th>
                                   </tr>
-                                </thead>
                                 <tbody>
                                   <tr ng-repeat="ingredient in ingredients">
                                      <td>
@@ -365,42 +350,33 @@
                                 </tbody>
                               </table>
                               </div>
-                    </div>
-                    
-                    <div class="row" >
-	                    <div ng-if="ingredients.length > 0">
-	                    	<div class="col-sm-1">
-								<button type="button" ng-click="deleteIngredient()"
-									class="btn btn-warning btn-sm"
-									ng-disabled="editRecipeForm.$pristine">   Delete   </button>
+                                                  		<div class="col-sm-1">
+								<button type="button" ng-click="deleteIngredient()" style="height: 35px; width: 80px; padding: 1px;"
+									ng-disabled="addRecipeForm.$pristine">   Delete   </button>
 							</div>
 							<div class="col-sm-1">
-								<button type="button" ng-click="editIngredient()"
-									class="btn btn-warning btn-sm"
-									ng-disabled="editRecipeForm.$pristine">    Edit     </button>
+								<button type="button" ng-click="editIngredient()" style="height: 35px; width: 60px; padding: 1px;"
+									ng-disabled="addRecipeForm.$pristine">    Edit    </button>
 							</div>
 							<div class="col-sm-3">
 								<input type="number" ng-model="updateIngredient.amount" name="newAmount"
-										class="newAmount form-control input-md-6"
-										placeholder="Enter ingredient amount." required="0" min="1"/>
-									<div class="has-error" ng-show="editRecipeForm.$dirty">
-										 <span ng-show="editRecipeForm.newAmount.$error.min">Amount
-											must be greater than 0 for ingredient in recipe.</span> 
-									</div>
+									class="newAmount form-control input-md-1"
+									placeholder="Enter ingredient amount." required="0" min="1"/>
+								<div class="has-error" ng-show="addRecipeForm.$dirty">
+										 <span ng-show="addRecipeForm.newAmount.$error.min">Amount
+											must be greater than 0 for ingredient in recipe.</span>
+								</div>
 							</div>
-		      			</div>
-					</div>
+                    	</div>
 					</div>
 					
 					<div class="row" >
 						<div class="form-actions floatRight">
-								<button type="button" ng-click="submit()"
-										class="btn btn-primary btn-sm"
-										ng-disabled="!canSubmit">Submit</button>
+								<button type="button" ng-click="submit()" ng-disabled="!canSubmit"
+								style="height: 35px; width: 90px; padding: 1px; position: absolute; margin-left: 1050px;">Submit</button>
 								 
 								<button type="button" ng-click="clear()"
-										class="btn btn-warning btn-sm">Cancel All Edits</button>
-								
+								style="height: 35px; width: 140px; padding: 1px; position: absolute; margin-left: 900px;">Cancel Edits</button>	
 						</div>
 					</div>
 						
@@ -413,6 +389,8 @@
 				<div ng-show="isuccess">Ingredient Added!</div>
 			</div>
 			
+		</div>
+		</div>
 		</div>
 
 		<a href="/managerhomepage" style="border: none;">
