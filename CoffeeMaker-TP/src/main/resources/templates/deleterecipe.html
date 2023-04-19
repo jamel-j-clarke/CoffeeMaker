@@ -5,17 +5,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" href="css/bootstrap.css" />
 <link rel="stylesheet" href="css/app.css" />
-<style>
-		body {
-				background-color:rgb(207, 176, 145);
-		}
-back {
-	position: absolute;
-	bottom: 8px;
-	left: 8px;
-	font-size: 60px;
-}
-</style>
 </head>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
@@ -80,9 +69,10 @@ back {
 	<div layout:fragment="content" class="generic-container ng-cloak"
 		ng-app="myApp" ng-controller="recipesCtrl as ctrl">
 
-		<h1>Coffee Recipes</h1>
+		<header>Coffee Recipes</header>
 
-		<div>
+		<div class="container">
+		<div class="form-group">
 			<ul>
 				<li ng-repeat="recipe in recipes"><label>{{recipe.name}}
 						<input type="radio" ng-model="$parent.name" name="name"
@@ -112,6 +102,7 @@ back {
 			<div ng-if="submissionSuccess">Recipe deleted successfully</div>
 
 
+		</div>
 		</div>
 		
 
