@@ -16,6 +16,25 @@
 		td {
 			font-size: 20px;
 		}
+		#completePopup {
+      		position: fixed;
+      		top: 40%;
+      		left: 50%;
+      		transform: translate(-50%, -50%);
+      		width: 600px;
+      		padding: 50px;
+      		box-shadow: 0 5px 30px rgba(0,0,0,.3);
+      		background: #FFF;
+      		visibility: hidden;
+      		opacity: 0;
+      		transition: 0.35s;
+      	}
+        #completePopup.active {
+      		top: 50%;
+      		visibility: visible;
+      		opacity: 1;
+      		transition: 0.35s;
+      	}
 	</style>
 </head>
 <body>
@@ -89,9 +108,11 @@
 					$scope.success = false;
 					$http.put("/api/v1/orders/complete/" + $scope.order.id).then(
 							function(success) {
+								console.log('Success');
 								$scope.success = true;
 								$scope.getIncomplete();
 								$scope.getInprogress();
+								$scope.toggle2();
 							}, function(error) {
 								if (error.status === 404) {
 								    alert("Recipe Not Found");
@@ -103,10 +124,13 @@
 								    $scope.success = false;
 								}
 							});
+					
 				}
-				
+			
 				$scope.getIncomplete();
 				$scope.getInprogress();
+				console.log($scope.ordersIncomp);
+				console.log($scope.ordersInprog);
 		
 			});
 			/*]]>*/
@@ -130,7 +154,7 @@
 								</colgroup>
 								<tr>
 									<th>Order #</th>
-									<th>Recipe Info</th>
+									<th>Drink</th>
 									<th>Status</th>
 									<th>Completed</th>
 								</tr>
@@ -162,7 +186,7 @@
 								</colgroup>
 								<tr>
 									<th>Order #</th>
-									<th>Recipe Info</th>
+									<th>Drink</th>
 									<th>Status</th>
 									<th>Fulfill</th>
 								</tr>
@@ -191,6 +215,12 @@
 				<popupButton href="/stafflogin" onclick="goToLogin()">Sign Out</popupButton>
 				<popupButton href="#" onclick="toggle()">Cancel</popupButton>
 			</div>
+			
+			<div class="holder" id="completePopup">
+				<p>Successfully completed Order</p>
+				<br>
+				<popupButton href="/baristahomepage" onclick="toggle2()">OK</popupButton>
+			</div>
 			<!-- end of sign out popup -->
 			
 			<script type="text/javascript">
@@ -202,9 +232,21 @@
 					signoutPopup.classList.toggle('active');
 				}
 				
+				function toggle2() {
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var completePopup = document.getElementById('completePopup');
+					completePopup.classList.toggle('active');
+				}
+				
 				// go to login page function
 				function goToLogin() {
 					window.location.href = "/stafflogin";
+				}
+				
+				// go to login page function
+				function goToPage() {
+					window.location.href = "/baristahomepage";
 				}
 			</script>
 		</div>
