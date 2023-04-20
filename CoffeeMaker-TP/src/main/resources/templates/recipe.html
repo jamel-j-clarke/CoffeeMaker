@@ -18,12 +18,12 @@
 </style>
 </head>
 <body>
-	<div layout:fragment="content">
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
 	<script>
 		/*<![CDATA[*/
 		var app = angular.module('myApp', []);
 		app.controller('recipesCtrl', function($scope, $http, $q) {
+		
 			$http.get("/api/v1/recipes").then(function(response) {
 				$scope.recipes = response.data;
 			});
@@ -102,7 +102,6 @@
 				} else {
 					$scope.reset();
 				}
-				$scope.success = true;
 			}
 
 			$scope.addRecipe = function() {
@@ -182,7 +181,7 @@
 				if($scope.canSubmit || $scope.canAdd){
 					alert("Current Recipe has not been submitted. Submit or Cancel before returning home.");
 				} else {
-					window.location.href = "/index";
+					window.location.href = "/managerhomepage";
 				}
 				
 			}
@@ -300,10 +299,10 @@
            	 
 					    </div>
 
-					 <div ng-hide="ingredients.length < 1">
+					<div ng-hide="ingredients.length < 1">
 					 <label class="panel-heading" for="list" style="border-bottom: 2px solid transparent;">Ingredient List</label>
 						<div class="row">	
-						<div class="button-group">
+							<div class="button-group">
                               <table class="table">
                                   <tr>
                                     <th>Edit/Delete</th>
@@ -322,8 +321,8 @@
                                   </tr>
                                 </tbody>
                               </table>
-                              </div>
-                                                  		<div class="col-sm-1">
+                       		</div>
+                            <div class="col-sm-1">
 								<button type="button" ng-click="del()" style="height: 35px; width: 80px; padding: 1px;"
 									ng-disabled="addRecipeForm.$pristine">   Delete   </button>
 							</div>
@@ -340,45 +339,48 @@
 											must be greater than 0 for ingredient in recipe.</span>
 								</div>
 							</div>
-                    	</div>
-                    	
-                    	<div class="row" >
-		      			</div>
-					</div>
-				</div>
-								
+							
+		      			</div> <!-- row -->
+					</div> <!-- hide length -->
+				</div> <!-- hide can add -->
+					<br>
+				<div class="form-group col-md-12">
 					<div class="row" >
 						<div class="form-actions floatRight">
 								<button type="button" ng-click="submit()" 
-									style="height: 35px; width: 80px; padding: 1px; position: absolute; margin-left: 910px;"
-									ng-disabled="!canSubmit">Submit</button>
-								 
-								<button type="button" ng-click="clear()" 
-									style="height: 35px; width: 150px; padding: 1px; position: absolute; margin-left: 995px;"
-									>Cancel Recipe</button>
+									style="height: 35px; width: 160px; padding: 1px; position: absolute; margin-left: 40%;"
+									ng-disabled="!canSubmit">Submit Recipe</button>
+								
+
 								
 						</div>
 					</div>
+				</div>
 					
 				</form>	
-				</div>
+			</div> <!-- body -->
+
+
+
 			
 			<div class="panel-footer">
+				<br>
+				<button type="button" ng-click="clear()" 
+									style="height: 35px; width: 150px; padding: 1px; position: absolute; margin-left: 40%;"
+									>Cancel Recipe</button>
 				<div ng-show="success">Recipe Created!</div>
 				<div ng-show="delsuccess">Ingredient Deleted!</div>
 				<div ng-show="editsuccess">Recipe Edited!</div>
 				<div ng-show="isuccess">Ingredient Added!</div>
-			</div>
-		</div>
-		</div>
-		</div>
+				<br>
+			</div> <!-- footer -->
+		</div> 
+		</div> 
+		</div> 
 
-	            <a href="/managerhomepage" style="border: none;">
+	        <a ng-click="onHome();" style="border: none;">
             	<back> ← </back>
             </a>
-	</div>
-
-
-</div>
+	</div> <!-- my app -->
 </body>
 </html>

@@ -75,19 +75,23 @@
 
 		<div class="container">
 		<div class="form-group">
+		
 		<div ng-if="recipes.length > 0">
-				<div class="panel-heading" style="border-bottom: 2px solid transparent;">
+			<div class="panel-heading" style="border-bottom: 2px solid transparent;">
 					<span><strong>Choose a Recipe to Delete</strong></span>
-				</div>	
-			<ul style="list-style: none;">
+			</div>	
+		</div>
+		
+		<ul style="list-style: none;">
 			  <li ng-repeat="recipe in recipes">
 			    <label style="font-size: 23px; font-weight: 500; display: inline-flex; align-items: center;">
 			      <input type="radio" ng-model="$parent.name" name="name" value="{{recipe.name}}" required="true" />
 			      {{recipe.name}}
 			    </label>
 			  </li>
-			</ul>
-			
+		</ul>
+		
+			<div ng-if="recipes.length > 0">
 			<br>
 
 				<div class="row">
@@ -108,11 +112,10 @@
 
 
 		</div>
-		</div>
-		
-
 	</div>
-				            <a href="/managerhomepage" style="border: none;">
+
+</div>
+			<a href="/managerhomepage" style="border: none;">
             	<back> ← </back>
             </a>
 
