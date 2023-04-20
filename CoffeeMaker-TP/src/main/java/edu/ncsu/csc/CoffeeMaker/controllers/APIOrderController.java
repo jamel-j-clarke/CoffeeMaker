@@ -173,9 +173,16 @@ public class APIOrderController extends APIController {
     @PostMapping ( BASE_PATH + "/orders" )
     public ResponseEntity createOrder ( @RequestBody final Order order ) {
         final Customer cust = customerService.findByEmail( order.getUserEmail() );
-        orderService.save( order );
-        cust.orderBeverage( order );
-        return new ResponseEntity( order.getId(), HttpStatus.OK );
+        final Order o;
+        try {
+            o = new Order( order.getRecipe(), order.getPayment(), order.getUserEmail() );
+        }
+        catch ( final Exception e ) {
+            return new ResponseEntity( errorResponse( "Order info invalid." ), HttpStatus.CONFLICT );
+        }
+        orderService.save( o );
+        cust.orderBeverage( o );
+        return new ResponseEntity( o.getId(), HttpStatus.OK );
 
     }
 

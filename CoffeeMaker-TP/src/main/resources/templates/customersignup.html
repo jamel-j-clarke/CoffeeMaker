@@ -112,7 +112,7 @@
 								$scope.failure = false;
 								$scope.toggle();
 								sessionStorage.setItem("currentUserName", $scope.customer.name);
-								/** sessionStorage.setItem("currentUserEmail", $scope.customer.email); */
+			            		sessionStorage.setItem("currentUserEmail", $scope.customer.email);
 							},
 							function(failure) {
 								$scope.success = false;
