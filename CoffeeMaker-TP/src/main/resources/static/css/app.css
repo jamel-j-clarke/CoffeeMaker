@@ -125,7 +125,7 @@ th, table {
 	margin-left: auto;
 	border: 2px solid black;
 	border-collapse: collapse;
-	padding: 15px;
+	padding: 10px;
 }
 .button-group {
 	display: flex;

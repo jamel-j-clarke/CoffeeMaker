@@ -9,9 +9,12 @@
 <link rel="stylesheet" href="css/app.css" />
 <link rel="icon" type="image/png" href="images/favicon-1.png"/>
 	<style>
-		th, table {
+		td, table {
 			margin-right: 20px;
 			margin-left: 20px;
+		}
+		td {
+			font-size: 20px;
 		}
 	</style>
 </head>
@@ -30,6 +33,11 @@
 				$http.get("/api/v1/orders").then(function(response) {
 					$scope.orders = response.data;
 				});
+				
+				$scope.fulfill = function() {
+					
+					
+				}
 			});
 			/*]]>*/
 		</script>
@@ -58,7 +66,7 @@
 								</tr>
 									<tr ng-repeat="order in orders">
 										<td>{{order.id}}</td>
-										<td>{{order.beverage.name}}</td>
+										<td>{{order.beverage}}</td>
 										<td>button to be implemented</td>
 										<td>
 											<label> 
@@ -95,11 +103,11 @@
 											</label>
 										</td>
 										<td>{{order.id}}</td>
-										<td>{{order.beverage.name}}</td>
+										<td>{{order.beverage}}</td>
 										<td>button to be implementedp for status</td>
 									</tr>
 							</table>
-							<button ng-click="cancel()" ng-disabled="baristaHomepageForm.$pristine" 
+							<button ng-click="fulfill()" ng-disabled="baristaHomepageForm.$pristine" 
 								class="button-side" style="	width: 215px; height: 50px;">Fulfill Order</button>
 					</div>
 					</form>
