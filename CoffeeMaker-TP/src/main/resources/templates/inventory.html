@@ -1,59 +1,33 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Inventory</title>
-<link rel="stylesheet" href="css/bootstrap.css" />
-<link rel="stylesheet" href="css/app.css" />
-<style>
-input.ng-valid {
-	background-color: lightgreen;
-}
-
-input.ng-dirty.ng-invalid-min {
-	background-color: yellow;
-}
-body {
-	background-color:rgb(207, 176, 145);
-}
-a {
-	border-radius: 10px;
-	border: 2px solid #000000;
-	text-align: center;
-	text-decoration: none;
-	color: black;
-	padding: 10px;
-	font-size: 36px;
-	white-space: normal;
-}
-back {
-	position: absolute;
-	bottom: 8px;
-	left: 8px;
-	font-size: 60px;
-}
-</style>
-
+	<title>Inventory</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="css/bootstrap.css" />
+	<link rel="stylesheet" href="css/app.css" />
+	<link rel="icon" type="image/png" href="images/favicon-1.png"/>
 </head>
-
 <body>
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
-	
-	<script>
-		/*<![CDATA[*/
+	<div layout:fragment="content">
+		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+		<script>
+		/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+		/*]]>*/
 		var app = angular.module('myApp', []);
 		app.controller('inventoryCtrl', function($scope, $http, $q) {
 			$scope.inventory = {
 				ingredients: ''
 			};
-			$scope.ingredient = {
-				name: '',
-				amount: ''
-			};
+			
+			
 
 			$scope.getInventory = function() {
 				$http.get("/api/v1/inventory").then(function(response) {
 					$scope.inventory = response.data;
+					console.log($scope.inventory);
 				}, function(rejection) {
 					console.error("Error while getting Inventory");
 				})
@@ -61,6 +35,7 @@ back {
 
 			$scope.updateIngredient = function() {
 				$scope.success = false;
+				console.log($scope.ingredient);
 				
 				if($scope.ingredient.amount > 0 && $scope.ingredient.name != ''){
 				
@@ -82,18 +57,45 @@ back {
 		        } else {
 		        	alert("Invalid Input. Try Again.");
 		        }
+				$scope.reset();
 			}
-
-			$scope.submit = function() {
-				$scope.updateIngredient();
+			
+			$scope.addIngredient = function() {
+				$scope.success = false;
+				console.log($scope.newIngredient);
+				
+				if($scope.newIngredient.amount > 0 && $scope.newIngredient.name != ''){
+					$http.post("/api/v1/inventory", $scope.newIngredient).then(
+							function(success) {
+								$scope.success = true;
+								$scope.getInventory();
+							}, function(error) {
+							      if (error.status === 409) {
+							          alert("Cannot add duplicate ingredient. Try again.");
+							          $scope.success = false;
+							        } else {
+							          console.error("Error while adding ingredient", error);
+							          alert("Invalid amount. Try again.");
+							          $scope.success = false;
+							        }
+							      });
+				} else {
+		        	alert("Invalid Input. Try Again.");
+		        }
 				$scope.reset();
 			}
 
 			$scope.reset = function() {
 				$scope.ingredient = {
-					name : '',
-					amount : ''
-				}
+						name: '',
+						amount: ''
+				};
+				
+				$scope.newIngredient = {
+						name: '',
+						amount: ''
+				};
+				
 				if (undefined != $scope.addInventoryForm) {
 					$scope.addInventoryForm.$setPristine(); //reset Form
 				}
@@ -102,88 +104,92 @@ back {
 			$scope.onHome = function() {
 				window.location.href = "/index";
 			}
-			
-			$scope.onAddIngredient = function() {
-				window.location.href = "/ingredient";
-			}
 
 			$scope.reset();
 			
 			$scope.getInventory();
 
 		});
+		/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
 		/*]]>*/
 	</script>
-
-
-
-	<div class="generic-container ng-cloak" ng-app="myApp"
-		ng-controller="inventoryCtrl as ctrl">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<span class="lead">Current Inventory</span>
-			</div>
-			
+	<div ng-app="myApp" ng-controller="inventoryCtrl as ctrl">
+		<header>Manage Inventory</header>
 			<br>
-				
-			<span ng-repeat="ingredient in inventory.ingredients">&emsp;{{ingredient.name}} :  &nbsp;{{ingredient.amount}}<br /></span>
-			
-			<br>
+		<div class="container">
+		<div class="form-group">
+			<div class="panel">
 				<div class="panel-heading">
-					<span class="lead">Update Inventory</span>
-				</div>
-				<div class="formcontainer">
-					<form ng-submit="submit()" name="addInventoryForm"
-						class="form-horizontal">
-					<div class="row">
-						<div class="form-group col-md-12">
-							<label class="col-md-1 control-lable" for="ingredient">Select an Ingredient</label>
-		      				<div class="col-md-4">
-		      					<select ng-model="ingredient.name" name="ingredientname" ng-required="true" class="form-control input-md-6">
-			      					<option value="">Select an Ingredient</option>
-			      					<option ng-repeat="ingredient in inventory.ingredients" ng-value="ingredient.name">{{ingredient.name}}</option>	
-		      					</select>
-								<div class="has-error" ng-show="addInventoryForm.$dirty">
-									<span ng-show="addInventoryForm.ingredientname.$error.required">This
-										is a required field for adding to inventory.</span>
-								</div>
-		      				</div>
-
-							<label class="col-md-1 control-lable" for="amount">Amount</label>
-		      				<div class="col-md-2">
-		        					<input type="number" ng-model="ingredient.amount" name="amount"
-											class="form-control input-md-6"
-											placeholder="Enter ingredient amount to add to inventory." required="0" min="1"/>
-									<div class="has-error" ng-show="addInventoryForm.$dirty">
-										<span ng-show="addInventoryForm.amount.$error.required">This
-											is a required field for adding to inventory.<br></span> <span
-											ng-show="addInventoryForm.amount.$error.min">Amount must be greater than
-											0 for adding to inventory.</span>
-									</div>
-		      				</div>
-	           	
-							<div class="col-md-2">
-								<input type="submit" value="Update Ingredient"
-									class="btn btn-primary btn-sm"
-									ng-disabled="addInventoryForm.$invalid" />
-							</div>
-							<div class="col-md-2">
-								<button type="button" ng-click="reset()"
-									class="btn btn-warning btn-sm"
-									ng-disabled="addInventoryForm.$pristine">Reset Form</button>
-							</div>
-					    </div>
+					<span><strong>Current Inventory</strong></span>
+				</div>	
+					<div class="panel-body">			
+						<span ng-repeat="ingredient in inventory.ingredients">&nbsp;<strong>{{ingredient.name}} : </strong>  &nbsp;{{ingredient.amount}}<br /></span>
 					</div>
-
-					</form>
+				<div class="panel-heading-middle">
+					<span><strong>Update Inventory</strong></span>
 				</div>
-			<div class="panel-footer">
-				<div ng-show="success">Inventory Updated!</div>
+					<div class="panel-body">
+						<form ng-submit="updateIngredient()" name="inventoryForm">
+							<div class="row justify-content-center">
+								<div class="form-group col-md-12">
+								<label class="col-sm-2 label-sm">Ingredient </label>
+				      				<div class="col-md-4">
+				      					<select ng-model="ingredient.name" name="name" ng-required="true" class="form-control input-md-6">
+					      					<option value="">Select an Ingredient</option>
+					      					<option ng-repeat="ingredient in inventory.ingredients" ng-value="ingredient.name">{{ingredient.name}}</option>	
+				      					</select>
+				      				</div>
+		
+									<label class="col-sm-1 label-sm">Amount</label>
+				      				<div class="col-md-2">
+				        					<input type="number" ng-model="ingredient.amount" name="amount"
+													class="form-control input-md-6"
+													placeholder="Enter ingredient amount to add to inventory." required="0" min="1"/>
+				      				</div>
+									<div class="col-md-3">
+										<input type="submit" value="Update Inventory" ng-disabled="addInventoryForm.$invalid" style="width: 70%;"/>	 
+									</div>
+							    </div>
+							</div>
+						</form>
+						</div>
+						<div class="form-group">
+						<form ng-submit="addIngredient()" name="inventoryForm">
+							<div class="row justify-content-center">
+								<div class="form-group col-md-12">
+								<label class="col-sm-2 label-sm">Name </label>
+				      				<div class="col-md-4">
+										<input type="text" ng-model="newIngredient.name" name="newName"
+													class="name form-control input-md-6"
+													placeholder="Enter ingredient name. No duplicate names." required>
+				      				</div>
+		
+									<label class="col-sm-1 label-sm">Amount</label>
+				      				<div class="col-md-2">
+				        					<input type="number" ng-model="newIngredient.amount" name="newAmount"
+													class="form-control input-md-6"
+													placeholder="Enter ingredient amount to add to inventory." required="0" min="1"/>
+				      				</div>
+									<div class="col-md-3">
+										<input type="submit" value="Add Ingredient" ng-disabled="addInventoryForm.$invalid" style="width: 70%;"/>	 
+									</div>
+							    </div>
+							</div>
+						</form>
+						</div>
+						<div class="panel-footer">
+						<footer ng-show="success">Inventory Updated!</footer>
+					</div>
+				</div>	
 			</div>
 		</div>	
-	</div>
-		            <a href="/managerhomepage" style="border: none;">
-            	<back> ← </back>
-            </a>
+		<div class="col">
+			<a href="/managerhomepage" style="border: none;">
+        		<back> ← </back>
+        	</a>
+        	<button type="button" ng-click="reset()" class="reset" ng-disabled="addInventoryForm.$pristine">Reset Form</button>	 
+		</div>
+		</div>
+  </div>
 </body>
 </html>

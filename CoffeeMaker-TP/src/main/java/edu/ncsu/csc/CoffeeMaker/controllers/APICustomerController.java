@@ -1,5 +1,7 @@
 package edu.ncsu.csc.CoffeeMaker.controllers;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 import javax.management.InvalidAttributeValueException;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.ncsu.csc.CoffeeMaker.models.UserInfo;
 import edu.ncsu.csc.CoffeeMaker.models.users.Customer;
 import edu.ncsu.csc.CoffeeMaker.services.CustomerService;
 
@@ -79,7 +82,39 @@ public class APICustomerController extends APIController {
         final Customer user = customerService.findByEmail( email );
         return null == user
                 ? new ResponseEntity( errorResponse( "No customer found with email " + email ), HttpStatus.NOT_FOUND )
-                : new ResponseEntity( user, HttpStatus.OK );
+                : new ResponseEntity( new UserInfo( user.getEmail(), user.getName(), "" ), HttpStatus.OK );
+    }
+
+    /**
+     * Validates the customer trying to sign in.
+     *
+     * @param attempt
+     *            the login attempt
+     * @return success if the customer's email and password is correct, error if
+     *         not.
+     * @throws InvalidAttributeValueException
+     *             if there is an error
+     * @throws InvalidKeySpecException
+     *             if there is an error
+     * @throws NoSuchAlgorithmException
+     *             if there is an error
+     */
+    @PostMapping ( BASE_PATH + "/customers/validate" )
+    public ResponseEntity validateCustomer ( @RequestBody final UserInfo attempt )
+            throws InvalidAttributeValueException, InvalidKeySpecException, NoSuchAlgorithmException {
+        final Customer user = customerService.findByEmail( attempt.getEmail() );
+        if ( null == user ) {
+            return new ResponseEntity( errorResponse( "No customer found with email " + attempt.getEmail() ),
+                    HttpStatus.NOT_FOUND );
+        }
+        else {
+            if ( user.checkPassword( attempt.getPassword() ) ) {
+                return new ResponseEntity( new UserInfo( user.getEmail(), user.getName(), "" ), HttpStatus.OK );
+            }
+            else {
+                return new ResponseEntity( "Incorrect password", HttpStatus.CONFLICT );
+            }
+        }
     }
 
     /**
@@ -91,11 +126,17 @@ public class APICustomerController extends APIController {
      *            The valid customer to be saved.
      * @return ResponseEntity indicating success if the User could be saved to
      *         the database, or an error if it could not be
+     * @throws NoSuchAlgorithmException
+     *             if there is an error
+     * @throws InvalidKeySpecException
+     *             if there is an error
      */
     @PostMapping ( BASE_PATH + "/customers" )
-    public ResponseEntity createCustomer ( @RequestBody final Customer customer ) {
+    public ResponseEntity createCustomer ( @RequestBody final UserInfo customer )
+            throws InvalidKeySpecException, NoSuchAlgorithmException {
+        Customer cust;
         try {
-            final Customer cust = new Customer( customer.getEmail(), customer.getName(), customer.getPassword() );
+            cust = new Customer( customer.getEmail(), customer.getName(), customer.getPassword() );
         }
         catch ( final InvalidAttributeValueException e ) {
             return new ResponseEntity( errorResponse( "Invalid input." ), HttpStatus.CONFLICT );
@@ -105,7 +146,8 @@ public class APICustomerController extends APIController {
                     errorResponse( "Customer with the email " + customer.getEmail() + " already exists" ),
                     HttpStatus.CONFLICT );
         }
-        customerService.save( customer );
+
+        customerService.save( cust );
         return new ResponseEntity( successResponse( customer.getName() + " was successfully created" ), HttpStatus.OK );
 
     }
@@ -122,11 +164,17 @@ public class APICustomerController extends APIController {
      *
      * @return ResponseEntity indicating success if the Customer could be saved
      *         to the inventory, or an error if it could not be
+     * @throws NoSuchAlgorithmException
+     *             if there is an error
+     * @throws InvalidKeySpecException
+     *             if there is an error
      */
     @PutMapping ( BASE_PATH + "/customers/{id}" )
-    public ResponseEntity updateCustomer ( @PathVariable final long id, @RequestBody final Customer customer ) {
+    public ResponseEntity updateCustomer ( @PathVariable final long id, @RequestBody final Customer customer )
+            throws InvalidKeySpecException, NoSuchAlgorithmException {
+        Customer cust;
         try {
-            final Customer cust = new Customer( customer.getEmail(), customer.getName(), customer.getPassword() );
+            cust = new Customer( customer.getEmail(), customer.getName(), customer.getPassword() );
         }
         catch ( final InvalidAttributeValueException e ) {
             return new ResponseEntity( errorResponse( "Invalid input. " ), HttpStatus.CONFLICT );
@@ -138,7 +186,7 @@ public class APICustomerController extends APIController {
                     HttpStatus.NOT_FOUND );
         }
         else {
-            currUser.updateUser( customer );
+            currUser.updateUser( cust );
             customerService.save( currUser );
             return new ResponseEntity( successResponse( customer.getName() + " was successfully updated" ),
                     HttpStatus.OK );

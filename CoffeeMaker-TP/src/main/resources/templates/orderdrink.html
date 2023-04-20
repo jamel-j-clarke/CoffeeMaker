@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Make an Order</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+	<div layout:fragment="content">
+		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+		<script>
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*]]>*/
+			var app = angular.module('myApp', []);
+			app.controller('orderCtrl', function($scope, $http, $q) {
+					
+				// get the customer info
+				$scope.name = sessionStorage.getItem("currentUserName");
+				$scope.email = sessionStorage.getItem("currentUserEmail");
+				
+				// get the recipes
+				$http.get("/api/v1/recipes").then(function(response) {
+					$scope.recipes = response.data;
+					console.log($scope.recipes);
+				});
+				
+				// create the new order
+				$scope.order = {
+					beverage: '',
+					payment: '',
+					userEmail: ''
+				};
+
+				// submit the drink order function
+				$scope.make = function() {
+					var amtPaid = $scope.amtPaid;
+					var name = $scope.name;
+					$scope.submissionFailure = false;
+					$scope.submissionSuccess = false;
+					$http.post("/api/v1/orders", $scope.order ).then(
+							function(response) {
+								$scope.submissionSuccess = true;
+								
+								// save the order information for order summary
+								sessionStorage.setItem("orderID", response.data);
+								sessionStorage.setItem("orderCost", $scope.order.payment);
+								
+								// go to the order summary page
+								window.location.href = "/ordersummary";
+								
+							}, function(errResponse) {
+								console.log(errResponse);
+								$scope.submissionFailure = true;
+								$scope.error = "Error while making recipe";
+							});
+				}
+				
+				// order form submit function
+				$scope.submit = function() {
+					
+					// update the order
+					$scope.order.beverage = document.getElementById("recipeName").textContent;
+					$scope.order.payment = document.getElementById("recipePrice").textContent;
+					$scope.order.userEmail= $scope.email;			
+					
+					$scope.make();
+					$scope.order = {};
+					
+					
+				}
+				
+				// go to customer home function
+				$scope.goToCustomerHome = function() {
+					window.location.href = "/customerhomepage";
+				}
+				
+				
+			});
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*<![CDATA[*/ 
+		</script>
+		
+		<div ng-app="myApp" ng-controller="orderCtrl">
+			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
+			<div class="holder" id="blur">
+				<div>
+					<header>What would you like to drink {{name}}?</header>
+				</div>
+				<br>
+				<form ng-submit="submit()" name="orderDrinkForm">
+					<table style="border: none;">
+						<tr>
+							<!-- drink options -->
+							
+							<td>
+								<div style="height:50%; overflow:auto">
+									<table>
+										<colgroup>
+											<col style="width:5%"/>
+											<col style="width:40%"/>
+											<col style="width:40%"/>
+											<col style="width:15%"/>
+										</colgroup>
+										<thead>
+											<tr>
+												<th></th>
+												<th>Drink Name:</th>
+												<th>Ingredients:</th>
+												<th>Price:</th>
+											</tr>
+										</thead>
+										<tr ng-repeat="recipe in recipes" style="height: 100px">
+											<td style="border: 2px solid #000000;"><input type="radio" name="selectRecipe"></td>
+											<td style="border: 2px solid #000000;" id="recipeName">{{recipe.name}}</td>
+											<td style="border: 2px solid #000000;">{{recipe.description}}</td>
+											<td style="border: 2px solid #000000;" id="recipePrice">{{recipe.price}}</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+							
+							<!-- total and order button -->
+							<td style="vertical-align: middle">
+								<input type="submit" style="font-size:36px; padding:20px; width:100%" ng-disabled="orderDrinkForm.$invalid" value="Order"/>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+			
+           	<back style="text-decoration: none" ng-click="goToCustomerHome()"> ← </back>
+           	
+           	<!-- drink verification popup -->
+			<!--  <div class="holder" id="newCustomerPopup">
+				<p>Are you sure you would like to order a
+				<br>Would you like to sign up?</p>
+				<br><br>
+				<popupButton href="/customersignup" onclick="goToSignUp()">Sign Up</popupButton>
+				<popupButton href="#" style="font-size: 20px" onclick="newToggle()">Cancel</popupButton> 
+			</div> -->
+			<!-- end of drink verification popup -->
+			
+		</div>
+	</div>
+</body>
+</html>

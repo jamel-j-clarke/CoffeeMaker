@@ -6,51 +6,10 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="css/bootstrap.css" />
+	<link rel="stylesheet" href="css/app.css" />
+	<link rel="icon" type="image/png" href="images/favicon-1.png"/>
     <style>
-    	body {
-			background-color: rgb(207, 176, 145);
-		}
-        header {
-			font-size: 56px;
-		}
-        back {
-			position: absolute;
-			bottom: 8px;
-			left: 8px;
-			font-size: 60px;
-		}
-		input[type=email], input[type=password], input[type=text] {
-			font-size: 24px;
-			border-radius: 10px;
-			border: 2px solid #000000;
-			width: 350px;
-			padding: 5px;
-		}
-		a, input[type=submit], button {
-			border-radius: 10px;
-			border: 2px solid #000000;
-			text-align: center;
-			text-decoration: none;
-			color: black;
-			padding: 10px;
-			font-size: 36px;
-			white-space: normal;
-		}
-		.holder {
-       		text-align: center;
-			vertical-align: middle;
-			font-size: 18px;
-		}
-		.holder#blur.active {
-			filter: blur(7px);
-		}
-		div {
-	        margin-bottom: 10px;
-			vertical-align: middle;
-			text-align: center;
-			font-size: 24px;
-			padding: 2px;
-      	}
       	#popup, #duplicateBaristaPopup {
       		position: fixed;
       		top: 40%;
@@ -70,17 +29,6 @@
       		opacity: 1;
       		transition: 0.35s;
       	}
-		table {
-			border: none;
-			margin-left: auto;
-			margin-right: auto;
-		}
-		* {
-			font-family: raleway;
-		}
-		input:invalid {
-		    border: 2px solid #FF0000;
-		}
     </style>
 </head>
 <body>
@@ -190,61 +138,67 @@
 				</div>
 				<br>
 				<form ng-submit="submit()" name="baristaRegistrationForm">
-					<table>
+					<table style="border: none;">
 						<tr>
 							<!-- holds actual table with fields that are a part of the form --> 
 							<td>
-								<table>
+								<table style="border: none">
 									<tr>
-										<td style="text-align: right;">
-											<label>Preferred Name:</label>
+										<td style="text-align: right; padding: 0px">
+											<label>Preferred Name:  &nbsp;</label>
 										</td>
 										<td>
-											<input type="text" required="true" ng-model="barista.name"/>
+											<input type="text" required="true" ng-model="barista.name"
+												style="border-radius: 7px;"/>
 										</td>
 									</tr>
 									<tr>
-										<td style="text-align: right;">
-											<label>Email:</label>
+										<td style="text-align: right; padding: 0px">
+											<label>Email:  &nbsp;</label>
 										</td>
 										<td>
-											<input type="email" required="true" ng-model="barista.email"/>
+											<input type="email" required="true" ng-model="barista.email"
+												style="border-radius: 7px;"/>
 										</td>
 									</tr>
 									<tr>
-										<td style="text-align: right;">
-											<label>Password:</label>
+										<td style="text-align: right; padding: 0px">
+											<label>Password:  &nbsp;</label>
 										</td>
 										<td>
-											<input type="password" required="true" ng-model="passwordVerification.password"/>
+											<input type="password" required="true" ng-model="passwordVerification.password"
+												style="border-radius: 7px;"/>
 										</td>
 									</tr>
 									<tr>
-										<td style="text-align: right;">
-											<label>Repeat Password:</label>
+										<td style="text-align: right; padding: 0px">
+											<label>Repeat Password:  &nbsp;</label>
 										</td>
 										<td>
-											<input type="password" required="true" ng-model="passwordVerification.repeatPassword"/>
+											<input type="password" required="true" ng-model="passwordVerification.repeatPassword"
+												style="border-radius: 7px;"/>
 										</td>
 									</tr>
 								</table>
 							</td>
-							<!-- holds button to submit the form --> 
-							<td>
-								<input type="submit" value="Register" class="a" ng-disabled="baristaRegistrationForm.$invalid"/>
-							</td>
 						</tr>
 					</table>
+					<!-- holds button to submit the form --> 
+					<input type="submit" value="Register" class="a" ng-disabled="baristaRegistrationForm.$invalid"
+						style="width: 150px; height: 40px; font-size: 22px; font-weight: bold; margin-top: 10px;"/>
 				</form>
 			</div>
 			<div ng-show="notMatching">Please enter matching passwords.</div>
+			
 			<!-- welcome message popup-->
 			<div class="holder" id="popup">
 				<p>Your barista account has been registered. <br>Welcome {{barista.name}}!</p>
 				<br> <br>
 				<a href="/baristahomepage" style="font-size: 20px">OK</a>
 			</div>
-			<!-- account already exists popup-->
+			<!-- end of welcome message popup -->
+			
+			<!-- account already exists popup -->
 			<div class="holder" id="duplicateBaristaPopup">
 				<p>A barista account with this email already exists.<br>
 				Would you like to login?</p> 
@@ -252,8 +206,9 @@
 				<a href="/stafflogin" style="font-size: 20px">Login</a>
 				<a href="#" style="font-size: 20px" onclick="dupeToggle()">Cancel</a>
 			</div>
+			<!-- end of account already exists popup -->
 			<script type="text/javascript">
-				// failed barista registration function
+				// failed barista registration popup function
 				function dupeToggle() {
 					var blur = document.getElementById('blur'); 
 					blur.classList.toggle('active');

@@ -6,72 +6,18 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
-    <style>
-        body {
-			background-color: rgb(207, 176, 145);
-		}
-		@font-face {
-  			font-family: 'Raleway', sans-serif;
-  			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
-		}
-        header {
-			font-size: 56px;
-		}
-		a, button {
-			border-radius: 10px;
-			border: 2px solid #000000;
-			text-align: center;
-			text-decoration: none;
-			color: black;
-			padding: 10px;
-			font-size: 36px;
-			width: 275px;
-			white-space: normal;
-		}
-		.holder {
-       		text-align: center;
-			vertical-align: middle;
-			font-size: 18px;
-			transition: 0.35s;
-		}
-		.holder#blur.active {
-			filter: blur(7px);
-		}
-		#signoutPopup {
-      		position: fixed;
-      		top: 40%;
-      		left: 50%;
-      		transform: translate(-50%, -50%);
-      		width: 600px;
-      		padding: 50px;
-      		box-shadow: 0 5px 30px rgba(0,0,0,.3);
-      		background: #FFF;
-      		visibility: hidden;
-      		opacity: 0;
-      		transition: 0.35s;
-      	}
-      	#signoutPopup.active {
-      		top: 50%;
-      		visibility: visible;
-      		opacity: 1;
-      		transition: 0.35s;
-      	}
-		div {
-	        margin-bottom: 10px;
-			vertical-align: middle;
-			font-size: 30px;
-			padding: 2px;
-      	}
+	<link rel="stylesheet" href="css/bootstrap.css" />
+	<link rel="stylesheet" href="css/app.css" />
+	<link rel="icon" type="image/png" href="images/favicon-1.png"/>
+	<style>
 		th, table {
-			margin-right: auto;
+			margin-right: 1px;
+			margin-left: 20px;
 			border: 2px solid black;
- 			border-collapse: collapse;
- 			padding: 15px;
+			border-collapse: collapse;
+			padding: 15px;
 		}
-		* {
-			font-family: raleway;
-		}
-    </style>
+</style>
 </head>
 <body>
 	<div layout:fragment="content">
@@ -87,7 +33,28 @@
 				
 				// get the current customer's name
 				$scope.name = sessionStorage.getItem("currentUserName");
+				$scope.email = sessionStorage.getItem("currentUserEmail");
 				console.log($scope.name);
+				console.log($scope.email);
+				
+				$scope.orders = '';
+				
+				$scope.order = {
+					id: '',
+					userEmail: ''
+				};
+				
+				$scope.updateOrders = function() {
+					// get the customer's orders
+					$http.get("/api/v1/orders/customer/" + $scope.email).then(function (response) {
+	  					$scope.orders = response.data;
+	  					console.log($scope.orders);
+	  				});
+				
+				}
+				
+				$scope.updateOrders();
+				
 				
 				// sign out as a customer
 				$scope.signOut = function() {
@@ -107,7 +74,6 @@
 						password: ''
 					};
 					
-					$scope.name = ' ';
 					
 					// clear the form
 					if (undefined != $scope.customerHomepageForm) {
@@ -115,59 +81,102 @@
 					}
 				}
 				
-				$scope.signout = function(){  
-					// update later to signout user of system instead of clearing
-					$scope.reset();	
-					window.location.href = "/index";
+				$scope.cancel = function(){  
+					$http.delete("/api/v1/orders/customer/" + $scope.order.id).then(
+					function (response) {
+	  					$scope.updateOrders();
+	  					console.log($scope.orders);
+	  					alert("Successfully canceled.");
+	  					$scope.reset();	
+	  				}, function(errResponse){
+	  					alert("Orders can not be canceled once they are started.");
+	  				});
+					
 				}
+				
+				$scope.pickup = function(){  
+					$http.put("/api/v1/orders/pickup/" + $scope.order.id).then(
+					function (response) {
+	  					$scope.updateOrders();
+	  					alert("Enjoy your order!");
+	  					console.log($scope.orders);
+	  					$scope.reset();	
+	  				}, function(errResponse) {
+	  					alert("Orders can not be picked up until they are completed.");
+	  				});
+					
+				}
+				
 			});
 			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
 			/*]]>*/
 		</script>
 		<div ng-app="myApp" ng-controller="populateCtrl">
-			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
-			<button style="position: absolute; top: 8px; right: 8px;" onclick="toggle()">Sign Out</button>
-			<div class="holder", style="text-align: left" id="blur">
+			<button class="signout" onclick="toggle()">Sign Out</button>
+			<div class="holder" id="blur">			
 				<form ng-submit="submit()" name="customerHomepageForm">
 				<div>
 					<header>Hey {{name}},</header>
 				</div>
 				<br>
-				<div>
-					Current Orders:
-					<table>
-						<colgroup>
-							<col style="width: 200px"/>
-							<col style="width: 550px"/>
-							<col style="width: 250px"/>
-						</colgroup>
-						<tr>
-							<th>Order #:</th>
-							<th>Drink:</th>
-							<th>Status:</th>
-						</tr>
-					</table>
-				</div>
-				</form>
+			<div class="table-header">Current Orders:</div>	
+			<div class="button-group">
+				<table>
+					<colgroup>
+						<col style="width: 200px"/>
+						<col style="width: 500px"/>
+						<col style="width: 250px"/>
+					</colgroup>
+					<tr>
+						<th> </th>
+						<th>Order #:</th>
+						<th>Drink:</th>
+						<th>Status:</th>
+					</tr>
+					<tr ng-repeat="order in orders">
+						<td style="border: 2px solid #000000;"><input type="radio" ng-model="$parent.order.id" ng-value="order.id" name="id"></td>
+						<td style="border: 2px solid #000000;" id="orderID">{{order.id}}</td>
+						<td style="border: 2px solid #000000;" id="orderRecipe">{{order.beverage}}</td>
+						<td style="border: 2px solid #000000;" id=orderStatus>{{order.status}}</td>
+					</tr>
+				</table>
+				<button ng-click="cancel()" ng-disabled="customerHomepageForm.$pristine" 
+					class="button-side" style="	width: 180px; height: 50px;">Cancel</button>
+				<button ng-click="pickup()" ng-disabled="customerHomepageForm.$pristine" 
+					class="button-side" style="	width: 180px; height: 50px;">Pickup</button>
 			</div>
+				</form>
+				</div>
+				<button href="orderdrink" onclick="goToOrder()" style="position: absolute; bottom: 8px; right: 8px;">Order Beverage</button>
+		</div>
 			<!--  sign out popup -->
 			<div class="holder" id="signoutPopup">
 				<p>Are you sure you would like to sign out?</p>
 				<br>
-				<a href="/customerlogin" style="font-size: 20px">Sign Out</a>
-				<a href="#" style="font-size: 20px" onclick="toggle()">Cancel</a>
+				<popupButton href="/customerlogin" onclick="goToLogin()">Sign Out</popupButton>
+				<popupButton href="#" onclick="toggle()">Cancel</popupButton>
 			</div>
+			<!-- end of sign out popup -->
+			
 			<script type="text/javascript">
-				// signing out function
+				// make signout popup appear function
 				function toggle() {
 					var blur = document.getElementById('blur'); 
 					blur.classList.toggle('active');
 					var popup = document.getElementById('signoutPopup'); 
 					popup.classList.toggle('active');
 				}
+
+				// go to login page function
+				function goToLogin() {
+					window.location.href = "/customerlogin";
+				}
+				
+				// go to order beverage page function
+				function goToOrder() {
+					window.location.href = "/orderdrink";
+				}
 			</script>
-			<button style="position: absolute; bottom: 8px; right: 8px;">Order Beverage</button>
 		</div>
-	</div>
 </body>
 </html>

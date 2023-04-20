@@ -1,68 +1,66 @@
 package edu.ncsu.csc.CoffeeMaker.models;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Min;
-
-import edu.ncsu.csc.CoffeeMaker.models.users.Customer;
 
 /**
  * The order object that tracks the recipes in the order for the user
  *
  * @author Emma Holincheck
  * @author Erin Grouge
- * @version 04/04/2023
+ * @version 04/17/2023
  *
  */
 @Entity
+@Table ( name = "orders" )
 public class Order extends DomainObject {
 
     /** The id of the order */
     @Id
     @GeneratedValue
-    private Long               id;
+    private Long          id;
     /** The payment for the order */
     @Min ( 0 )
-    private final long         payment;
+    private final Integer payment;
     /** The list of beverages in the order */
-    @OneToMany
-    private final List<Recipe> beverages;
+    private final String  beverage;
     /** Representative of the current status of the order in the system */
     @Enumerated ( EnumType.STRING )
-    private static OrderStatus orderStatus;
+    private OrderStatus   status;
     /** The id of the user placing the order */
-    private final long         userId;
+    private final String  userEmail;
 
     /**
      * Constructs a new Order
      *
-     * @param beverages
-     *            the list of beverages in the order
+     * @param beverage
+     *            the beverages in the order
      * @param payment
      *            the payment method for the order
+     * @param email
+     *            the email of the customer that ordered the beverage.
      */
-    public Order ( final List<Recipe> beverages, final long payment, final Customer customer ) {
-        this.beverages = beverages;
+    public Order ( final String beverage, final Integer payment, final String email ) {
+        this.beverage = beverage;
         this.payment = payment;
-        userId = (long) customer.getId();
-        orderStatus = OrderStatus.NOT_STARTED;
+        userEmail = email;
+        status = OrderStatus.NOT_STARTED;
     }
 
     /**
      * Constructs a default order
      */
     public Order () {
-        userId = 0;
+        userEmail = "";
         payment = 0;
-        beverages = new ArrayList<Recipe>();
+        beverage = "";
     }
 
     /**
@@ -70,8 +68,17 @@ public class Order extends DomainObject {
      *
      * @return payment information for the order
      */
-    public long getPayment () {
+    public Integer getPayment () {
         return payment;
+    }
+
+    /**
+     * Gets the beverage for the order
+     *
+     * @return beverage information for the order
+     */
+    public String getRecipe () {
+        return beverage;
     }
 
     /**
@@ -85,33 +92,73 @@ public class Order extends DomainObject {
     }
 
     /**
-     * Gets the id of the user who placed the order
+     * Returns the beverage ordered
      *
-     * @return userId of the user who placed the order
+     * @return beverage
      */
-    public long getUserId () {
-        return userId;
+    public String getBeverage () {
+        return this.beverage;
+    }
+
+    /**
+     * Gets the email of the user who placed the order
+     *
+     * @return userEmail of the user who placed the order
+     */
+    public String getUserEmail () {
+        return userEmail;
     }
 
     /**
      * Starts the order and moves its status to in progress in the system
+     *
+     * @return true if the order can be started, false if not.
      */
-    public void start () {
-        orderStatus = OrderStatus.IN_PROGRESS;
+    public boolean start () {
+        if ( status == OrderStatus.NOT_STARTED ) {
+            status = OrderStatus.IN_PROGRESS;
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**
-     * Completes the order, moving its status to done in the system
+     * Completes the order, moving its status to done in the system.
+     *
+     * @return true if the order can be completed, false if not.
      */
-    public void complete () {
-        orderStatus = OrderStatus.DONE;
+    public boolean complete () {
+        if ( status == OrderStatus.IN_PROGRESS ) {
+            status = OrderStatus.DONE;
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**
      * Cancels the order, moving its status to cancelled in the system
      */
     public void cancel () {
-        orderStatus = OrderStatus.CANCELLED;
+        status = OrderStatus.CANCELLED;
+    }
+
+    /**
+     * Cancels the order, moving its status to cancelled in the system
+     *
+     * @return true if the order can be picked up, false if not.
+     */
+    public boolean pickup () {
+        if ( status == OrderStatus.DONE ) {
+            status = OrderStatus.PICKED_UP;
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**
@@ -120,7 +167,7 @@ public class Order extends DomainObject {
      * @return the current order status
      */
     public OrderStatus getStatus () {
-        return orderStatus;
+        return status;
     }
 
     /**
@@ -138,21 +185,35 @@ public class Order extends DomainObject {
             return false;
         }
         final Order other = (Order) obj;
-        if ( beverages == null ) {
-            if ( other.beverages != null ) {
+        if ( beverage == null ) {
+            if ( other.beverage != null ) {
                 return false;
             }
         }
-        else if ( !beverages.equals( other.beverages ) ) {
+        else if ( !beverage.equals( other.beverage ) ) {
             return false;
         }
-        if ( id != other.id ) {
+        if ( userEmail == null ) {
+            if ( other.userEmail != null ) {
+                return false;
+            }
+        }
+        else if ( !userEmail.equals( other.userEmail ) ) {
             return false;
         }
-        if ( payment != other.payment ) {
+        if ( (long) id != (long) other.id ) {
+            return false;
+        }
+        if ( (int) payment != (int) other.payment ) {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString () {
+        return "Order " + id + " of " + beverage + " for $" + payment + " placed by " + userEmail + " has status "
+                + status;
     }
 
 }

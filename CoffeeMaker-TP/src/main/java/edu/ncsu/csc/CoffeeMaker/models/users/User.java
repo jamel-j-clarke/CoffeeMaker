@@ -1,6 +1,11 @@
 package edu.ncsu.csc.CoffeeMaker.models.users;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Objects;
 
 import javax.management.InvalidAttributeValueException;
@@ -15,7 +20,7 @@ import edu.ncsu.csc.CoffeeMaker.models.DomainObject;
  *
  * @author Emma Holincheck
  * @author Erin Grouge
- * @version 04/04/2023
+ * @version 04/10/2023
  */
 @MappedSuperclass
 public class User extends DomainObject {
@@ -29,6 +34,8 @@ public class User extends DomainObject {
     private String email;
     /** The password of the user */
     private String password;
+    /** Salt used for hashing password */
+    private String salt;
 
     /**
      * Constructs a new user object
@@ -41,11 +48,65 @@ public class User extends DomainObject {
      *            for the user's account
      * @throws InvalidAttributeValueException
      *             if the email is invalid
+     * @throws NoSuchAlgorithmException
+     *             if there is an error
+     * @throws InvalidKeySpecException
+     *             if there is an error
      */
-    public User ( final String email, final String name, final String password ) throws InvalidAttributeValueException {
+    public User ( final String email, final String name, final String password )
+            throws InvalidAttributeValueException, InvalidKeySpecException, NoSuchAlgorithmException {
+        // Create Salt
+        final SecureRandom random = new SecureRandom();
+        final byte[] s = new byte[16];
+        random.nextBytes( s );
+        salt = new String( s, StandardCharsets.UTF_8 );
+
         if ( ! ( setEmail( email ) && setName( name ) && setPassword( password ) ) ) {
             throw new InvalidAttributeValueException( "Invalid Input" );
         }
+
+    }
+
+    /**
+     * Returns true if the password matches the manager's password
+     *
+     * @param p
+     *            the password to check
+     * @return true if the password matches
+     */
+    public boolean checkPassword ( final String p ) {
+        final String passwordAttempt = hash( this.salt + p );
+
+        return this.password.equals( passwordAttempt );
+    }
+
+    /**
+     * Hashes the parameter
+     *
+     * Citation: The PackScheduler Project from CSC 216/217
+     *
+     * @param pw
+     *            the password to hash
+     * @return the hashed password
+     */
+    private String hash ( final String pw ) {
+        try {
+            final MessageDigest digest1 = MessageDigest.getInstance( "SHA-256" );
+            digest1.update( ( pw ).getBytes() );
+            return new String( digest1.digest() );
+        }
+        catch ( final NoSuchAlgorithmException e ) {
+            throw new IllegalArgumentException( "Cannot hash password" );
+        }
+    }
+
+    /**
+     * Returns the User's salt. Used for testing purpose
+     *
+     * @return the User's salt
+     */
+    public String getSalt () {
+        return this.salt;
     }
 
     /**
@@ -67,9 +128,8 @@ public class User extends DomainObject {
         if ( email == null || email.trim().equals( "" ) ) {
             return false;
         }
-        else if ( !email.contains( "@" ) || !email.contains( "." )
-                || ( email.indexOf( "." ) - email.indexOf( "@" ) <= 1 ) || email.indexOf( "@" ) == 0
-                || ( email.lastIndexOf( "." ) == email.length() - 1 ) ) {
+        else if ( !email.contains( "@" ) || !email.contains( "." ) || email.indexOf( "." ) - email.indexOf( "@" ) <= 1
+                || email.indexOf( "@" ) == 0 || email.lastIndexOf( "." ) == email.length() - 1 ) {
             // throw new InvalidAttributeValueException( "not a valid emails" );
             return false;
         }
@@ -90,12 +150,20 @@ public class User extends DomainObject {
     public boolean updateUser ( final User user ) {
         final String oldname = this.name;
         final String oldpassword = this.password;
-        if ( setName( user.getName() ) && setPassword( user.getPassword() ) ) {
-            return true;
+        if ( setName( user.getName() ) ) {
+            if ( user.getPassword() != null ) {
+                this.password = user.getPassword();
+                this.salt = user.getSalt();
+                return true;
+            }
+            else {
+                setName( oldname );
+                return false;
+            }
         }
         else { // If invalid, change back to old name and password
             setName( oldname );
-            setPassword( oldpassword );
+            this.password = oldpassword;
             return false;
         }
     }
@@ -136,7 +204,7 @@ public class User extends DomainObject {
      */
     private boolean setPassword ( final String password ) {
         if ( password != null && !password.trim().equals( "" ) ) {
-            this.password = password.trim();
+            this.password = hash( this.salt + password );
             return true;
         }
         else {

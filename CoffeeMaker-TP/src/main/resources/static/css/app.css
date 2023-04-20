@@ -1,62 +1,255 @@
-body, #mainWrapper {
-	height: 70%;
-	background-color: rgb(245, 245, 245);
+body {
+	background-color: rgb(207, 176, 145);
+	font-family: raleway;
 }
 
-body, .form-control {
-	font-size: 12px !important;
+@font-face {
+	font-family: 'Raleway', sans-serif;
+	src:
+		url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
 }
 
-.floatRight {
-	float: right;
-	margin-right: 18px;
+header {
+	font-size: 56px;
+	text-align: center;
 }
 
-.has-error {
-	color: red;
+a, .a, button, input[type=submit] {
+	border-radius: 7px;
+	border: 2px solid #000000;
+	text-align: center;
+	text-decoration: none;
+	background: transparent;
+	padding: 1px;
+	font-size: 20px;
+	font-weight: 600;
+	white-space: normal;
+	border-radius: 10px;
 }
 
-.formcontainer {
-	background-color: #DAE8E8;
-	padding: 20px;
+input[type="number"]{
+	height: auto;
+	border-radius: 10px;
 }
 
-.tablecontainer {
-	padding-left: 20px;
+.page-button {
+	border-radius: 10px;
+	color: black;
+	font-size: 35px;
 }
 
-.generic-container {
-	width: 80%;
+.signout {
+	position: absolute; 
+	top: 8px; 
+	right: 8px;
+	font-size: 22px;
+	padding: 2px;
+}
+
+.button-sm {
+	border-radius: 10px;
+	border: 2px solid #000000;
+	text-align: center;
+	text-decoration: none;
+	background: transparent;
+	padding: 2px;
+	font-size: 18px;
+	white-space: normal;
+}
+
+label {
+	font-size: 24px;
+	user-select: none;
+}
+
+.label-sm {
+	font-size: 20px;
+	padding-right: 20px;
+}
+
+#signoutPopup {
+	position: fixed;
+	top: 40%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 600px;
+	padding: 50px;
+	box-shadow: 0 5px 30px rgba(0,0,0,.3);
+	background: #FFF;
+	visibility: hidden;
+	opacity: 0;
+	transition: 0.35s;
+	font-size: 24px;
+}
+#signoutPopup.active {
+	top: 50%;
+	visibility: visible;
+	opacity: 1;
+	transition: 0.35s;
+}
+
+popupButton, .popupButton {
+	border-radius: 10px;
+	border: 2px solid #000000;
+	padding: 5px;
+	color: black;
+	font-size: 24px;
+	text-align: center;
+	text-decoration: none;
+	background-color: transparent;
+	user-select: none;
+}
+popupButton:hover, .popupButton:hover {
+	color: black;
+	cursor: pointer;
+}
+
+.holder {
+	text-align: center;
+	vertical-align: middle;
+	transition: 0.35s;
+}
+
+.holder#blur.active {
+	filter: blur(7px);
+}
+div {
+	margin-bottom: 10px;
+	vertical-align: middle;
+	padding: 2px;
+	font-size: 24px;
+	color: black;
+}
+th, table {
+	margin-right: auto;
+	margin-left: auto;
+	border: 2px solid black;
+	border-collapse: collapse;
+	padding: 10px;
+}
+.button-group {
+	display: flex;
+	justify-content: space-between;
 	margin-left: 20px;
-	margin-top: 20px;
-	margin-bottom: 20px;
-	padding: 20px;
-	background-color: #EAE7E7;
-	border: 1px solid #ddd;
-	border-radius: 4px;
-	box-shadow: 0 0 30px black;
+	margin-right: 40px;
+	margin-bottom: 10px;
+}
+.button-side {
+	margin-bottom: 10px;
+	margin-top: 10px;
+	font-size:  25px;
+}
+.button-group button {
+	margin-left: 10px;
+}
+.table-header {
+	margin-bottom: 10px;
+	margin-left: 20px;
+	font-size: 31px;
+	font-weight: bold;
+	text-align: left;
+}
+.panel {
+	margin-bottom: 1px;
+	background-color: transparent;
+	border-radius: 2px;
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+	border: 2px solid black;
+	border-collapse: collapse;
+}
+.panel-footer {
+	background-color: transparent;
+	border-bottom-right-radius: 3px;
+	border-bottom-left-radius: 3px;
+	border-top: 2px solid black;
+}
+footer {
+	font-size: 16px;
+	vertical-align: middle;
+	padding: 1px;
+	color: black;
+}
+.panel-heading {
+	background-color: transparent;
+	padding: 10px 15px;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	border-bottom: 2px solid black;
+}
+.panel-heading-middle {
+	background-color: transparent;
+	padding: 10px 15px;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	border-bottom: 2px solid black;
+	border-top: 2px solid black;
 }
 
-.custom-width {
-	width: 80px !important;
+.panel-heading>.dropdown .dropdown-toggle {
+	color: transparent;
 }
 
-.username.ng-valid {
-	background-color: lightgreen;
+.panel-title {
+	margin-top: 0;
+	margin-bottom: 0;
+	font-size: 16px;
+	color: transparent;
 }
-
-.username.ng-dirty.ng-invalid-required {
-	background-color: red;
+.panel-title>a, .panel-title>small, .panel-title>.small, .panel-title>small>a,
+	.panel-title>.small>a {
+	color: transparent;
 }
-
-.username.ng-dirty.ng-invalid-min {
+.panel-body {
+	padding: 5px;
+	font-size: 18px;
+}
+td {
+	padding: 10px;
+}
+back {
+	position: absolute;
+	bottom: 8px;
+	left: 8px;
+	font-size: 60px;
+	user-select: none;
+}
+back:hover {
+	color: black;
+	cursor: pointer;
+}
+.reset {
+	position: absolute;
+	bottom: 8px;
+	right: 8px;
+	font-size: 20px;
+}
+.container {
+	padding-right: 10px;
+	padding-left: 10px;
+	margin-right: auto;
+	margin-left: auto;
+}
+input[type=email], input[type=password], input[type=text] {
+	font-size: 14px;
+	border: 2px solid #000000;
+	width: 350px;
+	padding: 5px;
+	border-radius: 10px;
+}
+input:invalid {
+    border: 2px solid #FF0000;
+}
+input.ng-dirty.ng-invalid-min {
 	background-color: yellow;
 }
-
-.email.ng-valid {
+input.ng-valid {
 	background-color: lightgreen;
 }
-
-.email.ng-dirty.ng-invalid-required {
-	background-color: red;
+img {
+	border-radius: 10px;
+	border: 2px solid #000000;
+	width: 225px;
+	height: 225px;
+	padding: 10px;
 }

@@ -5,17 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" href="css/bootstrap.css" />
 <link rel="stylesheet" href="css/app.css" />
-<style>
-		body {
-				background-color:rgb(207, 176, 145);
-		}
-back {
-	position: absolute;
-	bottom: 8px;
-	left: 8px;
-	font-size: 60px;
-}
-</style>
+<link rel="icon" type="image/png" href="images/favicon-1.png"/>
 </head>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
@@ -80,28 +70,37 @@ back {
 	<div layout:fragment="content" class="generic-container ng-cloak"
 		ng-app="myApp" ng-controller="recipesCtrl as ctrl">
 
-		<h1>Coffee Recipes</h1>
+		<header>Coffee Recipes</header>
+		<br>
 
-		<div>
-			<ul>
-				<li ng-repeat="recipe in recipes"><label>{{recipe.name}}
-						<input type="radio" ng-model="$parent.name" name="name"
-						value="{{recipe.name}}" required="true" />
-				</label></li>
-			</ul>
-			<br />
-
-
+		<div class="container">
+		<div class="form-group">
+		
+		<div ng-if="recipes.length > 0">
+			<div class="panel-heading" style="border-bottom: 2px solid transparent;">
+					<span><strong>Choose a Recipe to Delete</strong></span>
+			</div>	
+		</div>
+		
+		<ul style="list-style: none;">
+			  <li ng-repeat="recipe in recipes">
+			    <label style="font-size: 23px; font-weight: 500; display: inline-flex; align-items: center;">
+			      <input type="radio" ng-model="$parent.name" name="name" value="{{recipe.name}}" required="true" />
+			      {{recipe.name}}
+			    </label>
+			  </li>
+		</ul>
+		
 			<div ng-if="recipes.length > 0">
+			<br>
+
 				<div class="row">
 					<div class="form-group col-md-12">
-						<div class="col-md-5">
-							<input type="checkbox" name="all" class="checkbox"
-								ng-model="$parent.deleteAll"> Delete all recipes? </input> <br />
-							<br>
-							<input type="submit" value="Delete" ng-click="del()"
-								class="btn btn-warning btn-sm" />
-						</div>
+							<label style="font-size: 20px; display: flex; flex-direction: row; font-weight: 500;">
+							  <input type="checkbox" name="all" class="checkbox" ng-model="$parent.deleteAll">
+							     &nbsp;Delete all Recipes?
+							</label>
+							<input type="submit" value="Delete" ng-click="del()" style="width: 10%;"/>
 					</div>
 				</div>
 			</div>
@@ -113,10 +112,10 @@ back {
 
 
 		</div>
-		
-
 	</div>
-				            <a href="/managerhomepage" style="border: none;">
+
+</div>
+			<a href="/managerhomepage" style="border: none;">
             	<back> ← </back>
             </a>
 

@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Order Summary</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="css/bootstrap.css" />
+	<link rel="stylesheet" href="css/app.css" />
+	<link rel="icon" type="image/png" href="images/favicon-1.png"/>
+</head>
+<body>
+	<div layout:fragment="content">
+		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+		<script>
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*]]>*/
+			var app = angular.module('myApp', []);
+			app.controller('populateCtrl', function($scope, $http, $q) {
+			
+				$scope.order = {
+					id: '',
+					payment: '',
+					beverage: '',
+					userEmail: '',				
+				}
+				
+				// check if there's order, and if not, 
+				if (sessionStorage.getItem("orderID") && sessionStorage.getItem("orderCost")) {
+					
+					// get the order
+					$http.get("/api/v1/orders/" + sessionStorage.getItem("orderID")).then(function (response) {
+						$scope.order = response.data;
+					});
+					
+					
+				} 
+				// and if so, 
+				else {
+					
+					// see if the user is a customer
+					try {
+						$http.get("/api/v1/customers/email/" + sessionStorage.getItem("currentUserEmail")).then(function (response) {
+							$scope.customer = response.data;
+							window.location.href = "/customerhomepage";
+						});
+					} 
+					// if not,
+					catch (err) {
+						// see if the user is a manager
+						try {
+							$http.get("/api/v1/employees/email/" + sessionStorage.getItem("currentUserEmail")).then(
+								function (success) {
+									if(success.status === 202) {
+										window.location.href = "/managerhomepage";
+									} 
+									// if the staff is not a manager, then they must be a barista
+									else {
+										window.location.href = "/baristahomepage";
+									}
+								}
+							);
+						} 
+						// if they aren't any of these users, idk
+						catch (err) {
+							window.location.href = "/index";
+						}
+					}
+					
+				}
+
+			});
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*]]>*/
+		</script>
+		<div ng-app="myApp" ng-controller="populateCtrl">
+			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
+			
+			<div>
+				<header>Order Summary</header>
+			</div>
+			<holder style="vertical-align: baseline">
+				<table style="border: none;">
+					<tr>
+						<!-- the message -->
+						<td style="text-align: center; width: 50%">
+							Thank you for your order! <br><br> You are Order#{{order.id}}. You can
+							view the status of your order on the home page. <br> You may cancel your order
+							as long as its status is still "Not Started". <br> And once your order's status
+							is "Ready", then you may pick up your order.
+						</td>
+					
+						<!-- the receipt and view orders button -->
+						<td style="text-align: center">
+							
+							<!-- receipt -->
+							<table style="border: none;">
+								<colgroup>
+									<col style="text-align: left"/>
+									<col style="text-align: right"/>
+								</colgroup>
+								
+								<!-- line item -->
+								<tr>
+									<td>{{order.beverage}}</td>
+									<td>${{order.payment}}.00</td>
+								</tr>
+								
+								<!-- empty line -->
+								<tr><td> </td><td> </td></tr>
+								
+								<!-- total -->
+								<tr>
+									<td>Total</td>
+									<td>${{order.payment}}.00</td>
+								</tr>
+								
+							</table>
+							
+							<!-- button -->
+							<button onclick="goToHomepage()">View Orders</button>
+						</td>
+					</tr>
+				</table>
+			</holder>
+			<script type="text/javascript">
+				// go to home page function
+				function goToHomepage() {
+					window.location.href = "/customerhomepage";
+				}
+			</script>
+		</div>
+	</div>
+</body>
+</html>

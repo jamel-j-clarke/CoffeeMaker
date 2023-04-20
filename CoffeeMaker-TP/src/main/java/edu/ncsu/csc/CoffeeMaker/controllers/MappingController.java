@@ -199,4 +199,41 @@ public class MappingController {
         return "stafflogin";
     }
 
+    /**
+     * On a GET request to /orderhistory, the UserController will return
+     * /src/main/resources/templates/orderhistory.html.
+     *
+     * @param model
+     *            undrelying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/orderhistory", "/orderhistory.html" } )
+    public String orderHistoryForm ( final Model model ) {
+        return "orderhistory";
+    }
+
+    /**
+     * On a GET request to /orderdrink, the UserController will return
+     * /src/main/resources/templates/orderdrink.html.
+     *
+     * @param model
+     *            undrelying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/orderdrink", "/orderdrink.html" } )
+    public String orderBeverageForm ( final Model model ) {
+        return "orderdrink";
+    }
+
+    /*
+     * On a GET request to /ordersummary, the UserController will return
+     * /src/main/resources/templates/ordersummary.html.
+     * @param model underlying UI model
+     * @return contents of the page
+     */
+    @GetMapping ( { "/ordersummary", "/ordersummary.html" } )
+    public String orderSummaryForm ( final Model model ) {
+        return "ordersummary";
+    }
+
 }

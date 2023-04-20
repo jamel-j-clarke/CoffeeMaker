@@ -1,5 +1,7 @@
 package edu.ncsu.csc.CoffeeMaker.controllers;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 import javax.management.InvalidAttributeValueException;
@@ -15,7 +17,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.ncsu.csc.CoffeeMaker.models.UserInfo;
 import edu.ncsu.csc.CoffeeMaker.models.users.Employee;
+import edu.ncsu.csc.CoffeeMaker.models.users.Manager;
 import edu.ncsu.csc.CoffeeMaker.services.EmployeeService;
 
 /**
@@ -76,18 +80,65 @@ public class APIEmployeeController extends APIController {
      * @param email
      *            employee email
      * @return response to the request
+     * @throws InvalidAttributeValueException
+     *             if there is an error
+     * @throws NoSuchAlgorithmException
+     *             if there is an error
+     * @throws InvalidKeySpecException
+     *             if there is an error
      */
     @GetMapping ( BASE_PATH + "/employees/email/{email}" )
-    public ResponseEntity getEmployee ( @PathVariable final String email ) {
+    public ResponseEntity getEmployee ( @PathVariable final String email )
+            throws InvalidAttributeValueException, InvalidKeySpecException, NoSuchAlgorithmException {
+        if ( Manager.checkEmail( email ) ) {
+            final Manager man = new Manager();
+            return new ResponseEntity( new UserInfo( man.getEmail(), man.getName(), "" ), HttpStatus.ACCEPTED );
+        }
         final Employee user = employeeService.findByEmail( email );
         if ( null == user ) {
             return new ResponseEntity( errorResponse( "No employee found with email " + email ), HttpStatus.NOT_FOUND );
         }
-        if ( "m4n4g3r@csc326.edu".equals( email ) ) {
-            return new ResponseEntity( user, HttpStatus.ACCEPTED );
+        else {
+            return new ResponseEntity( new UserInfo( user.getEmail(), user.getName(), "" ), HttpStatus.OK );
+        }
+    }
+
+    /**
+     * Validates the employee trying to sign in.
+     *
+     * @param attempt
+     *            the login in attempt
+     * @return success if the employee's email and password is correct, error if
+     *         not.
+     * @throws InvalidAttributeValueException
+     *             if there is an error
+     * @throws InvalidKeySpecException
+     *             if there is an error
+     * @throws NoSuchAlgorithmException
+     *             if there is an error
+     */
+    @PostMapping ( BASE_PATH + "/employees/validate" )
+    public ResponseEntity validateEmployee ( @RequestBody final UserInfo attempt )
+            throws InvalidAttributeValueException, InvalidKeySpecException, NoSuchAlgorithmException {
+        if ( Manager.checkEmail( attempt.getEmail() ) ) {
+            final Manager man = new Manager();
+            if ( man.checkPassword( attempt.getPassword() ) ) {
+                return new ResponseEntity( new UserInfo( man.getEmail(), man.getName(), "" ), HttpStatus.ACCEPTED );
+            }
+            return new ResponseEntity( errorResponse( "Invalid password." ), HttpStatus.CONFLICT );
+        }
+        final Employee user = employeeService.findByEmail( attempt.getEmail() );
+        if ( null == user ) {
+            return new ResponseEntity( errorResponse( "No employee found with email " + attempt.getEmail() ),
+                    HttpStatus.NOT_FOUND );
         }
         else {
-            return new ResponseEntity( user, HttpStatus.OK );
+            if ( user.checkPassword( attempt.getPassword() ) ) {
+                return new ResponseEntity( new UserInfo( user.getEmail(), user.getName(), "" ), HttpStatus.OK );
+            }
+            else {
+                return new ResponseEntity( "Incorrect password", HttpStatus.CONFLICT );
+            }
         }
     }
 
@@ -100,12 +151,18 @@ public class APIEmployeeController extends APIController {
      *            The valid User to be saved.
      * @return ResponseEntity indicating success if the User could be saved to
      *         the database, or an error if it could not be
+     * @throws NoSuchAlgorithmException
+     *             if there's an error
+     * @throws InvalidKeySpecException
+     *             if there's an error
      */
     @PostMapping ( BASE_PATH + "/employees" )
-    public ResponseEntity createEmployee ( @RequestBody final Employee employee ) {
+    public ResponseEntity createEmployee ( @RequestBody final UserInfo employee )
+            throws InvalidKeySpecException, NoSuchAlgorithmException {
         // Check for invalid inputs with temporary employee object
+        Employee emp;
         try {
-            final Employee emp = new Employee( employee.getEmail(), employee.getName(), employee.getPassword() );
+            emp = new Employee( employee.getEmail(), employee.getName(), employee.getPassword() );
         }
         catch ( final InvalidAttributeValueException e ) {
             return new ResponseEntity( errorResponse( "Invalid input." ), HttpStatus.CONFLICT );
@@ -115,7 +172,7 @@ public class APIEmployeeController extends APIController {
                     errorResponse( "Employee with the email " + employee.getEmail() + " already exists" ),
                     HttpStatus.CONFLICT );
         }
-        employeeService.save( employee );
+        employeeService.save( emp );
         return new ResponseEntity( successResponse( employee.getName() + " successfully created" ), HttpStatus.OK );
 
     }
@@ -132,12 +189,18 @@ public class APIEmployeeController extends APIController {
      *
      * @return ResponseEntity indicating success if the Employee could be saved
      *         to the inventory, or an error if it could not be
+     * @throws NoSuchAlgorithmException
+     *             if there's an error
+     * @throws InvalidKeySpecException
+     *             if there's an error
      */
     @PutMapping ( BASE_PATH + "/employees/{id}" )
-    public ResponseEntity updateEmployeeById ( @PathVariable final long id, @RequestBody final Employee employee ) {
+    public ResponseEntity updateEmployeeById ( @PathVariable final long id, @RequestBody final Employee employee )
+            throws InvalidKeySpecException, NoSuchAlgorithmException {
         // Check for invalid inputs with temporary employee object
+        Employee emp;
         try {
-            final Employee emp = new Employee( employee.getEmail(), employee.getName(), employee.getPassword() );
+            emp = new Employee( employee.getEmail(), employee.getName(), employee.getPassword() );
         }
         catch ( final InvalidAttributeValueException e ) {
             return new ResponseEntity( errorResponse( "Invalid input." ), HttpStatus.CONFLICT );
@@ -148,7 +211,7 @@ public class APIEmployeeController extends APIController {
             return new ResponseEntity( errorResponse( "Employee with the id " + id + " does not exist" ),
                     HttpStatus.NOT_FOUND );
         }
-        if ( currUser.updateUser( employee ) ) {
+        if ( currUser.updateUser( emp ) ) {
             employeeService.save( currUser );
             return new ResponseEntity( successResponse( employee.getName() + " was successfully updated" ),
                     HttpStatus.OK );

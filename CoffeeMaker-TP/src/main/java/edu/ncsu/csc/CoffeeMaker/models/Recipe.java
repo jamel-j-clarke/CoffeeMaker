@@ -39,6 +39,9 @@ public class Recipe extends DomainObject {
     @OneToMany ( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
     private List<Ingredient> ingredients;
 
+    /** Description of the Recipe for frontend */
+    private String           description;
+
     /**
      * Creates a default recipe for the coffee maker.
      */
@@ -69,6 +72,16 @@ public class Recipe extends DomainObject {
     @Override
     public Long getId () {
         return id;
+    }
+
+    /**
+     * Returns the recipe description
+     *
+     * @return description
+     */
+    public String getDescription () {
+        this.description = this.toString();
+        return this.description;
     }
 
     /**
@@ -231,7 +244,24 @@ public class Recipe extends DomainObject {
      */
     @Override
     public String toString () {
-        return name + " with ingredients " + ingredients.toString();
+        final StringBuilder str = new StringBuilder();
+        for ( int i = 0; i < ingredients.size(); i++ ) {
+            if ( i == ingredients.size() - 1 ) {
+                str.append( "and " );
+                str.append( ingredients.get( i ).getName() );
+                str.append( " (" );
+                str.append( ingredients.get( i ).getAmount() );
+                str.append( ")." );
+            }
+            else {
+                str.append( ingredients.get( i ).getName() );
+                str.append( " (" );
+                str.append( ingredients.get( i ).getAmount() );
+                str.append( "), " );
+            }
+        }
+        return str.toString();
+
     }
 
     @Override

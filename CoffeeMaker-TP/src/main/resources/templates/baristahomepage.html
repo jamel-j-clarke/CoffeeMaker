@@ -2,150 +2,249 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <title>Barista Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/bootstrap.css" />
 <link rel="stylesheet" href="css/app.css" />
-<style>
-		@font-face {
-  			font-family: 'Raleway', sans-serif;
-  			src: url("https://fonts.googleapis.com/css2?family=Raleway&display=swap");
+<link rel="icon" type="image/png" href="images/favicon-1.png"/>
+	<style>
+		td, table {
+			margin-right: 20px;
+			margin-left: 20px;
 		}
-		body {
-				background-color:rgb(207, 176, 145);
+		td {
+			font-size: 20px;
 		}
-		header {
-			font-size: 56px;
-		}
-		* {
-			font-family: raleway;
-		}
-		input.ng-valid {
-			background-color: lightgreen;
-		}
-		
-		input.ng-dirty.ng-invalid-min {
-			background-color: yellow;
-		}
-		a, button {
-			border-radius: 10px;
-			border: 2px solid #000000;
-			text-align: center;
-			text-decoration: none;
-			color: black;
-			padding: 10px;
-			font-size: 36px;
-			width: 275px;
-			white-space: normal;
-		}
-      	* {
-			font-family: raleway;
-		}
-</style>
+		#completePopup {
+      		position: fixed;
+      		top: 40%;
+      		left: 50%;
+      		transform: translate(-50%, -50%);
+      		width: 600px;
+      		padding: 50px;
+      		box-shadow: 0 5px 30px rgba(0,0,0,.3);
+      		background: #FFF;
+      		visibility: hidden;
+      		opacity: 0;
+      		transition: 0.35s;
+      	}
+        #completePopup.active {
+      		top: 50%;
+      		visibility: visible;
+      		opacity: 1;
+      		transition: 0.35s;
+      	}
+	</style>
 </head>
 <body>
 	<div layout:fragment="content">
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
-	<script>
-		/*<![CDATA[*/
-		var app = angular.module('myApp', []);
-		app.controller('populateCtrl', function($scope, $http, $q) {
-			$scope.signout = function(){  
-				// update later to signout user of system instead of clearing
-				window.location.href = "/index";
-			}
-		});
-		/*]]>*/
-	</script>
-	
-	<div class="row text-center">
-        <h1>Barista Homepage</h1>
-		<br>
-		<br>
-    </div>	
-	<div class="generic-container ng-cloak" ng-app="myApp"
-		ng-controller="populateCtrl as ctrl">
-				<form ng-submit="submit()" name="baristaHomepageForm"
-					class="form-horizontal">
-						<input type="submit" class="a" style="position: absolute; top: 15px; right: 15px;" value="Signout"  ng-click="signout()"/>
-					<div class="row text-center"> 
-					 
-						<br> 
-						<br> 
-					</div>				
-						<div class="row">
-							<label class="col-lg-12 control-lable" for="list" style="font-size: 15px">Current Orders:</label>
-                              <div class="col-md-6">
-                              <table class="table table-striped">
-                                <thead>
-                                  <tr>
-                                    <th>Order #</th>
-                                    <th>Recipe Info</th>
-                                    <th>Status</th>
-                                    <th>Completed</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr ng-repeat="ingredient in ingredients">       
-                                      <td>{{ ingredient.amount }}</td>
-                                      <td>{{ ingredient.name }}</td>
-                                      <td>button</td>
-                                      <td>
-                                      	<label>
-                                          <input type="radio" name="name" ng-model="$parent.name" value="{{ingredient.name}}">
-                                        </label>
-                                      </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                              </div>
-                             <div class="form-actions floatRight">
-								<button type="button" ng-click="submit()"
-										class="btn btn-default btn-sm"
-										ng-disabled="!canSubmit">Complete Order</button>
-							</div>
-					    </div>
-					
-						<div class="row">
-							<label class="col-lg-12 control-lable" for="list" style="font-size: 15px">All Orders:</label>
-                              <div class="col-md-6">
-                              <table class="table table-striped">
-                                <thead>
-                                  <tr>
-                                    <th>Fulfill</th>
-                                    <th>Order #</th>
-                                    <th>Recipe Info</th>
-                                    <th>Status</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr ng-repeat="ingredient in ingredients">
-                                     <td>
-                                      <label>
-                                          <input type="radio" name="name" ng-model="$parent.name" value="{{ingredient.name}}">
-                                        </label>
-                                      </td>
-                                      <td>{{ ingredient.name }}</td>
-                                      <td>{{ ingredient.amount }}</td>
-                                      <td>button</td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                              </div>
-                    </div>
-					<div class="row" >
-						<div class="form-actions floatRight">
-								<button type="button" ng-click="submit()"
-										class="btn btn-default btn-sm"
-										ng-disabled="!canSubmit">Fulfill Order</button>
-						</div>
-					</div>
-					<br>	
-				</form>
-					
-			<div class="panel-footer">
-			</div>
+		<script>
+			/*<![CDATA[*/
+			var app = angular.module('myApp', []);
+			app.controller('populateCtrl', function($scope, $http, $q) {
+				console.log('Hit');
+				
+				$scope.ordersIncomp = {
+						orders : '',	
+				};
+				
+				$scope.ordersInprog = {
+						orders : '',	
+				};
+				
+				$scope.order = {
+						id : '',
+						beverage : '',
+						status : '',
+						recipe : '',	
+				}
+				
+				$scope.getIncomplete = function() {
+					$http.get("/api/v1/orders/incomplete").then(function(response) {
+						$scope.ordersIncomp = response.data;
+					}, function(rejection) {
+						console.error("Error while getting Recipe");
+					})
+				}
+				
+				$scope.getInprogress = function() {
+					$http.get("/api/v1/orders/inprogress").then(function(response) {
+						$scope.ordersInprog = response.data;
+					}, function(rejection) {
+						console.error("Error while getting Recipe");
+					})
+				}
 
-	</div>
-	
-	</div>
+				$scope.signout = function(){  
+					// update later to signout user of system instead of clearing
+					window.location.href = "/index";
+				}
+				
+				$scope.fulfill = function() {
+					$scope.success = false;
+					$http.put("/api/v1/orders/start/" + $scope.order.id).then(
+							function(success) {
+								$scope.success = true;
+								$scope.getIncomplete();
+								$scope.getInprogress();
+								$scope.order.id = '';
+							}, function(error) {
+								if (error.status === 404) {
+								    alert("Unable to Start order");
+								    $scope.success = false;
+								}
+								if (error.status === 400) {
+								    alert("Not Enough Ingredients");
+								    // Implement more later
+								    $scope.success = false;
+								}
+							});
+				}
+				
+				$scope.complete = function() {
+					$scope.success = false;
+					$http.put("/api/v1/orders/complete/" + $scope.order.id).then(
+							function(success) {
+								console.log('Success');
+								$scope.success = true;
+								$scope.getIncomplete();
+								$scope.getInprogress();
+								toggle2();
+							}, function(error) {
+								if (error.status === 404) {
+								    alert("Recipe Not Found");
+								    $scope.success = false;
+								}
+								if (error.status === 400) {
+								    alert("Not enough Ingredients");
+								    // Implement more later
+								    $scope.success = false;
+								}
+							});
+				}
+			
+				$scope.getIncomplete();
+				$scope.getInprogress();
+		
+			});
+			/*]]>*/
+		</script>
+		<div ng-app="myApp" ng-controller="populateCtrl">
+			<button class="signout" onclick="toggle()">Sign Out</button>
+			<div class="holder" id="blur">
+				<div>
+					<header>Barista Homepage</header>
+				</div>
+				<form name="baristaHomepageForm">
+					<!-- current orders table -->
+					<div class="table-header">Current Orders:</div>	
+					<div class="button-group">
+							<table>
+								<colgroup>
+									<col style="width: 200px"/>
+									<col style="width: 250px"/>
+									<col style="width: 250px"/>
+									<col style="width: 200px"/>
+								</colgroup>
+								<tr>
+									<th>Order #</th>
+									<th>Drink</th>
+									<th>Status</th>
+									<th>Completed</th>
+								</tr>
+									<tr ng-repeat="order in ordersInprog">
+										<td>{{order.id}}</td>
+										<td>{{order.beverage}}</td>
+										<td>{{order.status}}</td>
+										<td>
+											<label> 
+												<input type="radio" ng-model="$parent.order.id" ng-value="order.id" name="id">
+											</label>
+										</td>
+									</tr>
+							</table>
+								<button ng-click="complete()" ng-disabled="baristaHomepageForm.$pristine" 
+									class="button-side" style="	width: 215px; height: 50px;">Complete Order</button>
+					</div>
+					<br>
+					<br>
+					<!-- all orders table -->
+					<div class="table-header">All Orders:</div>	
+					<div class="button-group">
+							<table>
+								<colgroup>
+									<col style="width: 200px"/>
+									<col style="width: 250px"/>
+									<col style="width: 250px"/>
+									<col style="width: 200px"/>
+								</colgroup>
+								<tr>
+									<th>Order #</th>
+									<th>Drink</th>
+									<th>Status</th>
+									<th>Fulfill</th>
+								</tr>
+									<tr ng-repeat="order in ordersIncomp">
+					
+										<td>{{order.id}}</td>
+										<td>{{order.beverage}}</td>
+										<td>{{order.status}}</td>
+										<td>
+											<label> 
+												<input type="radio" ng-model="$parent.order.id" ng-value="order.id" name="id">
+											</label>
+										</td>
+									</tr>
+							</table>
+							<button ng-click="fulfill()"
+								class="button-side" style="	width: 215px; height: 50px;">Fulfill Order</button>
+					</div>
+					</form>
+					</div>
+			</div>
+			<!-- sign out popup -->
+			<div class="holder" id="signoutPopup">
+				<p>Are you sure you would like to sign out?</p>
+				<br>
+				<popupButton href="/stafflogin" onclick="goToLogin()">Sign Out</popupButton>
+				<popupButton href="#" onclick="toggle()">Cancel</popupButton>
+			</div>
+			
+			<div class="holder" id="completePopup">
+				<p>Successfully completed Order</p>
+				<br>
+				<popupButton href="/baristahomepage" onclick="toggle2()">OK</popupButton>
+			</div>
+			<!-- end of sign out popup -->
+			
+			<script type="text/javascript">
+				// make signout popup appear function
+				function toggle() {
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var signoutPopup = document.getElementById('signoutPopup');
+					signoutPopup.classList.toggle('active');
+				}
+				
+				function toggle2() {
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var completePopup = document.getElementById('completePopup');
+					completePopup.classList.toggle('active');
+				}
+				
+				// go to login page function
+				function goToLogin() {
+					window.location.href = "/stafflogin";
+				}
+				
+				// go to login page function
+				function goToPage() {
+					window.location.href = "/baristahomepage";
+				}
+			</script>
+		</div>
 </body>
 </html>
