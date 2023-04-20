@@ -35,6 +35,9 @@
 				$scope.name = sessionStorage.getItem("currentUserName");
 				console.log($scope.name);
 				
+				// get the customer's orders
+				$http.get("/api/v1/orders/customer")
+				
 				// sign out as a customer
 				$scope.signOut = function() {
 					// clear sesstion storage
@@ -72,6 +75,7 @@
 					$scope.reset();	
 					$console.log("Implement a popup for an order");
 				}
+				
 			});
 			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
 			/*]]>*/
@@ -96,6 +100,11 @@
 						<th>Order #:</th>
 						<th>Drink:</th>
 						<th>Status:</th>
+					</tr>
+					<tr ng-repeat="order in orders">
+						<td style="border: 2px solid #000000;" id="orderID">{{order.id}}</td>
+						<td style="border: 2px solid #000000;" id="orderRecipe">{{order.beverage}}</td>
+						<td style="border: 2px solid #000000;" id=orderStatus>{{order.status}}</td>
 					</tr>
 				</table>
 				<button ng-click="cancel()" ng-disabled="customerHomepageForm.$pristine" 
