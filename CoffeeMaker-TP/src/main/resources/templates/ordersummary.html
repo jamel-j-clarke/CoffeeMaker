@@ -20,16 +20,52 @@
 			app.controller('populateCtrl', function($scope, $http, $q) {
 				
 				// check if there's order, and if not, 
-				
-				// get the order
-				$http.get("/api/v1/orders/" + $sessionStorage.getItem("orderID")).then(function (response) {
-					$scope.order = response.data;
-				});
-				
-				// define variables
-				$scope.price = $sessionStorage.getItem("orderCost");
-				$scope.payment = $scope.order.payment;
-				$scope.change = $scope.payment - $scope.price;
+				if (sessionStorage.getItem("orderID") && sessionStorage.getItem("orderCost")) {
+					
+					// get the order
+					$http.get("/api/v1/orders/" + sessionStorage.getItem("orderID")).then(function (response) {
+						$scope.order = response.data;
+					});
+					
+					// define variables
+					$scope.price = sessionStorage.getItem("orderCost");
+					$scope.payment = scope.order.payment;
+					$scope.change = scope.payment - $scope.price;
+					
+				} 
+				// and if so, 
+				else {
+					
+					// see if the user is a customer
+					try {
+						$http.get("/api/v1/customers/email/" + sessionStorage.getItem("currentUserEmail")).then(function (response) {
+							$scope.customer = response.data;
+							window.location.href = "/customerhomepage";
+						});
+					} 
+					// if not,
+					catch (err) {
+						// see if the user is a manager
+						try {
+							$http.get("/api/v1/employees/email/" + sessionStorage.getItem("currentUserEmail")).then(
+								function (success) {
+									if(success.status === 202) {
+										window.location.href = "/managerhomepage";
+									} 
+									// if the staff is not a manager, then they must be a barista
+									else {
+										window.location.href = "/baristahomepage";
+									}
+								}
+							);
+						} 
+						// if they aren't any of these users, idk
+						catch (err) {
+							window.location.href = "/index";
+						}
+					}
+					
+				}
 
 			});
 			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
@@ -64,7 +100,7 @@
 								
 								<!-- line item -->
 								<tr>
-									<td>{{order.recipe}}</td>
+									<td>{{order.beverage}}</td>
 									<td>${{price}}.00</td>
 								</tr>
 								
@@ -80,7 +116,7 @@
 							</table>
 							
 							<!-- button -->
-							<button  onclick="goToHomepage()">View Orders</button>
+							<button onclick="goToHomepage()">View Orders</button>
 						</td>
 					</tr>
 				</table>
