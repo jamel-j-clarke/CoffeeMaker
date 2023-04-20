@@ -24,7 +24,6 @@ import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 import edu.ncsu.csc.CoffeeMaker.models.users.Customer;
 import edu.ncsu.csc.CoffeeMaker.services.CustomerService;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
-import edu.ncsu.csc.CoffeeMaker.services.OrderHistoryService;
 import edu.ncsu.csc.CoffeeMaker.services.OrderService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 
@@ -47,35 +46,28 @@ public class APIOrderController extends APIController {
      * manipulating the User model
      */
     @Autowired
-    private OrderService        orderService;
+    private OrderService     orderService;
 
     /**
      * OrderService object, to be autowired in by Spring to allow for
      * manipulating the User model
      */
     @Autowired
-    private OrderHistoryService orderHistoryService;
+    private InventoryService inventoryService;
 
     /**
      * OrderService object, to be autowired in by Spring to allow for
      * manipulating the User model
      */
     @Autowired
-    private InventoryService    inventoryService;
+    private CustomerService  customerService;
 
     /**
      * OrderService object, to be autowired in by Spring to allow for
      * manipulating the User model
      */
     @Autowired
-    private CustomerService     customerService;
-
-    /**
-     * OrderService object, to be autowired in by Spring to allow for
-     * manipulating the User model
-     */
-    @Autowired
-    private RecipeService       recipeService;
+    private RecipeService    recipeService;
 
     /**
      * REST API method to provide GET access to all orders in the system
@@ -97,7 +89,7 @@ public class APIOrderController extends APIController {
      */
     @GetMapping ( BASE_PATH + "/orders/customer/{email}" )
     public List<Order> getCustomerOrders ( @PathVariable final String email ) {
-        return orderService.findByUserEmail( email );
+        return orderService.findByStatusNotAndUserEmail( OrderStatus.PICKED_UP, email );
     }
 
     /**
@@ -137,7 +129,7 @@ public class APIOrderController extends APIController {
      */
     @GetMapping ( BASE_PATH + "/orders/pickedup" )
     public List<Order> getPickedUpOrders () {
-        return orderHistoryService.findAll();
+        return orderService.findByStatus( OrderStatus.PICKED_UP );
     }
 
     /**
@@ -188,7 +180,7 @@ public class APIOrderController extends APIController {
             return new ResponseEntity( errorResponse( "Order info invalid." ), HttpStatus.CONFLICT );
         }
         orderService.save( o );
-        cust.orderBeverage( o );
+        // cust.orderBeverage( o );
         return new ResponseEntity( o.getId(), HttpStatus.OK );
 
     }
@@ -284,7 +276,7 @@ public class APIOrderController extends APIController {
 
         else {
             return new ResponseEntity( errorResponse( currOrder.getId() + " does not have enough ingredients" ),
-                    HttpStatus.BAD_REQUEST );
+                    HttpStatus.CONFLICT );
         }
 
     }
@@ -319,11 +311,11 @@ public class APIOrderController extends APIController {
         }
         else {
             currOrder.pickup();
-            orderHistoryService.save( currOrder );
-            orderService.delete( currOrder );
-            final Customer cust = customerService.findByEmail( currOrder.getUserEmail() );
+            orderService.save( currOrder );
+            // final Customer cust = customerService.findByEmail(
+            // currOrder.getUserEmail() );
             // Removes the order from the list of current orders
-            cust.cancelOrder( currOrder );
+            // cust.cancelOrder( currOrder );
             return new ResponseEntity( successResponse( currOrder.getId() + " was successfully picked up" ),
                     HttpStatus.OK );
         }

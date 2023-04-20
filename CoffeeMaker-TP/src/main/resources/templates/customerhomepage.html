@@ -74,7 +74,6 @@
 						password: ''
 					};
 					
-					$scope.name = ' ';
 					
 					// clear the form
 					if (undefined != $scope.customerHomepageForm) {
@@ -83,21 +82,29 @@
 				}
 				
 				$scope.cancel = function(){  
-					$http.delete("/api/v1/orders/customer/" + $scope.order.id).then(function (response) {
+					$http.delete("/api/v1/orders/customer/" + $scope.order.id).then(
+					function (response) {
 	  					$scope.updateOrders();
 	  					console.log($scope.orders);
+	  					alert("Successfully canceled.");
+	  					$scope.reset();	
+	  				}, function(errResponse){
+	  					alert("Orders can not be canceled once they are started.");
 	  				});
-					$scope.reset();	
-					console.log("Implement cancelling an order");
+					
 				}
 				
 				$scope.pickup = function(){  
-					$http.put("/api/v1/orders/pickup/" + $scope.order.id).then(function (response) {
+					$http.put("/api/v1/orders/pickup/" + $scope.order.id).then(
+					function (response) {
 	  					$scope.updateOrders();
+	  					alert("Enjoy your order!");
 	  					console.log($scope.orders);
+	  					$scope.reset();	
+	  				}, function(errResponse) {
+	  					alert("Orders can not be picked up until they are completed.");
 	  				});
-					$scope.reset();	
-					$console.log("Implement a popup for an order");
+					
 				}
 				
 			});

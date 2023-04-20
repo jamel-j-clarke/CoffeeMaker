@@ -36,4 +36,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      * @return Found order(s), null if none.
      */
     List<Order> findByUserEmail ( String userEmail );
+
+    List<Order> findByStatusNotAndUserEmail ( final OrderStatus status, final String userEmail );
 }
