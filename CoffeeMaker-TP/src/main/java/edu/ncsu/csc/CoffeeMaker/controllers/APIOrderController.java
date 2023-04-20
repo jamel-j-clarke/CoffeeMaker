@@ -24,6 +24,7 @@ import edu.ncsu.csc.CoffeeMaker.models.Recipe;
 import edu.ncsu.csc.CoffeeMaker.models.users.Customer;
 import edu.ncsu.csc.CoffeeMaker.services.CustomerService;
 import edu.ncsu.csc.CoffeeMaker.services.InventoryService;
+import edu.ncsu.csc.CoffeeMaker.services.OrderHistoryService;
 import edu.ncsu.csc.CoffeeMaker.services.OrderService;
 import edu.ncsu.csc.CoffeeMaker.services.RecipeService;
 
@@ -46,28 +47,35 @@ public class APIOrderController extends APIController {
      * manipulating the User model
      */
     @Autowired
-    private OrderService     orderService;
+    private OrderService        orderService;
 
     /**
      * OrderService object, to be autowired in by Spring to allow for
      * manipulating the User model
      */
     @Autowired
-    private InventoryService inventoryService;
+    private OrderHistoryService orderHistoryService;
 
     /**
      * OrderService object, to be autowired in by Spring to allow for
      * manipulating the User model
      */
     @Autowired
-    private CustomerService  customerService;
+    private InventoryService    inventoryService;
 
     /**
      * OrderService object, to be autowired in by Spring to allow for
      * manipulating the User model
      */
     @Autowired
-    private RecipeService    recipeService;
+    private CustomerService     customerService;
+
+    /**
+     * OrderService object, to be autowired in by Spring to allow for
+     * manipulating the User model
+     */
+    @Autowired
+    private RecipeService       recipeService;
 
     /**
      * REST API method to provide GET access to all orders in the system
@@ -89,8 +97,7 @@ public class APIOrderController extends APIController {
      */
     @GetMapping ( BASE_PATH + "/orders/customer/{email}" )
     public List<Order> getCustomerOrders ( @PathVariable final String email ) {
-        final Customer cust = customerService.findByEmail( email );
-        return cust.getOrders();
+        return orderService.findByUserEmail( email );
     }
 
     /**
@@ -130,7 +137,7 @@ public class APIOrderController extends APIController {
      */
     @GetMapping ( BASE_PATH + "/orders/pickedup" )
     public List<Order> getPickedUpOrders () {
-        return orderService.findByStatus( OrderStatus.PICKED_UP );
+        return orderHistoryService.findAll();
     }
 
     /**
@@ -312,7 +319,11 @@ public class APIOrderController extends APIController {
         }
         else {
             currOrder.pickup();
-            orderService.save( currOrder );
+            orderHistoryService.save( currOrder );
+            orderService.delete( currOrder );
+            final Customer cust = customerService.findByEmail( currOrder.getUserEmail() );
+            // Removes the order from the list of current orders
+            cust.cancelOrder( currOrder );
             return new ResponseEntity( successResponse( currOrder.getId() + " was successfully picked up" ),
                     HttpStatus.OK );
         }

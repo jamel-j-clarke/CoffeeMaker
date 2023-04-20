@@ -33,14 +33,28 @@
 				
 				// get the current customer's name
 				$scope.name = sessionStorage.getItem("currentUserName");
+				$scope.email = sessionStorage.getItem("currentUserEmail");
 				console.log($scope.name);
+				console.log($scope.email);
 				
-				// get the customer's orders
-				$http.get("/api/v1/orders/customer/" + sessionStorage.getItem("currentUserEmail")).then(
-					function(response) {
-						$scope.orders = response.data
-					}
-				)
+				$scope.orders = '';
+				
+				$scope.order = {
+					id: '',
+					userEmail: ''
+				};
+				
+				$scope.updateOrders = function() {
+					// get the customer's orders
+					$http.get("/api/v1/orders/customer/" + $scope.email).then(function (response) {
+	  					$scope.orders = response.data;
+	  					console.log($scope.orders);
+	  				});
+				
+				}
+				
+				$scope.updateOrders();
+				
 				
 				// sign out as a customer
 				$scope.signOut = function() {
@@ -69,13 +83,19 @@
 				}
 				
 				$scope.cancel = function(){  
-					// implement
+					$http.delete("/api/v1/orders/customer/" + $scope.order.id).then(function (response) {
+	  					$scope.updateOrders();
+	  					console.log($scope.orders);
+	  				});
 					$scope.reset();	
-					$console.log("Implement cancelling an order");
+					console.log("Implement cancelling an order");
 				}
 				
 				$scope.pickup = function(){  
-					// implement
+					$http.put("/api/v1/orders/pickup/" + $scope.order.id).then(function (response) {
+	  					$scope.updateOrders();
+	  					console.log($scope.orders);
+	  				});
 					$scope.reset();	
 					$console.log("Implement a popup for an order");
 				}
@@ -101,11 +121,13 @@
 						<col style="width: 250px"/>
 					</colgroup>
 					<tr>
+						<th> </th>
 						<th>Order #:</th>
 						<th>Drink:</th>
 						<th>Status:</th>
 					</tr>
 					<tr ng-repeat="order in orders">
+						<td style="border: 2px solid #000000;"><input type="radio" ng-model="$parent.order.id" ng-value="order.id" name="id"></td>
 						<td style="border: 2px solid #000000;" id="orderID">{{order.id}}</td>
 						<td style="border: 2px solid #000000;" id="orderRecipe">{{order.beverage}}</td>
 						<td style="border: 2px solid #000000;" id=orderStatus>{{order.status}}</td>

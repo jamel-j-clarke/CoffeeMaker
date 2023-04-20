@@ -15,7 +15,7 @@ import edu.ncsu.csc.CoffeeMaker.models.OrderStatus;
  * @version 04/17/2023
  *
  */
-public interface OrderRepository extends JpaRepository<Order, Long> {
+public interface OrderHistoryRepository extends JpaRepository<Order, Long> {
 
     /**
      * Finds order objects with the provided status. Spring will generate code

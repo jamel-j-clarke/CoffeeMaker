@@ -212,10 +212,15 @@ public class APIIOrderTest {
                 .andDo( print() ).andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
         final long id1 = Long.parseLong( strid1 );
 
-        final String orders = mvc.perform( get( "/api/v1/orders" ) ).andDo( print() ).andExpect( status().isOk() )
-                .andReturn().getResponse().getContentAsString();
+        String orders = mvc.perform( get( "/api/v1/orders" ) ).andDo( print() ).andExpect( status().isOk() ).andReturn()
+                .getResponse().getContentAsString();
         assertTrue( orders.contains( "Mocha" ) );
         assertEquals( 1, service.count() );
+
+        orders = mvc.perform( get( "/api/v1/orders/customer/" + cust1.getEmail() ) ).andDo( print() )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
+        System.out.println( "*** Orders: " + orders );
+        assertTrue( orders.contains( "" + id1 ) );
 
         String incOrders = mvc.perform( get( "/api/v1/orders/incomplete" ) ).andDo( print() )
                 .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();

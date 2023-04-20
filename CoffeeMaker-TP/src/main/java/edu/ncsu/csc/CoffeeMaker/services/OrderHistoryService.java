@@ -22,7 +22,7 @@ import edu.ncsu.csc.CoffeeMaker.repositories.OrderRepository;
  */
 @Component
 @Transactional
-public class OrderService extends Service<Order, Long> {
+public class OrderHistoryService extends Service<Order, Long> {
     /**
      * OrderRepository, to be autowired in by Spring and provide CRUD operations
      * on Order model.
