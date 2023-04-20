@@ -84,13 +84,12 @@
 				
 				$scope.fulfill = function() {
 					$scope.success = false;
-					console.log($scope.ordersIncomp);
-					console.log($scope.order.id);
 					$http.put("/api/v1/orders/start/" + $scope.order.id).then(
 							function(success) {
 								$scope.success = true;
 								$scope.getIncomplete();
 								$scope.getInprogress();
+								$scope.order.id = '';
 							}, function(error) {
 								if (error.status === 404) {
 								    alert("Unable to Start order");
@@ -112,25 +111,22 @@
 								$scope.success = true;
 								$scope.getIncomplete();
 								$scope.getInprogress();
-								$scope.toggle2();
+								toggle2();
 							}, function(error) {
 								if (error.status === 404) {
 								    alert("Recipe Not Found");
 								    $scope.success = false;
 								}
 								if (error.status === 400) {
-								    alert("Unable to Complete order");
+								    alert("Not enough Ingredients");
 								    // Implement more later
 								    $scope.success = false;
 								}
 							});
-					
 				}
 			
 				$scope.getIncomplete();
 				$scope.getInprogress();
-				console.log($scope.ordersIncomp);
-				console.log($scope.ordersInprog);
 		
 			});
 			/*]]>*/
@@ -141,7 +137,7 @@
 				<div>
 					<header>Barista Homepage</header>
 				</div>
-				<form ng-submit="submit()" name="baristaHomepageForm">
+				<form ng-submit="fulfill()" name="baristaHomepageForm">
 					<!-- current orders table -->
 					<div class="table-header">Current Orders:</div>	
 					<div class="button-group">
