@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.management.InvalidAttributeValueException;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 
 import edu.ncsu.csc.CoffeeMaker.models.Order;
 
@@ -22,9 +25,8 @@ import edu.ncsu.csc.CoffeeMaker.models.Order;
 public class Customer extends User {
 
     /** List of orders the user has made */
-    // @OneToMany ( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
-    // private final List<Order> orders;
-    private final ArrayList<Long> orders;
+    @OneToMany ( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
+    private final List<Order> orders;
 
     /**
      * Creates a new Customer User
@@ -45,8 +47,7 @@ public class Customer extends User {
     public Customer ( final String email, final String name, final String password )
             throws InvalidAttributeValueException, InvalidKeySpecException, NoSuchAlgorithmException {
         super( email, name, password );
-        // orders = new ArrayList<Order>();
-        orders = new ArrayList<Long>();
+        orders = new ArrayList<Order>();
     }
 
     /**
@@ -55,8 +56,7 @@ public class Customer extends User {
      */
     public Customer () {
         super();
-        // orders = new ArrayList<Order>();
-        orders = new ArrayList<Long>();
+        orders = new ArrayList<Order>();
     }
 
     /**
@@ -68,7 +68,7 @@ public class Customer extends User {
      */
     public boolean orderBeverage ( final Order order ) {
         if ( isUsersOrder( order ) ) {
-            orders.add( (Long) order.getId() );
+            orders.add( order );
             return true;
         }
         return false;
@@ -82,7 +82,7 @@ public class Customer extends User {
      * @return true if the order can be placed and false if it cannot
      */
     public boolean cancelOrder ( final Order order ) {
-        return orders.remove( order.getId() );
+        return orders.remove( order );
     }
 
     /**
@@ -90,7 +90,7 @@ public class Customer extends User {
      *
      * @return returns the users orders
      */
-    public List<Long> getOrders () {
+    public List<Order> getOrders () {
         return orders;
     }
 
