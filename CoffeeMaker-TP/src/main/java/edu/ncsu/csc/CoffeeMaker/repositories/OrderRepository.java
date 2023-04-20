@@ -26,4 +26,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      * @return Found order(s), null if none.
      */
     List<Order> findByStatus ( OrderStatus status );
+
+    /**
+     * Finds order objects with the provided status. Spring will generate code
+     * to make this happen.
+     *
+     * @param userEmail
+     *            email of the customer
+     * @return Found order(s), null if none.
+     */
+    List<Order> findByUserEmail ( String userEmail );
+
+    List<Order> findByStatusNotAndUserEmail ( final OrderStatus status, final String userEmail );
 }

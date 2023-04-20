@@ -89,8 +89,7 @@ public class APIOrderController extends APIController {
      */
     @GetMapping ( BASE_PATH + "/orders/customer/{email}" )
     public List<Order> getCustomerOrders ( @PathVariable final String email ) {
-        final Customer cust = customerService.findByEmail( email );
-        return cust.getOrders();
+        return orderService.findByStatusNotAndUserEmail( OrderStatus.PICKED_UP, email );
     }
 
     /**
@@ -181,7 +180,7 @@ public class APIOrderController extends APIController {
             return new ResponseEntity( errorResponse( "Order info invalid." ), HttpStatus.CONFLICT );
         }
         orderService.save( o );
-        cust.orderBeverage( o );
+        // cust.orderBeverage( o );
         return new ResponseEntity( o.getId(), HttpStatus.OK );
 
     }
@@ -277,7 +276,7 @@ public class APIOrderController extends APIController {
 
         else {
             return new ResponseEntity( errorResponse( currOrder.getId() + " does not have enough ingredients" ),
-                    HttpStatus.BAD_REQUEST );
+                    HttpStatus.CONFLICT );
         }
 
     }
@@ -313,6 +312,10 @@ public class APIOrderController extends APIController {
         else {
             currOrder.pickup();
             orderService.save( currOrder );
+            // final Customer cust = customerService.findByEmail(
+            // currOrder.getUserEmail() );
+            // Removes the order from the list of current orders
+            // cust.cancelOrder( currOrder );
             return new ResponseEntity( successResponse( currOrder.getId() + " was successfully picked up" ),
                     HttpStatus.OK );
         }

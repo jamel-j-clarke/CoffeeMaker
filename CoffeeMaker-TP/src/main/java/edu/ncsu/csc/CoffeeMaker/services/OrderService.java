@@ -51,4 +51,19 @@ public class OrderService extends Service<Order, Long> {
         return orderRepository.findByStatus( status );
     }
 
+    /**
+     * Find orders with the provided status
+     *
+     * @param userEmail
+     *            email of the customer's orders to find
+     * @return found orders, null if none
+     */
+    public List<Order> findByUserEmail ( final String userEmail ) {
+        return orderRepository.findByUserEmail( userEmail );
+    }
+
+    public List<Order> findByStatusNotAndUserEmail ( final OrderStatus status, final String userEmail ) {
+        return orderRepository.findByStatusNotAndUserEmail( status, userEmail );
+    }
+
 }

@@ -160,6 +160,10 @@ public class APIIOrderTest {
         assertTrue( ord.contains( "cust2@gmail.com" ) );
         assertTrue( ord.contains( "Cinnamon" ) );
 
+        ord = mvc.perform( get( "/api/v1/orders/customer/" + cust2.getEmail() ) ).andDo( print() )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
+        assertTrue( ord.contains( "Cinnamon" ) );
+
         // Post Order 3
         final Order order3 = new Order( r1.getName(), 10, cust2.getEmail() );
         mvc.perform( post( "/api/v1/orders" ).contentType( MediaType.APPLICATION_JSON )
@@ -230,6 +234,10 @@ public class APIIOrderTest {
                 .andReturn().getResponse().getContentAsString();
         assertFalse( picOrders.contains( "Mocha" ) );
 
+        String ord = mvc.perform( get( "/api/v1/orders/customer/" + cust1.getEmail() ) ).andDo( print() )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
+        assertTrue( ord.contains( "Mocha" ) );
+
         // Start Order
         mvc.perform( put( "/api/v1/orders/start/" + id1 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isOk() );
@@ -246,6 +254,10 @@ public class APIIOrderTest {
         picOrders = mvc.perform( get( "/api/v1/orders/pickedup" ) ).andDo( print() ).andExpect( status().isOk() )
                 .andReturn().getResponse().getContentAsString();
         assertFalse( picOrders.contains( "Mocha" ) );
+
+        ord = mvc.perform( get( "/api/v1/orders/customer/" + cust1.getEmail() ) ).andDo( print() )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
+        assertTrue( ord.contains( "Mocha" ) );
 
         // Complete Order
         mvc.perform( put( "/api/v1/orders/complete/" + id1 ).contentType( MediaType.APPLICATION_JSON ) )
@@ -264,6 +276,10 @@ public class APIIOrderTest {
                 .andReturn().getResponse().getContentAsString();
         assertFalse( picOrders.contains( "Mocha" ) );
 
+        ord = mvc.perform( get( "/api/v1/orders/customer/" + cust1.getEmail() ) ).andDo( print() )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
+        assertTrue( ord.contains( "Mocha" ) );
+
         // Pick Up Order
         mvc.perform( put( "/api/v1/orders/pickup/" + id1 ).contentType( MediaType.APPLICATION_JSON ) )
                 .andExpect( status().isOk() );
@@ -280,6 +296,10 @@ public class APIIOrderTest {
         picOrders = mvc.perform( get( "/api/v1/orders/pickedup" ) ).andDo( print() ).andExpect( status().isOk() )
                 .andReturn().getResponse().getContentAsString();
         assertTrue( picOrders.contains( "Mocha" ) );
+
+        ord = mvc.perform( get( "/api/v1/orders/customer/" + cust1.getEmail() ) ).andDo( print() )
+                .andExpect( status().isOk() ).andReturn().getResponse().getContentAsString();
+        assertFalse( ord.contains( "Mocha" ) );
 
         // Check for orders that do not exist
         mvc.perform( put( "/api/v1/orders/start/123456" ).contentType( MediaType.APPLICATION_JSON ) )
