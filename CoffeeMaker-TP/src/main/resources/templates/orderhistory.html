@@ -20,11 +20,20 @@
 			/*<![CDATA[*/
 			var app = angular.module('myApp', []);
 			app.controller('populateCtrl', function($scope, $http, $q) {
+				$scope.total = 0;
 
 				// get all orders
-				$http.get("/api/v1/orders").then(function(response) {
+				$http.get("/api/v1/orders/pickedup").then(function(response) {
 					$scope.orders = response.data;
+					$scope.getTotal();
 				});
+				
+				$scope.getTotal = function() {
+					$scope.total = 0;
+					for (var i = 0, len = $scope.orders.length; i < len; i++) {
+						$scope.total = $scope.total + $scope.orders[i].payment;
+					}
+				}
 				
 			});
 
@@ -38,31 +47,24 @@
 					<header>Order History</header>
 				</div>
 				<br>
-				<table style="border: none">
-					<tr>
-						<td style="width: 50%">
-							<input type="text" id="customerFilter" onkeyup="filterByCustomer()" placeholder="Filter by customer names..."/>
-						</td>
-						<td style="width: 50%">
-							<input type="text" id="drinkFilter" onkeyup="filterByDrink()" placeholder="Filter by drink names..."/>
-						</td>
-					</tr>
-				</table>
 				
 				<table>
 					<tr>
 						<th style="width:15%">Order #:</th>
-						<th style="width:35%">Customer Name:</th>
+						<th style="width:35%">Customer Email:</th>
 						<th style="width:35%">Drink:</th>
 						<th style="width:15%">Total:</th>
 					</tr>
 					<tr ng-repeat="order in orders">
 						<td>{{order.id}}</td>
-						<td>{{order.customer.name}}</td>
-						<td>{{order.beverage.name}}</td>
-						<td>{{order.beverage.total}}</td>
+						<td>{{order.userEmail}}</td>
+						<td>{{order.beverage}}</td>
+						<td>{{order.payment}}</td>
 					</tr>
 				</table>
+				<label>Total: ${{total}}.00</label>
+			
+				
 			</div>
 			<a href="/managerhomepage" style="border: none;">
             	<back> ← </back>
