@@ -30,6 +30,11 @@ public class IngredientService extends Service<Ingredient, Long> {
     @Autowired
     private IngredientRepository ingredientRepository;
 
+    /**
+     * Gets the current Ingredient Repository
+     *
+     * @return the current Ingredient Repository
+     */
     @Override
     protected JpaRepository<Ingredient, Long> getRepository () {
         return ingredientRepository;

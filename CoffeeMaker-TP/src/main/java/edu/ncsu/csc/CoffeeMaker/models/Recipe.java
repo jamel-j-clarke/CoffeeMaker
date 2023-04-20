@@ -264,6 +264,11 @@ public class Recipe extends DomainObject {
 
     }
 
+    /**
+     * Hash function for the Recipe object
+     *
+     * @return int hash for the recipe
+     */
     @Override
     public int hashCode () {
         final int prime = 31;

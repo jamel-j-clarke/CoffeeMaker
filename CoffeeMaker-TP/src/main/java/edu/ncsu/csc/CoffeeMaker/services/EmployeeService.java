@@ -13,7 +13,7 @@ import edu.ncsu.csc.CoffeeMaker.repositories.EmployeeRepository;
  * Employee Service
  *
  * @author Emma Holincheck
- * @version 03/30/2023
+ * @version 04/20/2023
  *
  */
 @Component
@@ -36,17 +36,6 @@ public class EmployeeService extends Service<Employee, Long> {
     protected JpaRepository<Employee, Long> getRepository () {
         return employeeRepository;
     }
-
-    // /**
-    // * Find an employee with the provided name
-    // *
-    // * @param id
-    // * id of the employee to find
-    // * @return found employee, null if none
-    // */
-    // public Employee findById ( final long id ) {
-    // return employeeRepository.findById( id );
-    // }
 
     /**
      * Find a customer with the provided id
