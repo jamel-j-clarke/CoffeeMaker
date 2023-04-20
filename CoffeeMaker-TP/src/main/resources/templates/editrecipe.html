@@ -232,7 +232,7 @@
 				if($scope.canSubmit){
 					alert("Current Recipe has not been submitted. Submit or Cancel before returning home.");
 				} else {
-					window.location.href = "/index";
+					window.location.href = "/managerhomepage";
 				}
 				
 			}
@@ -394,7 +394,7 @@
 		</div>
 		</div>
 
-		<a href="/managerhomepage" style="border: none;">
+		<a ng-click="onHome();" style="border: none;">
            <back> ← </back>
         </a>
 	</div>
