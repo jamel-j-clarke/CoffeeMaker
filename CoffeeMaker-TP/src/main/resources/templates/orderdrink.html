@@ -8,55 +8,86 @@
 <link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/bootstrap.css" />
 <link rel="stylesheet" href="css/app.css" />
-<link rel="icon" type="image/png" href="images/favicon-1.png"/>
 </head>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 <body>
-	<script th:inline="javascript">
-		/*<![CDATA[*/
+	<div layout:fragment="content">
+		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+		<script>
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*]]>*/
+			var app = angular.module('myApp', []);
+			app.controller('orderCtrl', function($scope, $http, $q) {
+					
+				// get the customer info
+				$scope.name = sessionStorage.getItem("currentUserName");
+				$scope.email = sessionStorage.getItem("currentUserEmail");
+				
+				// get the recipes
+				$http.get("/api/v1/recipes").then(function(response) {
+					$scope.recipes = response.data;
+					console.log($scope.recipes);
+				});
+				
+				// create the new order
+				$scope.order = {
+					drinkName: '',
+					payment: '',
+					email: ''
+				};
 
-		var app = angular.module('myApp', []);
-		app.controller('recipesCtrl', function($scope, $http, $q) {
-			$http.get("/api/v1/recipes").then(function(response) {
-				$scope.recipes = response.data;
+				// submit the drink order function
+				$scope.make = function() {
+					var amtPaid = $scope.amtPaid;
+					var name = $scope.name;
+					$scope.submissionFailure = false;
+					$scope.submissionSuccess = false;
+					$http.post("/api/v1/orderdrink/" + $scope.order ).then(
+							function(response) {
+								$scope.submissionSuccess = true;
+								
+								// save the order information for order summary
+								sessionStorage.setItem("orderID", response.data);
+								sessionStorage.setItem("orderCost", $scope.order.payment);
+								
+								// go to the order summary page
+								window.location.href("/ordersummary");
+								
+							}, function(errResponse) {
+								console.log(errResponse);
+								$scope.submissionFailure = true;
+								$scope.error = "Error while making recipe";
+							});
+				}
+				
+				// order form submit function
+				$scope.submit = function() {
+					
+					// update the order
+					$scope.order = {
+						drinkName: document.getElementById("recipeName").textContent,
+						payment: document.getElementById("recipePrice").textContent,
+						email: $scope.email
+					};
+					
+					
+					$scope.make();
+					$scope.order = {};
+					
+					
+				}
+				
+				// go to customer home function
+				$scope.goToCustomerHome = function() {
+					window.location.href = "/customerhomepage";
+				}
+				
+				
 			});
-
-			$scope.make = function() {
-				var amtPaid = $scope.amtPaid;
-				var name = $scope.name;
-				$scope.submissionFailure = false;
-				$scope.submissionSuccess = false;
-				$http.post("/api/v1/makecoffee/" + name, amtPaid).then(
-						function(response) {
-							$scope.change = response.data.message;
-							$scope.submissionSuccess = true;
-						}, function(errResponse) {
-							console.log(errResponse);
-							$scope.submissionFailure = true;
-							$scope.error = "Error while making recipe";
-						});
-
-			}
-			
-			$scope.submit = function() {
-				$scope.make();
-				$scope.amtPaid = '';
-			}
-			
-			$scope.onHome = function() {
-				window.location.href = "/index";
-			}
-			
-			$scope.onAddRecipe = function() {
-				window.location.href = "/recipe";
-			}
-		});
-
-		/*]]>*/
-	</script>
-
-	<div ng-app="myApp" ng-controller="orderCtrl">
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*<![CDATA[*/ 
+		</script>
+		
+		<div ng-app="myApp" ng-controller="orderCtrl">
 			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
 			<div class="holder" id="blur">
 				<div>
@@ -69,7 +100,7 @@
 							<!-- drink options -->
 							
 							<td>
-								<div style="height:600px; overflow:auto">
+								<div style="height:50%; overflow:auto">
 									<table>
 										<colgroup>
 											<col style="width:5%"/>
@@ -86,10 +117,10 @@
 											</tr>
 										</thead>
 										<tr ng-repeat="recipe in recipes" style="height: 100px">
-											<td style="border: 2px solid #000000;"><input type="radio" required="true"/></td>
-											<td style="border: 2px solid #000000;">{{recipe.name}}</td>
+											<td style="border: 2px solid #000000;"><input type="radio" name="selectRecipe"></td>
+											<td style="border: 2px solid #000000;" id="recipeName">{{recipe.name}}</td>
 											<td style="border: 2px solid #000000;">{{recipe.description}}</td>
-											<td style="border: 2px solid #000000;">{{recipe.price}}</td>
+											<td style="border: 2px solid #000000;" id="recipePrice">{{recipe.price}}</td>
 										</tr>
 									</table>
 								</div>
@@ -97,33 +128,26 @@
 							
 							<!-- total and order button -->
 							<td style="vertical-align: middle">
-								<table style="border: none;">
-									<tr>
-										<td style="text-align: right">Total:</td>
-										<td style="border: 2px solid #000000;">{{price}}</td>
-									</tr>
-									<tr>
-										<td colspan="2">
-											<input type="submit" style="font-size:36px; padding:20px; width:100%" value="Order" ng-disabled="orderDrinkForm.$invalid"/>
-										</td>
-									</tr>
-								</table>
+								<input type="submit" style="font-size:36px; padding:20px; width:100%" ng-disabled="orderDrinkForm.$invalid" value="Order"/>
 							</td>
 						</tr>
 					</table>
 				</form>
 			</div>
 			
-           	<back style="text-decoration: none" onclick="goToCustomerHome()"> ← </back>
+           	<back style="text-decoration: none" ng-click="goToCustomerHome()"> ← </back>
            	
-           	<script>
-           		// go to customer homepage function
-           		function goToCustomerHome() {
-           			window.location.href = "/customerhomepage";
-           		}
-           	</script>
+           	<!-- drink verification popup -->
+			<!--  <div class="holder" id="newCustomerPopup">
+				<p>Are you sure you would like to order a
+				<br>Would you like to sign up?</p>
+				<br><br>
+				<popupButton href="/customersignup" onclick="goToSignUp()">Sign Up</popupButton>
+				<popupButton href="#" style="font-size: 20px" onclick="newToggle()">Cancel</popupButton> 
+			</div> -->
+			<!-- end of drink verification popup -->
+			
 		</div>
 	</div>
-
 </body>
 </html>

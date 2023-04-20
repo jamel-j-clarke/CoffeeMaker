@@ -89,12 +89,11 @@
 			            	function (success) {
 			            		$scope.customer = success.data;
 			            		$scope.success = true;
-
 			            		// Successful log in
-			            		// sessionStorage.setItem("currentUserName", $scope.customer.name);
+			            		sessionStorage.setItem("currentUserName", $scope.customer.name);
+			            		sessionStorage.setItem("currentUserEmail", $scope.customer.email);
 						        $scope.toggle();
 						        $scope.reset();
-			            		/** sessionStorage.setItem("currentUserEmail", $scope.customer.email); */
 			            	},
 			            	function(failure){
 			            		if(failure.status == 404){
@@ -111,6 +110,7 @@
 				// go to homepage with name from guest popup
 				$scope.goToHomepage = function () {
 					sessionStorage.setItem("currentUserName", $scope.customer.name);
+					sessionStorage.setItem("currentUserEmail", $scope.customer.email);
 					window.location.href = "/customerhomepage";
 					$scope.reset();
 				}
