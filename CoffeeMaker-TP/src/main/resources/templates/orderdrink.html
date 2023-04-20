@@ -30,9 +30,9 @@
 				
 				// create the new order
 				$scope.order = {
-					drinkName: '',
+					beverage: '',
 					payment: '',
-					email: ''
+					userEmail: ''
 				};
 
 				// submit the drink order function
@@ -41,7 +41,7 @@
 					var name = $scope.name;
 					$scope.submissionFailure = false;
 					$scope.submissionSuccess = false;
-					$http.post("/api/v1/orders/" + $scope.order ).then(
+					$http.post("/api/v1/orders", $scope.order ).then(
 							function(response) {
 								$scope.submissionSuccess = true;
 								
@@ -50,7 +50,7 @@
 								sessionStorage.setItem("orderCost", $scope.order.payment);
 								
 								// go to the order summary page
-								window.location.href("/ordersummary");
+								window.location.href = "/ordersummary";
 								
 							}, function(errResponse) {
 								console.log(errResponse);
@@ -63,12 +63,9 @@
 				$scope.submit = function() {
 					
 					// update the order
-					$scope.order = {
-						drinkName: document.getElementById("recipeName").textContent,
-						payment: document.getElementById("recipePrice").textContent,
-						email: $scope.email
-					};
-					
+					$scope.order.beverage = document.getElementById("recipeName").textContent;
+					$scope.order.payment = document.getElementById("recipePrice").textContent;
+					$scope.order.userEmail= $scope.email;			
 					
 					$scope.make();
 					$scope.order = {};
