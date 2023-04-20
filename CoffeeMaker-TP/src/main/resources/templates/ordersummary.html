@@ -38,7 +38,7 @@
 					
 					// see if the user is a customer
 					try {
-						$http.get("/api/v1/customers/" + sessionStorage).then(function (response) {
+						$http.get("/api/v1/customers/email/" + sessionStorage.getItem("currentUserEmail")).then(function (response) {
 							$scope.customer = response.data;
 							window.location.href = "/customerhomepage";
 						});
@@ -47,7 +47,7 @@
 					catch (err) {
 						// see if the user is a manager
 						try {
-							$http.get("/api/v1/employees/email/" + sessionStorage).then(
+							$http.get("/api/v1/employees/email/" + sessionStorage.getItem("currentUserEmail")).then(
 								function (success) {
 									if(success.status === 202) {
 										window.location.href = "/managerhomepage";
@@ -61,7 +61,7 @@
 						} 
 						// if they aren't any of these users, idk
 						catch (err) {
-							// do nothing
+							window.location.href = index.html;
 						}
 					}
 					
