@@ -85,7 +85,7 @@ public class OrderTest {
      *             if there is an error
      */
     @Test
-    // @Transactional
+    @Transactional
     public void testOrder () throws InvalidAttributeValueException, InvalidKeySpecException, NoSuchAlgorithmException {
         assertEquals( 0, service.count() );
 
@@ -97,54 +97,54 @@ public class OrderTest {
         service.save( order1 );
         assertEquals( 1, service.count() );
 
-        // // Check copy saved in service.
-        // Order serviceOrder1 = service.findById( (Long) order1.getId() );
-        // assertEquals( OrderStatus.NOT_STARTED, serviceOrder1.getStatus() );
-        // assertEquals( 8, serviceOrder1.getPayment() );
-        // assertEquals( "etgrouge@ncsu.edu", serviceOrder1.getUserEmail() );
-        //
-        // order1.start();
-        // assertEquals( OrderStatus.IN_PROGRESS, order1.getStatus() );
-        // service.save( order1 );
-        //
-        // serviceOrder1 = service.findById( (Long) order1.getId() );
-        // assertEquals( OrderStatus.IN_PROGRESS, serviceOrder1.getStatus() );
-        //
-        // order1.complete();
-        // assertEquals( OrderStatus.DONE, order1.getStatus() );
-        // service.save( order1 );
-        //
-        // serviceOrder1 = service.findById( (Long) order1.getId() );
-        // assertEquals( OrderStatus.DONE, serviceOrder1.getStatus() );
-        //
-        // order1.pickup();
-        // assertEquals( OrderStatus.PICKED_UP, order1.getStatus() );
-        // service.save( order1 );
-        //
-        // serviceOrder1 = service.findById( (Long) order1.getId() );
-        // assertEquals( OrderStatus.PICKED_UP, serviceOrder1.getStatus() );
-        //
-        // // Order 2
-        // final Order order2 = new Order( "Chai", 7, "egrouge@ncsu.edu" );
-        // assertEquals( OrderStatus.NOT_STARTED, order2.getStatus() );
-        // assertEquals( 7, order2.getPayment() );
-        // assertEquals( "egrouge@ncsu.edu", order2.getUserEmail() );
-        //
-        // service.save( order2 );
-        // assertEquals( 2, service.count() );
-        //
-        // // Check copy saved in service.
-        // Order serviceOrder2 = service.findById( (Long) order2.getId() );
-        // assertEquals( OrderStatus.NOT_STARTED, serviceOrder2.getStatus() );
-        // assertEquals( 7, serviceOrder2.getPayment() );
-        // assertEquals( "egrouge@ncsu.edu", serviceOrder2.getUserEmail() );
-        //
-        // order2.cancel();
-        // assertEquals( OrderStatus.CANCELLED, order2.getStatus() );
-        //
-        // service.save( order2 );
-        // serviceOrder2 = service.findById( (Long) order2.getId() );
-        // assertEquals( OrderStatus.CANCELLED, serviceOrder2.getStatus() );
+        // Check copy saved in service.
+        Order serviceOrder1 = service.findById( (Long) order1.getId() );
+        assertEquals( OrderStatus.NOT_STARTED, serviceOrder1.getStatus() );
+        assertEquals( 8, serviceOrder1.getPayment() );
+        assertEquals( "etgrouge@ncsu.edu", serviceOrder1.getUserEmail() );
+
+        order1.start();
+        assertEquals( OrderStatus.IN_PROGRESS, order1.getStatus() );
+        service.save( order1 );
+
+        serviceOrder1 = service.findById( (Long) order1.getId() );
+        assertEquals( OrderStatus.IN_PROGRESS, serviceOrder1.getStatus() );
+
+        order1.complete();
+        assertEquals( OrderStatus.DONE, order1.getStatus() );
+        service.save( order1 );
+
+        serviceOrder1 = service.findById( (Long) order1.getId() );
+        assertEquals( OrderStatus.DONE, serviceOrder1.getStatus() );
+
+        order1.pickup();
+        assertEquals( OrderStatus.PICKED_UP, order1.getStatus() );
+        service.save( order1 );
+
+        serviceOrder1 = service.findById( (Long) order1.getId() );
+        assertEquals( OrderStatus.PICKED_UP, serviceOrder1.getStatus() );
+
+        // Order 2
+        final Order order2 = new Order( "Chai", 7, "egrouge@ncsu.edu" );
+        assertEquals( OrderStatus.NOT_STARTED, order2.getStatus() );
+        assertEquals( 7, order2.getPayment() );
+        assertEquals( "egrouge@ncsu.edu", order2.getUserEmail() );
+
+        service.save( order2 );
+        assertEquals( 2, service.count() );
+
+        // Check copy saved in service.
+        Order serviceOrder2 = service.findById( (Long) order2.getId() );
+        assertEquals( OrderStatus.NOT_STARTED, serviceOrder2.getStatus() );
+        assertEquals( 7, serviceOrder2.getPayment() );
+        assertEquals( "egrouge@ncsu.edu", serviceOrder2.getUserEmail() );
+
+        order2.cancel();
+        assertEquals( OrderStatus.CANCELLED, order2.getStatus() );
+
+        service.save( order2 );
+        serviceOrder2 = service.findById( (Long) order2.getId() );
+        assertEquals( OrderStatus.CANCELLED, serviceOrder2.getStatus() );
 
     }
 
