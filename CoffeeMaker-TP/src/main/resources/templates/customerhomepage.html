@@ -36,7 +36,11 @@
 				console.log($scope.name);
 				
 				// get the customer's orders
-				$http.get("/api/v1/orders/customer")
+				$http.get("/api/v1/orders/customer/" + sessionStorage.getItem("currentUserEmail")).then(
+					function(response) {
+						$scope.orders = response.data
+					}
+				)
 				
 				// sign out as a customer
 				$scope.signOut = function() {
