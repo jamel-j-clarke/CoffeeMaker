@@ -43,6 +43,7 @@ input[type="number"]{
 	top: 8px; 
 	right: 8px;
 	font-size: 22px;
+	padding: 2px;
 }
 
 .button-sm {
@@ -124,7 +125,7 @@ th, table {
 	margin-left: auto;
 	border: 2px solid black;
 	border-collapse: collapse;
-	padding: 15px;
+	padding: 10px;
 }
 .button-group {
 	display: flex;

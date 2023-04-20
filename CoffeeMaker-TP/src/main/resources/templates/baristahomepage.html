@@ -9,9 +9,12 @@
 <link rel="stylesheet" href="css/app.css" />
 <link rel="icon" type="image/png" href="images/favicon-1.png"/>
 	<style>
-		th, table {
+		td, table {
 			margin-right: 20px;
 			margin-left: 20px;
+		}
+		td {
+			font-size: 20px;
 		}
 	</style>
 </head>
@@ -22,14 +25,89 @@
 			/*<![CDATA[*/
 			var app = angular.module('myApp', []);
 			app.controller('populateCtrl', function($scope, $http, $q) {
+				console.log('Hit');
+				
+				$scope.ordersIncomp = {
+						orders : '',	
+				};
+				
+				$scope.ordersInprog = {
+						orders : '',	
+				};
+				
+				$scope.order = {
+						id : '',
+						beverage : '',
+						status : '',
+						recipe : '',	
+				}
+				
+				$scope.getIncomplete = function() {
+					$http.get("/api/v1/orders/incomplete").then(function(response) {
+						$scope.ordersIncomp = response.data;
+					}, function(rejection) {
+						console.error("Error while getting Recipe");
+					})
+				}
+				
+				$scope.getInprogress = function() {
+					$http.get("/api/v1/orders/inprogress").then(function(response) {
+						$scope.ordersInprog = response.data;
+					}, function(rejection) {
+						console.error("Error while getting Recipe");
+					})
+				}
+
 				$scope.signout = function(){  
 					// update later to signout user of system instead of clearing
 					window.location.href = "/index";
 				}
 				
-				$http.get("/api/v1/orders").then(function(response) {
-					$scope.orders = response.data;
-				});
+				$scope.fulfill = function() {
+					$scope.success = false;
+					console.log($scope.ordersIncomp);
+					console.log($scope.order.id);
+					$http.put("/api/v1/orders/start/" + $scope.order.id).then(
+							function(success) {
+								$scope.success = true;
+								$scope.getIncomplete();
+								$scope.getInprogress();
+							}, function(error) {
+								if (error.status === 404) {
+								    alert("Unable to Start order");
+								    $scope.success = false;
+								}
+								if (error.status === 400) {
+								    alert("Not Enough Ingredients");
+								    // Implement more later
+								    $scope.success = false;
+								}
+							});
+				}
+				
+				$scope.complete = function() {
+					$scope.success = false;
+					$http.put("/api/v1/orders/complete/" + $scope.order.id).then(
+							function(success) {
+								$scope.success = true;
+								$scope.getIncomplete();
+								$scope.getInprogress();
+							}, function(error) {
+								if (error.status === 404) {
+								    alert("Recipe Not Found");
+								    $scope.success = false;
+								}
+								if (error.status === 400) {
+								    alert("Unable to Complete order");
+								    // Implement more later
+								    $scope.success = false;
+								}
+							});
+				}
+				
+				$scope.getIncomplete();
+				$scope.getInprogress();
+		
 			});
 			/*]]>*/
 		</script>
@@ -46,7 +124,7 @@
 							<table>
 								<colgroup>
 									<col style="width: 200px"/>
-									<col style="width: 550px"/>
+									<col style="width: 250px"/>
 									<col style="width: 250px"/>
 									<col style="width: 200px"/>
 								</colgroup>
@@ -56,18 +134,18 @@
 									<th>Status</th>
 									<th>Completed</th>
 								</tr>
-									<tr ng-repeat="order in orders">
+									<tr ng-repeat="order in ordersInprog">
 										<td>{{order.id}}</td>
-										<td>{{order.beverage.name}}</td>
-										<td>button to be implemented</td>
+										<td>{{order.beverage}}</td>
+										<td>{{order.status}}</td>
 										<td>
 											<label> 
-												<input type="radio" name="name" ng-model="$parent.completed" value="{{order.completed}}">
+												<input type="radio" ng-model="$parent.order.id" ng-value="order.id" name="id">
 											</label>
 										</td>
 									</tr>
 							</table>
-								<button ng-click="cancel()" ng-disabled="baristaHomepageForm.$pristine" 
+								<button ng-click="complete()" ng-disabled="baristaHomepageForm.$pristine" 
 									class="button-side" style="	width: 215px; height: 50px;">Complete Order</button>
 					</div>
 					<br>
@@ -78,28 +156,29 @@
 							<table>
 								<colgroup>
 									<col style="width: 200px"/>
-									<col style="width: 550px"/>
+									<col style="width: 250px"/>
 									<col style="width: 250px"/>
 									<col style="width: 200px"/>
 								</colgroup>
 								<tr>
-									<th>Fulfill</th>
 									<th>Order #</th>
 									<th>Recipe Info</th>
 									<th>Status</th>
+									<th>Fulfill</th>
 								</tr>
-									<tr ng-repeat="order in orders">
+									<tr ng-repeat="order in ordersIncomp">
+					
+										<td>{{order.id}}</td>
+										<td>{{order.beverage}}</td>
+										<td>{{order.status}}</td>
 										<td>
 											<label> 
-												<input type="radio" name="name" ng-model="$parent.completed" value="{{order.completed}}">
+												<input type="radio" ng-model="$parent.order.id" ng-value="order.id" name="id">
 											</label>
 										</td>
-										<td>{{order.id}}</td>
-										<td>{{order.beverage.name}}</td>
-										<td>button to be implementedp for status</td>
 									</tr>
 							</table>
-							<button ng-click="cancel()" ng-disabled="baristaHomepageForm.$pristine" 
+							<button ng-click="fulfill()"
 								class="button-side" style="	width: 215px; height: 50px;">Fulfill Order</button>
 					</div>
 					</form>
