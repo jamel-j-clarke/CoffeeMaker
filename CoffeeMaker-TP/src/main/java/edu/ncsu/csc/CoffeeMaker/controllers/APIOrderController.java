@@ -276,7 +276,7 @@ public class APIOrderController extends APIController {
 
         else {
             return new ResponseEntity( errorResponse( currOrder.getId() + " does not have enough ingredients" ),
-                    HttpStatus.CONFLICT );
+                    HttpStatus.BAD_REQUEST );
         }
 
     }

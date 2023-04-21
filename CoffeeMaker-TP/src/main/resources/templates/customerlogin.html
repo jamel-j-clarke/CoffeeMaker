@@ -90,10 +90,10 @@
 			            		$scope.customer = success.data;
 			            		$scope.success = true;
 			            		// Successful log in
+						        $scope.toggle();
+						        
 			            		sessionStorage.setItem("currentUserName", $scope.customer.name);
 			            		sessionStorage.setItem("currentUserEmail", $scope.customer.email);
-						        $scope.toggle();
-						        $scope.reset();
 			            	},
 			            	function(failure){
 			            		if(failure.status == 404){

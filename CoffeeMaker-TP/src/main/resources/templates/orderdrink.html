@@ -28,6 +28,12 @@
 					console.log($scope.recipes);
 				});
 				
+				$scope.selectedRecipe = {
+					name: '',
+					description: '',
+					price: ''			
+				}				
+				
 				// create the new order
 				$scope.order = {
 					beverage: '',
@@ -49,7 +55,7 @@
 								sessionStorage.setItem("orderID", response.data);
 								sessionStorage.setItem("orderCost", $scope.order.payment);
 								
-								// go to the order summary page
+								// go to the order summary page\
 								window.location.href = "/ordersummary";
 								
 							}, function(errResponse) {
@@ -63,12 +69,13 @@
 				$scope.submit = function() {
 					
 					// update the order
-					$scope.order.beverage = document.getElementById("recipeName").textContent;
-					$scope.order.payment = document.getElementById("recipePrice").textContent;
-					$scope.order.userEmail= $scope.email;			
+					$scope.order.beverage = $scope.selectedRecipe.name;
+					$scope.order.payment = $scope.selectedRecipe.price;
+					$scope.order.userEmail= $scope.email;	
+					
+					console.log($scope.selectedRecipe);		
 					
 					$scope.make();
-					$scope.order = {};
 					
 					
 				}
@@ -114,7 +121,7 @@
 											</tr>
 										</thead>
 										<tr ng-repeat="recipe in recipes" style="height: 100px">
-											<td style="border: 2px solid #000000;"><input type="radio" name="selectRecipe"></td>
+											<td style="border: 2px solid #000000;"><input type="radio" name="selectRecipe" ng-model="$parent.selectedRecipe" ng-value="recipe"></td>
 											<td style="border: 2px solid #000000;" id="recipeName">{{recipe.name}}</td>
 											<td style="border: 2px solid #000000;">{{recipe.description}}</td>
 											<td style="border: 2px solid #000000;" id="recipePrice">{{recipe.price}}</td>
