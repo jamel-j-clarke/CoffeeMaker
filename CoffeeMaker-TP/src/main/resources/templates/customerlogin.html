@@ -109,12 +109,41 @@
 				
 				// go to homepage with name from guest popup
 				$scope.goToHomepage = function () {
+					
+					// get the current date and time for email generation
+					const today = new Date();
+					var year = today.getUTCFullYear();
+					var month = today.getMonth();
+					var day = today.getDate();
+					var hours = today.getHours();
+					var minutes = today.getMinutes();
+					var seconds = today.getSeconds();
+					console.log("heyyy" + today);
+					
+					// if month, day, minutes or seconds is less than 10, add a zero
+					if ( month < 10 ) month = "0" + month;
+					if ( day < 10 ) day = "0" + day;
+					if ( minutes < 10 ) minutes = "0" + minutes;
+					if ( seconds < 10 ) seconds = "0" + seconds;
+					
+					// create the time string with this format
+					// [year][month][day][hours][minutes][seconds]
+					var time = year + month + day + hours + minutes + seconds;
+					
+					// create the email
+					// [name].[time].guest@coffeemaker.com
+					var email = $scope.customer.name + "." + time + ".guest@coffeemaker.com";
+					
+					// set the currentUserName and currentUser email
 					sessionStorage.setItem("currentUserName", $scope.customer.name);
-					sessionStorage.setItem("currentUserEmail", $scope.customer.email);
+					sessionStorage.setItem("currentUserEmail", email);
+					
+					// clear the variables & form and go to the customer homepage
 					window.location.href = "/customerhomepage";
 					$scope.reset();
 				}
 				
+				// variable resetting and form clearing function
 				$scope.reset = function(){
 					$scope.customer = {
 						email: '',
@@ -127,6 +156,11 @@
 					}
 					
 					$scope.password = '';
+				}
+				
+				// go to main home page function
+				$scope.goToMainHomepage = function() {
+					window.location.href = "/index";
 				}
 			});
 			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
@@ -239,9 +273,7 @@
 					window.location.href = "/customersignup";
 				}
 			</script>
-            <a href="/index" style="border: none;">
-            	<back> ← </back>
-            </a>
+            <back style="text-decoration: none" ng-click="goToMainHomepage()">←</back>
 		</div>
 	</div>
 </body>
