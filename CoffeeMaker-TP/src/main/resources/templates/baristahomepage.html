@@ -124,6 +124,27 @@
 								}
 							});
 				}
+				
+				$scope.cancel = function() {
+					$scope.success = false;
+					$http.delete("/api/v1/orders/employee/" + $scope.order.id).then(
+							function(success) {
+								console.log('Success');
+								$scope.success = true;
+								$scope.getIncomplete();
+								$scope.getInprogress();
+							}, function(error) {
+								if (error.status === 404) {
+								    alert("Order Not Found");
+								    $scope.success = false;
+								}
+								if (error.status === 406) {
+								    alert("Order can not be canceled.");
+								    // Implement more later
+								    $scope.success = false;
+								}
+							});
+				}
 			
 				$scope.getIncomplete();
 				$scope.getInprogress();
@@ -200,7 +221,11 @@
 							</table>
 							<button ng-click="fulfill()"
 								class="button-side" style="	width: 215px; height: 50px;">Fulfill Order</button>
+							
 					</div>
+					
+					<button ng-click="cancel()"
+								class="button-side" style="	width: 215px; height: 50px;">Cancel Order</button>
 					</form>
 					</div>
 			</div>
