@@ -12,17 +12,6 @@ import edu.ncsu.csc.CoffeeMaker.models.users.Employee;
  *
  */
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-    // /**
-    // * Finds an Employee object with the provided id. Spring will generate
-    // code
-    // * to make this happen.
-    // *
-    // * @param id
-    // * of the employee
-    // *
-    // * @return Found employee, null if none.
-    // */
-    // Employee findById ( long id );
 
     /**
      * Finds the customer with the given email

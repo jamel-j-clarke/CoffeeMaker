@@ -12,5 +12,6 @@ import edu.ncsu.csc.CoffeeMaker.models.Inventory;
  *
  */
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
-
+    // This repository is empty because all ingredients are under
+    // inventory_ingredients in the database
 }

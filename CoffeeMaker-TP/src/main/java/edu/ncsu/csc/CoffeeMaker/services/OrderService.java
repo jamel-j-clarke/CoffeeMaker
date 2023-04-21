@@ -17,7 +17,7 @@ import edu.ncsu.csc.CoffeeMaker.repositories.OrderRepository;
  *
  * @author Emma Holincheck
  * @author Erin Grouge
- * @version 04/17/2023
+ * @version 04/20/2023
  *
  */
 @Component
@@ -62,6 +62,18 @@ public class OrderService extends Service<Order, Long> {
         return orderRepository.findByUserEmail( userEmail );
     }
 
+    /**
+     * Finds orders by their status and the users email
+     *
+     * @param status
+     *            the status of the order this will change depending on whether
+     *            this function is being used to generate the order history
+     *            list, the in-progress list, the barista order options list and
+     *            so on
+     * @param userEmail
+     *            the email of the user that placed the order
+     * @return a list of orders that meet the parameter criteria
+     */
     public List<Order> findByStatusNotAndUserEmail ( final OrderStatus status, final String userEmail ) {
         return orderRepository.findByStatusNotAndUserEmail( status, userEmail );
     }

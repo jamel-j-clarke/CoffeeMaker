@@ -14,6 +14,7 @@ import javax.validation.constraints.Min;
  *
  * @author Erin Grouge
  * @author Gabriel Watts
+ * @version 04/20/2023
  *
  */
 @Entity
@@ -115,17 +116,31 @@ public class Ingredient extends DomainObject {
 
     /**
      * Returns a string version of the ingredients information
+     *
+     * @return a String representation of the ingredient
      */
     @Override
     public String toString () {
         return "Ingredient [name=" + name + ", amount=" + amount + "]";
     }
 
+    /**
+     * Hash method that generates a hash for the recipe.
+     *
+     * @return an int hash
+     */
     @Override
     public int hashCode () {
         return Objects.hash( amount, name );
     }
 
+    /**
+     * Overrides the base equals methods for ingredients
+     *
+     * @param obj
+     *            the object that is being compared to the current ingredient
+     * @return true if the ingredients are equal and false if they are not
+     */
     @Override
     public boolean equals ( final Object obj ) {
         if ( this == obj ) {

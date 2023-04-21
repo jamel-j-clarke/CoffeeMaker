@@ -30,6 +30,11 @@ public class InventoryService extends Service<Inventory, Long> {
     @Autowired
     private InventoryRepository inventoryRepository;
 
+    /**
+     * Gets the current Inventory Repository
+     *
+     * @return the current Inventory Repository
+     */
     @Override
     protected JpaRepository<Inventory, Long> getRepository () {
         return inventoryRepository;
