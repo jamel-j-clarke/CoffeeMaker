@@ -137,6 +137,7 @@
 					// set the currentUserName and currentUser email
 					sessionStorage.setItem("currentUserName", $scope.customer.name);
 					sessionStorage.setItem("currentUserEmail", email);
+					sessionStorage.setItem("guest", "true");
 					
 					// clear the variables & form and go to the customer homepage
 					window.location.href = "/customerhomepage";

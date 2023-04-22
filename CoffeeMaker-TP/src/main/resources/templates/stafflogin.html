@@ -83,6 +83,9 @@
 			            		} else {
 			            			$scope.toggle();
 			            		}
+			            		
+			            		sessionStorage.setItem("currentUserName", $scope.employee.name);
+			            		sessionStorage.setItem("currentUserEmail", $scope.employee.email);
 			            	},
 			            	function(failure){
 			                	$scope.success = false;

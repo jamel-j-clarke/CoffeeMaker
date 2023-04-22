@@ -20,7 +20,18 @@
 			/*<![CDATA[*/
 			var app = angular.module('myApp', []);
 			app.controller('populateCtrl', function($scope, $http, $q) {
+				$http.get("api/v1/employees/email/" + sessionStorage.getItem("currentUserEmail")).then(
+			            	function (success) {
+			            		// An employee but not a manager, so redirect
+			            		if(success.status == 200){
+			            			window.location.href = "/stafflogin";
+			            		}			            	
+			            	}, function(failure) {
+			            		window.location.href = "/index";			            	
+			    });
+				
 				$scope.signout = function() {
+					
 					// update later to signout user of system instead of clearing
 					window.location.href = "/index";
 				}
@@ -90,6 +101,8 @@
 				
 				// go to login page function
 				function goToLogin() {
+					sessionStorage.setItem("currentUserName", "");
+			        sessionStorage.setItem("currentUserEmail","");
 					window.location.href = "/stafflogin";
 				}
 				

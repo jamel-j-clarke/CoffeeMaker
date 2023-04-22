@@ -24,6 +24,16 @@
 		var app = angular.module('myApp', []);
 		app.controller('recipesCtrl', function($scope, $http, $q) {
 		
+			$http.get("api/v1/employees/email/" + sessionStorage.getItem("currentUserEmail")).then(
+			            	function (success) {
+			            		// An employee but not a manager, so redirect
+			            		if(success.status == 200){
+			            			window.location.href = "/stafflogin";
+			            		}			            	
+			            	}, function(failure) {
+			            		window.location.href = "/index";			            	
+			    });
+		
 			$http.get("/api/v1/recipes").then(function(response) {
 				$scope.recipes = response.data;
 			});

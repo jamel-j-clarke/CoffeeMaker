@@ -47,7 +47,16 @@ back {
 		/*<![CDATA[*/
 		var app = angular.module('myApp', []);
 		app.controller('addIngredientCtrl', function($scope, $http, $q) {
-			console.log("Hit!");
+		
+			$http.get("api/v1/employees/email/" + sessionStorage.getItem("currentUserEmail")).then(
+			            	function (success) {
+			            		// An employee but not a manager, so redirect
+			            		if(success.status == 200){
+			            			window.location.href = "/stafflogin";
+			            		}			            	
+			            	}, function(failure) {
+			            		window.location.href = "/index";			            	
+			    });
 
 			$scope.reset = function() {
 				$scope.ingredient = {
