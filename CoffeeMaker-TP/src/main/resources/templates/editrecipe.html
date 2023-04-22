@@ -17,6 +17,7 @@
 			
 			$scope.canSubmit = false;
 			$scope.selected = false;
+			$scope.submitted = false;
 	
 			$scope.inventory = '';
 			
@@ -80,6 +81,7 @@
 			}
 
 			$scope.submit = function() {
+				$scope.submitted = true;
 				$scope.editRecipe();
 				$scope.canSubmit = false;
 				$scope.reset();
@@ -93,7 +95,7 @@
 				}, function(rejection) {
 					console.error("Error while getting Recipe");
 				})
-				
+				$scope.submitted = false;
 				$scope.getIngredients();
 				$scope.selected = true;
 				$scope.canSubmit = false;
@@ -105,7 +107,13 @@
 				$http.put("/api/v1/recipes/" + $scope.recipe.name, $scope.recipe).then(
 						function(response) {
 							$scope.editsuccess = true;
-							$scope.canSubmit = true;
+							// Since this function is used to edit the price as well as submitting all edits,
+							// this check is needed to appropriately allow/disallow using the back button. 
+							if($scope.submitted){
+								$scope.canSubmit = false;
+							} else {
+								$scope.canSubmit = true;
+							}
 							$scope.getRecipe();
 						}, function(rejection) {
 							$scope.failure = true;
