@@ -44,6 +44,15 @@
 			/*<![CDATA[*/
 			var app = angular.module('myApp', []);
 			app.controller('populateCtrl', function($scope, $http, $q) {
+				$http.get("api/v1/employees/email/" + sessionStorage.getItem("currentUserEmail")).then(
+			            	function (success) {
+			            		// A manager, so redirect.
+			            		if(success.status == 202){
+			            			window.location.href = "/stafflogin";
+			            		}			            	
+			            	}, function(failure) {
+			            		window.location.href = "/index";			            	
+			    });
 				console.log('Hit');
 				
 				$scope.ordersIncomp = {
@@ -78,6 +87,8 @@
 				}
 
 				$scope.signout = function(){  
+					sessionStorage.setItem("currentUserEmail", "");
+					sessionStorage.setItem("currentUserName", "");
 					// update later to signout user of system instead of clearing
 					window.location.href = "/index";
 				}
@@ -275,6 +286,8 @@
 				
 				// go to login page function
 				function goToLogin() {
+					sessionStorage.setItem("currentUserEmail", "");
+					sessionStorage.setItem("currentUserName", "");
 					window.location.href = "/stafflogin";
 				}
 				

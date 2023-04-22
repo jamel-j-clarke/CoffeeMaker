@@ -17,6 +17,18 @@
 			/*]]>*/
 			var app = angular.module('myApp', []);
 			app.controller('orderCtrl', function($scope, $http, $q) {
+				$http.get("api/v1/customers/email/" + sessionStorage.getItem("currentUserEmail")).then(
+						function(success){
+							// do nothing
+						},
+			            function(failure) {
+			            	// Guests won't be in customers database so check that they were signed in as a guest.
+			            	if(sessionStorage.getItem("guest") == "true"){
+			            		// do nothing
+			            	} else {
+			            		window.location.href = "/customerlogin";	
+			            	}		            	
+			    });
 					
 				// get the customer info
 				$scope.name = sessionStorage.getItem("currentUserName");
@@ -132,7 +144,7 @@
 							
 							<!-- total and order button -->
 							<td style="vertical-align: middle">
-								<input type="submit" style="font-size:36px; padding:20px; width:100%" ng-disabled="orderDrinkForm.$invalid" value="Order"/>
+								<input type="submit" style="font-size:36px; padding:20px; width:100%" ng-disabled="orderDrinkForm.$pristine" value="Order"/>
 							</td>
 						</tr>
 					</table>
