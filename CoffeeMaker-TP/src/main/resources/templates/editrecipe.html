@@ -421,24 +421,23 @@
 				</div>
 			</div>
 			<a ng-click="onHome();" style="border: none;"><back> ← </back></a>
-			
-			<!-- general message order popup -->
-			<div class="holder" id="messagePopup">
-				<p id="messageString"></p>
-				<br>
-				<popupButton href="#" onclick="messageToggle()">OK</popupButton>
-			</div>
-			
-			<script type="text/javascript">
-				//make the message popup disappear function
-				function messageToggle() {
-					var blur = document.getElementById('blur');
-					blur.classList.toggle('active');
-					var popup = document.getElementById('messagePopup');
-					popup.classList.toggle('active');
-				}
-			</script>
 		</div>
+		<!-- general message order popup -->
+		<div class="holder" id="messagePopup">
+			<p id="messageString"></p>
+			<br>
+			<popupButton href="#" onclick="messageToggle()">OK</popupButton>
+		</div>
+		
+		<script type="text/javascript">
+			//make the message popup disappear function
+			function messageToggle() {
+				var blur = document.getElementById('blur');
+				blur.classList.toggle('active');
+				var popup = document.getElementById('messagePopup');
+				popup.classList.toggle('active');
+			}
+		</script>
 	</div>
 </body>
 </html>
