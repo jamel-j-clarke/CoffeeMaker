@@ -5,7 +5,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="stylesheet" href="css/bootstrap.css" />
 <link rel="stylesheet" href="css/app.css" />
-<link rel="icon" type="image/png" href="images/favicon-1.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+	href="https://fonts.googleapis.com/css2?family=Raleway&display=swap"
+	rel="stylesheet">
+<link rel="icon" type="image/png" href="images/favicon-1.png" />
 </head>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
@@ -25,17 +30,11 @@
 		        $http.delete("/api/v1/recipes/" + recipe)
 		            .then(
 		            function (response) {
-		            		console.log(response);
-		    				$scope.submissionSuccess=true;	
-		    				
-		                
+	    				$scope.messageToggle("Recipe deleted successfully.");
 		             	updateRecipes();
 		            },
 		            function(rejection){
-		                console.error('Error while deleting recipe');
-		                console.log(rejection);
-		                
-						$scope.submissionSuccess=false;	
+		                $scope.messageToggle("Error while deleting recipe");
 		                
 		             	// Update recipe list
 				        $http.get("/api/v1/recipes").then(function (response) {
@@ -63,6 +62,19 @@
 			}
 			
   			updateRecipes();
+  			
+  			// make message popup appear function
+			$scope.messageToggle = function(message) {
+				
+				// set the message of the popup
+				document.getElementById("messageString").innerHTML = message;
+				
+				// toggle it
+				var blur = document.getElementById('blur');
+				blur.classList.toggle('active');
+				var popup = document.getElementById('messagePopup');
+				popup.classList.toggle('active');
+			}
 		});
 	/*]]>*/
 	</script>
@@ -73,51 +85,68 @@
 		<header>Coffee Recipes</header>
 		<br>
 
-		<div class="container">
-		<div class="form-group">
-		
-		<div ng-if="recipes.length > 0">
-			<div class="panel-heading" style="border-bottom: 2px solid transparent;">
-					<span><strong>Choose a Recipe to Delete</strong></span>
-			</div>	
-		</div>
-		
-		<ul style="list-style: none;">
-			  <li ng-repeat="recipe in recipes">
-			    <label style="font-size: 23px; font-weight: 500; display: inline-flex; align-items: center;">
-			      <input type="radio" ng-model="$parent.name" name="name" value="{{recipe.name}}" required="true" />
-			      {{recipe.name}}
-			    </label>
-			  </li>
-		</ul>
-		
-			<div ng-if="recipes.length > 0">
-			<br>
+		<div class="holder" id="blur">
+			<div class="form-group">
 
-				<div class="row">
-					<div class="form-group col-md-12">
-							<label style="font-size: 20px; display: flex; flex-direction: row; font-weight: 500;">
-							  <input type="checkbox" name="all" class="checkbox" ng-model="$parent.deleteAll">
-							     &nbsp;Delete all Recipes?
-							</label>
-							<input type="submit" value="Delete" ng-click="del()" style="width: 10%;"/>
+				<div ng-if="recipes.length > 0">
+					<div class="panel-heading"
+						style="border-bottom: 2px solid transparent;">
+						<span><strong>Choose a Recipe to Delete</strong></span>
 					</div>
 				</div>
+
+				<ul style="list-style: none;">
+					<li ng-repeat="recipe in recipes"><label 
+						style="font-size: 23px; font-weight: 500; display: inline-flex; align-items: center;">
+							<input type="radio" ng-model="$parent.name" name="name"
+							value="{{recipe.name}}" required="true" /> {{recipe.name}}
+					</label></li>
+				</ul>
+
+				<div ng-if="recipes.length > 0">
+					<br>
+
+					<div class="row">
+						<div class="form-group col-md-12">
+							<input type="submit" value="Delete" ng-click="del()"
+								style="width: 10%;" />
+						</div>
+					</div>
+					<label
+						style="font-size: 20px; display: flex; flex-direction: row; font-weight: 500;">
+						<input type="checkbox" name="all" class="checkbox"
+						ng-model="$parent.deleteAll"> &nbsp;Delete all Recipes?
+					</label>
+				</div>
+
+				<div ng-if="0 >= recipes.length">There are no recipes in CoffeeMaker.</div>
+
 			</div>
-
-			<div ng-if="0 >= recipes.length">There are no recipes in the
-				Coffee Maker.</div>
-				
-			<div ng-if="submissionSuccess">Recipe deleted successfully</div>
-
-
 		</div>
-	</div>
+		<a href="/managerhomepage" style="border: none;">
+			<back> ← </back>
+		</a>
+		
+		<!-- message popup -->
+		<div class="holder" id="messagePopup">
+			<p id="messageString"></p>
+			<br>
+			<popupButton onclick="messageToggle()">OK</popupButton>
+		</div>
+		
+		<script type="text/javascript">
 
-</div>
-			<a href="/managerhomepage" style="border: none;">
-            	<back> ← </back>
-            </a>
+		//make the message popup disappear function
+		function messageToggle() {
+			var blur = document.getElementById('blur');
+			blur.classList.toggle('active');
+			var popup = document.getElementById('messagePopup');
+			popup.classList.toggle('active');
+		}
+		</script>
+		
+	</div>
+	
 
 
 </body>

@@ -53,22 +53,6 @@
 				
 				$scope.password = '';
 				
-				// successful employee login
-				$scope.toggle = function() {
-					var blur = document.getElementById('blur'); 
-					blur.classList.toggle('active');
-					var popup = document.getElementById('popup'); 
-					popup.classList.toggle('active');
-				}
-				
-				// Successful log in as manager
-				$scope.mantoggle = function() {
-					var blur = document.getElementById('blur'); 
-					blur.classList.toggle('active');
-					var manpopup = document.getElementById('manpopup'); 
-					manpopup.classList.toggle('active');
-				}
-				
 				$scope.submit = function(){
 					$scope.employee.password = $scope.password;
 					$http.post("/api/v1/employees/validate", $scope.employee)
@@ -79,18 +63,18 @@
 			            		
 			            		// Check if manager
 			            		if(success.status === 202) {
-			            			$scope.mantoggle();
+			            			$scope.messageToggle("Hi " + $scope.employee.name + "! You're now logged in as Manager.");
 			            		} else {
-			            			$scope.toggle();
+			            			$scope.messageToggle("Hi " + $scope.employee.name + "! You're now logged in.");
 			            		}
 			            	},
 			            	function(failure){
 			                	$scope.success = false;
 			                	
 			                	if(failure.status == 404) {
-			                		alert("An account with that email does not exist. Contact your Manager to make the account.");
+			                		$scope.messageToggle("An account with that email doesn't exist. Contact the manager to get you registered!");
 			                	} else {
-			                		alert("Invalid password. Try again.");
+			                		$scope.messageToggle("The provided login information is incorrect.");
 			                	}
 			                	    
 			        		});
@@ -117,6 +101,19 @@
 				
 				$scope.reset();
 		
+				// make message popup appear function
+				$scope.messageToggle = function(message) {
+					
+					// set the message of the popup
+					document.getElementById("messageString").innerHTML = message;
+					
+					// toggle it
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var popup = document.getElementById('messagePopup');
+					popup.classList.toggle('active');
+					
+				}
 			});
 			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
 			/*<![CDATA[*/ 
@@ -168,19 +165,25 @@
 					</div>
 				</form>
 			</div>
-			<div class="holder" id="popup">
-				<p>Hi {{employee.name}}! <br> You're now logged in.</p>
-				<br> <br>
-				<a href="/baristahomepage" class="popupButton" style="text-decoration: none">OK</a>
-			</div>
-			<div class="holder" id="manpopup">
-				<p>Hi {{employee.name}}! <br> You're now logged in as Manager.</p>
-				<br> <br>
-				<a href="/managerhomepage" class="popupButton" style="text-decoration: none">OK</a>
-			</div>
             <a href="/index" style="border: none;">
             	<back> ← </back>
             </a>
+            <!-- general message order popup -->
+			<div class="holder" id="messagePopup">
+				<p id="messageString"></p>
+				<br>
+				<popupButton href="#" onclick="messageToggle()">OK</popupButton>
+			</div>
+			
+			<script type="text/javascript">
+				//make the message popup disappear function
+				function messageToggle() {
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var popup = document.getElementById('messagePopup');
+					popup.classList.toggle('active');
+				}
+			</script>
 		</div>
 	</div>	
 </body>
