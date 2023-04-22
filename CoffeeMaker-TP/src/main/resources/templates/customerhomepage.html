@@ -1,60 +1,84 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title>Customer Home</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="css/bootstrap.css" />
-	<link rel="stylesheet" href="css/app.css" />
-	<link rel="icon" type="image/png" href="images/favicon-1.png"/>
-	<style>
-		th, table {
-			margin-right: 1px;
-			margin-left: 20px;
-			border: 2px solid black;
-			border-collapse: collapse;
-			padding: 15px;
-		}
+<title>Customer Home</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+	href="https://fonts.googleapis.com/css2?family=Raleway&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="css/app.css" />
+<link rel="icon" type="image/png" href="images/favicon-1.png" />
+<style>
+th, table {
+	margin-right: 1px;
+	margin-left: 20px;
+	border: 2px solid black;
+	border-collapse: collapse;
+	padding: 15px;
+}
+
+#paymentPopup, #enjoyPopup, #messagePopup {
+	position: fixed;
+	top: 40%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 600px;
+	padding: 50px;
+	box-shadow: 0 5px 30px rgba(0, 0, 0, .3);
+	background: #FFF;
+	visibility: hidden;
+	opacity: 0;
+	transition: 0.35s;
+	font-size: 24px;
+}
+
+#paymentPopup.active, #enjoyPopup.active, #messagePopup.active {
+	top: 50%;
+	visibility: visible;
+	opacity: 1;
+	transition: 0.35s;
+}
 </style>
 </head>
 <body>
 	<div layout:fragment="content">
-		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+		<script
+			src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
 		<script>
 			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
 			/*]]>*/
 			var app = angular.module('myApp', []);
 			app.controller('populateCtrl', function($scope, $http, $q) {
 				
-				// log the hit
-				console.log("Hit!");
-				
-				// get the current customer's name
+				// get the current customer's name and email
 				$scope.name = sessionStorage.getItem("currentUserName");
 				$scope.email = sessionStorage.getItem("currentUserEmail");
-				console.log($scope.name);
-				console.log($scope.email);
 				
+				// initialize order variables
 				$scope.orders = '';
-				
 				$scope.order = {
 					id: '',
 					userEmail: ''
 				};
+				$scope.selectedOrder = {
+					id: '',
+					payment: '',
+				};
 				
+				$scope.customerPayment = '';
+				
+				// order getting function
 				$scope.updateOrders = function() {
 					// get the customer's orders
 					$http.get("/api/v1/orders/customer/" + $scope.email).then(function (response) {
 	  					$scope.orders = response.data;
-	  					console.log($scope.orders);
 	  				});
-				
 				}
 				
 				$scope.updateOrders();
-				
 				
 				// sign out as a customer
 				$scope.signOut = function() {
@@ -66,6 +90,7 @@
 					window.location.href = "customerlogin.html";
 				}
 				
+				// form and customer field clearing function
 				$scope.reset = function() {
 					// clear the fields of customer
 					$scope.customer = {
@@ -74,37 +99,98 @@
 						password: ''
 					};
 					
-					
 					// clear the form
 					if (undefined != $scope.customerHomepageForm) {
 						$scope.customerHomepageForm.$setPristine();
 					}
 				}
 				
+				// cancel order function
 				$scope.cancel = function(){  
 					$http.delete("/api/v1/orders/customer/" + $scope.order.id).then(
 					function (response) {
 	  					$scope.updateOrders();
 	  					console.log($scope.orders);
-	  					alert("Successfully canceled.");
+	  					$scope.messageToggle("Successfully canceled.");
 	  					$scope.reset();	
 	  				}, function(errResponse){
-	  					alert("Orders can not be canceled once they are started.");
+	  					$scope.messageToggle("Orders can not be canceled once they are started.");
 	  				});
-					
 				}
 				
+				// pickup order function
 				$scope.pickup = function(){  
 					$http.put("/api/v1/orders/pickup/" + $scope.order.id).then(
 					function (response) {
 	  					$scope.updateOrders();
-	  					alert("Enjoy your order!");
-	  					console.log($scope.orders);
+	  					$scope.paymentToggle();
 	  					$scope.reset();	
 	  				}, function(errResponse) {
-	  					alert("Orders can not be picked up until they are completed.");
+	  					$scope.messageToggle("Orders can not be picked up until they are completed.");
 	  				});
+				}
+				
+				// make payment popup appear function
+				$scope.paymentToggle = function() {
 					
+					// find the correct order
+					for ( let i = 0; i < $scope.orders.length; i++ ) {
+						if ( $scope.order.id === $scope.orders[i].id ) {
+							$scope.selectedOrder = {
+								id: $scope.orders[i].id,
+								payment: $scope.orders[i].payment,
+							};
+							document.getElementById("paymentMessage").innerHTML = "Your total" +
+							" for Order #" + $scope.selectedOrder.id + " is $" + $scope.selectedOrder.payment + ".00. Please enter in your payment:";
+						}
+					}
+					
+					// set the minimum of the input field
+					document.getElementById('customerPayment').setAttribute('min', $scope.selectedOrder.payment);
+					
+					// toggle the popup
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var popup = document.getElementById('paymentPopup');
+					popup.classList.toggle('active');
+				}
+				
+				// change calculation function
+				$scope.calculateChange = function() {
+					$scope.change = 0;
+					$scope.customerPayment = document.getElementById("customerPayment").value;
+					if ( $scope.customerPayment > $scope.selectedOrder.payment ) {
+						$scope.change = $scope.customerPayment - $scope.selectedOrder.payment;
+						document.getElementById("enjoyMessage").innerHTML = "Order #" + $scope.selectedOrder.id + " has been picked up." +
+							"Your change is $" + $scope.change + ".00.";
+					}
+					var popup = document.getElementById('paymentPopup');
+					popup.classList.toggle('active');
+					$scope.enjoyToggle();
+				}
+				
+				// make enjoy popup appear and clear enjoy form function
+				$scope.enjoyToggle = function() {
+					var popup = document.getElementById('enjoyPopup');
+					popup.classList.toggle('active');
+					
+					// clear the form
+					if (undefined != $scope.paymentForm) {
+						$scope.paymentForm.$setPristine();
+					}
+				}
+				
+				// make error popup appear function
+				$scope.messageToggle = function(message) {
+					
+					// set the message of the popup
+					document.getElementById("messageString").innerHTML = message;
+					
+					// toggle it
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var popup = document.getElementById('messagePopup');
+					popup.classList.toggle('active');
 				}
 				
 			});
@@ -113,51 +199,84 @@
 		</script>
 		<div ng-app="myApp" ng-controller="populateCtrl">
 			<button class="signout" onclick="toggle()">Sign Out</button>
-			<div class="holder" id="blur">			
+			<div class="holder" id="blur" name="blur">
 				<form ng-submit="submit()" name="customerHomepageForm">
-				<div>
-					<header>Hey {{name}},</header>
-				</div>
-				<br>
-			<div class="table-header">Current Orders:</div>	
-			<div class="button-group">
-				<table>
-					<colgroup>
-						<col style="width: 200px"/>
-						<col style="width: 500px"/>
-						<col style="width: 250px"/>
-					</colgroup>
-					<tr>
-						<th> </th>
-						<th>Order #:</th>
-						<th>Drink:</th>
-						<th>Status:</th>
-					</tr>
-					<tr ng-repeat="order in orders">
-						<td style="border: 2px solid #000000;"><input type="radio" ng-model="$parent.order.id" ng-value="order.id" name="id"></td>
-						<td style="border: 2px solid #000000;" id="orderID">{{order.id}}</td>
-						<td style="border: 2px solid #000000;" id="orderRecipe">{{order.beverage}}</td>
-						<td style="border: 2px solid #000000;" id=orderStatus>{{order.status}}</td>
-					</tr>
-				</table>
-				<button ng-click="cancel()" ng-disabled="customerHomepageForm.$pristine" 
-					class="button-side" style="	width: 180px; height: 50px;">Cancel</button>
-				<button ng-click="pickup()" ng-disabled="customerHomepageForm.$pristine" 
-					class="button-side" style="	width: 180px; height: 50px;">Pickup</button>
-			</div>
+					<div>
+						<header>Hey {{name}},</header>
+					</div>
+					<br>
+					<div class="table-header">Current Orders:</div>
+					<div class="button-group">
+						<table>
+							<colgroup>
+								<col style="width: 50px" />
+								<col style="width: 200px" />
+								<col style="width: 500px" />
+								<col style="width: 250px" />
+							</colgroup>
+							<tr>
+								<th></th>
+								<th>Order #:</th>
+								<th>Drink:</th>
+								<th>Status:</th>
+							</tr>
+							<tr ng-repeat="order in orders">
+								<td style="border: 2px solid #000000;"><input type="radio"
+									ng-model="$parent.order.id" ng-value="order.id" name="id"></td>
+								<td style="border: 2px solid #000000;" id="orderID">{{order.id}}</td>
+								<td style="border: 2px solid #000000;" id="orderRecipe">{{order.beverage}}</td>
+								<td style="border: 2px solid #000000;" id=orderStatus>{{order.status}}</td>
+							</tr>
+						</table>
+						<button ng-click="cancel()"
+							ng-disabled="customerHomepageForm.$pristine" class="button-side"
+							style="width: 180px; height: 50px;">Cancel</button>
+						<button ng-click="pickup()"
+							ng-disabled="customerHomepageForm.$pristine" class="button-side"
+							style="width: 180px; height: 50px;">Pickup</button>
+					</div>
 				</form>
-				</div>
-				<button href="orderdrink" onclick="goToOrder()" style="position: absolute; bottom: 8px; right: 8px;">Order Beverage</button>
-		</div>
+			</div>
+			<button href="orderdrink" onclick="goToOrder()"
+				style="position: absolute; bottom: 8px; right: 8px;">Order
+				Beverage</button>
 			<!--  sign out popup -->
 			<div class="holder" id="signoutPopup">
 				<p>Are you sure you would like to sign out?</p>
 				<br>
-				<popupButton href="/customerlogin" onclick="goToLogin()">Sign Out</popupButton>
+				<popupButton href="/customerlogin" onclick="goToLogin()">Sign
+				Out</popupButton>
 				<popupButton href="#" onclick="toggle()">Cancel</popupButton>
 			</div>
-			<!-- end of sign out popup -->
-			
+
+			<!-- payment popup -->
+			<div class="holder" id="paymentPopup">
+				<form ng-submit="calculateChange()" name="paymentForm">
+					<p id="paymentMessage">Your total for Order
+						#{{selectedOrder.id}} is ${{selectedOrder.payment}}.00. Please
+						enter in your payment:</p>
+					$<input type="number" id="customerPayment" required="true" />
+					<input type="submit" value="OK" />
+				</form>
+
+			</div>
+
+			<!-- enjoy order message popup -->
+			<div class="holder" id="enjoyPopup">
+				<p id="enjoyMessage">Order #{{selectedOrder.id}} has been picked
+					up.</p>
+				<br>
+				<p>Enjoy your order!</p>
+				<popupButton onclick="enjoyToggle()">OK</popupButton>
+			</div>
+
+			<!-- message popup -->
+			<div class="holder" id="messagePopup">
+				<p id="messageString"></p>
+				<br>
+				<popupButton onclick="messageToggle()">OK</popupButton>
+			</div>
+
 			<script type="text/javascript">
 				// make signout popup appear function
 				function toggle() {
@@ -166,7 +285,23 @@
 					var popup = document.getElementById('signoutPopup'); 
 					popup.classList.toggle('active');
 				}
-
+				
+				// make the enjoy popup disappear function
+				function enjoyToggle() {
+					var blur = document.getElementById('blur'); 
+					blur.classList.toggle('active');
+					var popup = document.getElementById('enjoyPopup'); 
+					popup.classList.toggle('active');
+				}
+				
+				//make the message popup disappear function
+				function messageToggle() {
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var popup = document.getElementById('messagePopup');
+					popup.classList.toggle('active');
+				}
+				
 				// go to login page function
 				function goToLogin() {
 					window.location.href = "/customerlogin";
@@ -176,7 +311,11 @@
 				function goToOrder() {
 					window.location.href = "/orderdrink";
 				}
+				
+				
 			</script>
 		</div>
+
+	</div>
 </body>
 </html>
