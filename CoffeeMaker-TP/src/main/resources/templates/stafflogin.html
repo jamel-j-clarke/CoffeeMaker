@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="css/app.css" />
 <link rel="icon" type="image/png" href="images/favicon-1.png"/>
 <style>
-   	#loginPopup {
+   	#baristaLoginPopup, #managerLoginPopup {
    		position: fixed;
    		top: 40%;
    		left: 50%;
@@ -23,7 +23,7 @@
    		opacity: 0;
    		transition: 0.35s;
    	}
-   	#loginPopup.active {
+   	#baristaLoginPopup.active, #managerLoginPopup.active {
    		top: 50%;
    		visibility: visible;
    		opacity: 1;
@@ -61,12 +61,9 @@
 			            		
 			            		// Check if manager
 			            		if(success.status === 202) {
-			            			$scope.loginToggle("Hi " + $scope.employee.name + "! You're now logged in as Manager.",
-			            					"/managerhomepage");
-			            			console.log("hit!");
+			            			$scope.managerLoginToggle();
 			            		} else {
-			            			$scope.loginToggle("Hi " + $scope.employee.name + "! You're now logged in.",
-			            					"/baristahomepage");
+			            			$scope.baristaLoginToggle();
 			            		}
 			            	},
 			            	function(failure){
@@ -102,19 +99,23 @@
 				
 				$scope.reset();
 		
-				// make login popup appear function
-				$scope.loginToggle = function(message, destination) {
-					
-					// set the message of the popup
-					document.getElementById("loginMessage").innerHTML = message;
-					
-					// set the destination page for the button
-					document.getElementById("loginButton").href = destination;
+				// make barista login popup appear function
+				$scope.baristaLoginToggle = function(message, destination) {
 					
 					// toggle it
 					var blur = document.getElementById('blur');
 					blur.classList.toggle('active');
-					var popup = document.getElementById('loginPopup');
+					var popup = document.getElementById('baristaLoginPopup');
+					popup.classList.toggle('active');
+				}
+				
+				// make manager login popup appear function
+				$scope.managerLoginToggle = function() {
+					
+					// toggle it
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var popup = document.getElementById('managerLoginPopup');
 					popup.classList.toggle('active');
 				}
 				
@@ -138,11 +139,11 @@
 
 		<div ng-app="myApp" ng-controller="populateCtrl">
 			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
-			<div>
-				<header>Employee Login</header>
-			</div>
-			<br>
 			<div class="holder" id="blur">
+				<div>
+					<header>Employee Login</header>
+				</div>
+				<br>
 				<form ng-sumbit="submit()" name="employeeLoginForm">
 					<table style="border: none; margin-left: auto; margin-right: auto;">
 						<tr>
@@ -170,7 +171,6 @@
 										required="true" style="border-radius: 7px;"/>
 								</div>
 							</td>
-							
 						</tr>
 					</table>
 					
@@ -184,11 +184,18 @@
 			</div>
            	<back href="/index" style="border: none;"> ← </back>
             
-            <!-- login popup -->
-			<div class="holder" id="loginPopup">
-				<p id="loginMessage"></p>
+            <!-- barista login popup -->
+			<div class="holder" id="baristaLoginPopup">
+				<p>Hi {{employee.name}}! You're now logged in.</p>
 				<br>
-				<popupButton id="loginButton" onclick="loginToggle()">OK</popupButton>
+				<popupButton href="/baristahomepage" onclick="baristaLoginToggle()">OK</popupButton>
+			</div>
+			
+			<!-- manager login popup -->
+			<div class="holder" id="managerLoginPopup">
+				<p>Hi {{employee.name}}! You're now logged in as manager.</p>
+				<br>
+				<popupButton href="/managerhomepage" onclick="managerLoginToggle()">OK</popupButton>
 			</div>
 			
 			<!-- general message order popup -->
@@ -207,11 +214,19 @@
 					popup.classList.toggle('active');
 				}
 				
-				// make the login popup disappear function
-				function loginToggle() {
+				// make the barista login popup disappear function
+				function baristaLoginToggle() {
 					var blur = document.getElementById('blur');
 					blur.classList.toggle('active');
-					var popup = document.getElementById('loginPopup');
+					var popup = document.getElementById('baristaLoginPopup');
+					popup.classList.toggle('active');
+				}
+				
+				// make the manager login popup disappear function
+				function managerLoginToggle() {
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var popup = document.getElementById('managerLoginPopup');
 					popup.classList.toggle('active');
 				}
 			</script>
