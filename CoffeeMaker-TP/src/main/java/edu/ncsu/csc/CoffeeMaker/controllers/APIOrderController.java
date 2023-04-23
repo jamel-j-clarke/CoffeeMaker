@@ -224,7 +224,7 @@ public class APIOrderController extends APIController {
 
         else {
             return new ResponseEntity( errorResponse( currOrder.getId() + " does not have enough ingredients" ),
-                    HttpStatus.BAD_REQUEST );
+                    HttpStatus.CONFLICT );
         }
 
     }
@@ -276,7 +276,7 @@ public class APIOrderController extends APIController {
 
         else {
             return new ResponseEntity( errorResponse( currOrder.getId() + " does not have enough ingredients" ),
-                    HttpStatus.BAD_REQUEST );
+                    HttpStatus.CONFLICT );
         }
 
     }
