@@ -12,7 +12,8 @@
 </head>
 <body>
 	<div layout:fragment="content">
-		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+		<script
+			src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
 		<script>
 		/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
 		/*]]>*/
@@ -36,42 +37,37 @@
 			$scope.getInventory = function() {
 				$http.get("/api/v1/inventory").then(function(response) {
 					$scope.inventory = response.data;
-					console.log($scope.inventory);
 				}, function(rejection) {
-					console.error("Error while getting Inventory");
+					$scope.messageToggle("There was in error while getting CoffeeMaker's inventory.");
 				})
 			}
 
 			$scope.updateIngredient = function() {
 				$scope.success = false;
-				console.log($scope.ingredient);
 				
 				if($scope.ingredient.amount > 0 && $scope.ingredient.name != ''){
 				
 					$http.put("/api/v1/inventory/" + $scope.ingredient.name, $scope.ingredient)
 		            	.then(
 		            	function (response) {
-		            		console.log(response);
 		    				$scope.success = true;	
 		    				
 		                	$scope.getInventory();
 		            	},
 		            	function(rejection){
-		                	console.error('Error while editing ingredient');
-		                	console.log(rejection);
+		                	$scope.messageToggle("There was an error while trying to update the amount of athe ingredient.");
 		                
 							$scope.success = false;
 		            	}
 		        	);
 		        } else {
-		        	alert("Invalid Input. Try Again.");
+		        	$scope.messageToggle("Invalid amount. Try again.");
 		        }
 				$scope.reset();
 			}
 			
 			$scope.addIngredient = function() {
 				$scope.success = false;
-				console.log($scope.newIngredient);
 				
 				if($scope.newIngredient.amount > 0 && $scope.newIngredient.name != ''){
 					$http.post("/api/v1/inventory", $scope.newIngredient).then(
@@ -80,16 +76,16 @@
 								$scope.getInventory();
 							}, function(error) {
 							      if (error.status === 409) {
-							          alert("Cannot add duplicate ingredient. Try again.");
+							          $scope.messageToggle("That ingredient is already in CoffeeMaker. Try adding a new one.");
 							          $scope.success = false;
 							        } else {
-							          console.error("Error while adding ingredient", error);
-							          alert("Invalid amount. Try again.");
+							          $scope.messageToggle("Invalid amount. Try again.");
+							          
 							          $scope.success = false;
 							        }
 							      });
 				} else {
-		        	alert("Invalid Input. Try Again.");
+					$scope.messageToggle("Invalid input. Try again.");
 		        }
 				$scope.reset();
 			}
@@ -117,88 +113,127 @@
 			$scope.reset();
 			
 			$scope.getInventory();
-
+			
+			// make message popup appear function
+			$scope.messageToggle = function(message) {
+				
+				// set the message of the popup
+				document.getElementById("messageString").innerHTML = message;
+				
+				// toggle it
+				var blur = document.getElementById('blur');
+				blur.classList.toggle('active');
+				var popup = document.getElementById('messagePopup');
+				popup.classList.toggle('active');
+				
+			}
 		});
 		/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
 		/*]]>*/
 	</script>
-	<div ng-app="myApp" ng-controller="inventoryCtrl as ctrl">
-		<header>Manage Inventory</header>
+		<div ng-app="myApp" ng-controller="inventoryCtrl as ctrl">
+			<header>Manage Inventory</header>
 			<br>
-		<div class="container">
-		<div class="form-group">
-			<div class="panel">
-				<div class="panel-heading">
-					<span><strong>Current Inventory</strong></span>
-				</div>	
-					<div class="panel-body">			
-						<span ng-repeat="ingredient in inventory.ingredients">&nbsp;<strong>{{ingredient.name}} : </strong>  &nbsp;{{ingredient.amount}}<br /></span>
-					</div>
-				<div class="panel-heading-middle">
-					<span><strong>Update Inventory</strong></span>
-				</div>
-					<div class="panel-body">
-						<form ng-submit="updateIngredient()" name="inventoryForm">
-							<div class="row justify-content-center">
-								<div class="form-group col-md-12">
-								<label class="col-sm-2 label-sm">Ingredient </label>
-				      				<div class="col-md-4">
-				      					<select ng-model="ingredient.name" name="name" ng-required="true" class="form-control input-md-6">
-					      					<option value="">Select an Ingredient</option>
-					      					<option ng-repeat="ingredient in inventory.ingredients" ng-value="ingredient.name">{{ingredient.name}}</option>	
-				      					</select>
-				      				</div>
-		
-									<label class="col-sm-1 label-sm">Amount</label>
-				      				<div class="col-md-2">
-				        					<input type="number" ng-model="ingredient.amount" name="amount"
-													class="form-control input-md-6"
-													placeholder="Enter ingredient amount to add to inventory." required="0" min="1"/>
-				      				</div>
-									<div class="col-md-3">
-										<input type="submit" value="Update Inventory" ng-disabled="addInventoryForm.$invalid" style="width: 70%;"/>	 
+			<div class="container" style="transition: 0.35s" id="blur">
+				<div class="form-group">
+					<div class="panel">
+						<div class="panel-heading">
+							<span><strong>Current Inventory</strong></span>
+						</div>
+						<div class="panel-body">
+							<span ng-repeat="ingredient in inventory.ingredients">&nbsp;<strong>{{ingredient.name}}
+									: </strong> &nbsp;{{ingredient.amount}}<br /></span>
+						</div>
+						<div class="panel-heading-middle">
+							<span><strong>Update Inventory</strong></span>
+						</div>
+						<div class="panel-body">
+							<form ng-submit="updateIngredient()" name="inventoryForm">
+								<div class="row justify-content-center">
+									<div class="form-group col-md-12">
+										<label class="col-sm-2 label-sm">Ingredient </label>
+										<div class="col-md-4">
+											<select ng-model="ingredient.name" name="name"
+												ng-required="true" class="form-control input-md-6">
+												<option value="">Select an Ingredient</option>
+												<option ng-repeat="ingredient in inventory.ingredients"
+													ng-value="ingredient.name">{{ingredient.name}}</option>
+											</select>
+										</div>
+
+										<label class="col-sm-1 label-sm">Amount</label>
+										<div class="col-md-2">
+											<input type="number" ng-model="ingredient.amount"
+												name="amount" class="form-control input-md-6"
+												placeholder="Enter ingredient amount to add to inventory."
+												required="0" min="1" />
+										</div>
+										<div class="col-md-3">
+											<input type="submit" value="Update Inventory"
+												ng-disabled="addInventoryForm.$invalid" style="width: 70%;" />
+										</div>
 									</div>
-							    </div>
-							</div>
-						</form>
+								</div>
+							</form>
 						</div>
 						<div class="form-group">
-						<form ng-submit="addIngredient()" name="inventoryForm">
-							<div class="row justify-content-center">
-								<div class="form-group col-md-12">
-								<label class="col-sm-2 label-sm">Name </label>
-				      				<div class="col-md-4">
-										<input type="text" ng-model="newIngredient.name" name="newName"
-													class="name form-control input-md-6"
-													placeholder="Enter ingredient name. No duplicate names." required>
-				      				</div>
-		
-									<label class="col-sm-1 label-sm">Amount</label>
-				      				<div class="col-md-2">
-				        					<input type="number" ng-model="newIngredient.amount" name="newAmount"
-													class="form-control input-md-6"
-													placeholder="Enter ingredient amount to add to inventory." required="0" min="1"/>
-				      				</div>
-									<div class="col-md-3">
-										<input type="submit" value="Add Ingredient" ng-disabled="addInventoryForm.$invalid" style="width: 70%;"/>	 
+							<form ng-submit="addIngredient()" name="inventoryForm">
+								<div class="row justify-content-center">
+									<div class="form-group col-md-12">
+										<label class="col-sm-2 label-sm">Name </label>
+										<div class="col-md-4">
+											<input type="text" ng-model="newIngredient.name"
+												name="newName" class="name form-control input-md-6"
+												placeholder="Enter ingredient name. No duplicate names."
+												required>
+										</div>
+
+										<label class="col-sm-1 label-sm">Amount</label>
+										<div class="col-md-2">
+											<input type="number" ng-model="newIngredient.amount"
+												name="newAmount" class="form-control input-md-6"
+												placeholder="Enter ingredient amount to add to inventory."
+												required="0" min="1" />
+										</div>
+										<div class="col-md-3">
+											<input type="submit" value="Add Ingredient"
+												ng-disabled="addInventoryForm.$invalid" style="width: 70%;" />
+										</div>
 									</div>
-							    </div>
-							</div>
-						</form>
+								</div>
+							</form>
 						</div>
 						<div class="panel-footer">
-						<footer ng-show="success">Inventory Updated!</footer>
+							<footer ng-show="success">Inventory Updated!</footer>
+						</div>
 					</div>
-				</div>	
+				</div>
 			</div>
-		</div>	
-		<div class="col">
-			<a href="/managerhomepage" style="border: none;">
-        		<back> ← </back>
-        	</a>
-        	<button type="button" ng-click="reset()" class="reset" ng-disabled="addInventoryForm.$pristine">Reset Form</button>	 
+			<div class="col">
+				<a href="/managerhomepage" style="border: none;"> <back>
+					← </back>
+				</a>
+				<button type="button" ng-click="reset()" class="reset"
+					ng-disabled="addInventoryForm.$pristine">Reset Form</button>
+			</div>
+			
+			<!-- general message order popup -->
+			<div class="holder" id="messagePopup">
+				<p id="messageString"></p>
+				<br>
+				<popupButton href="#" onclick="messageToggle()">OK</popupButton>
+			</div>
+			<script type="text/javascript">
+				//make the message popup disappear function
+				function messageToggle() {
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var popup = document.getElementById('messagePopup');
+					popup.classList.toggle('active');
+				}
+			</script>
+			
 		</div>
-		</div>
-  </div>
+	</div>
 </body>
 </html>

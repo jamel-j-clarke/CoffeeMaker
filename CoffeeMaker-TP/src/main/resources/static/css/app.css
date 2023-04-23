@@ -67,7 +67,7 @@ label {
 	padding-right: 20px;
 }
 
-#signoutPopup {
+#signoutPopup, #messagePopup {
 	position: fixed;
 	top: 40%;
 	left: 50%;
@@ -81,7 +81,7 @@ label {
 	transition: 0.35s;
 	font-size: 24px;
 }
-#signoutPopup.active {
+#signoutPopup.active, #messagePopup.active {
 	top: 50%;
 	visibility: visible;
 	opacity: 1;
@@ -110,9 +110,10 @@ popupButton:hover, .popupButton:hover {
 	transition: 0.35s;
 }
 
-.holder#blur.active {
+.holder#blur.active, .container#blur.active {
 	filter: blur(7px);
 }
+
 div {
 	margin-bottom: 10px;
 	vertical-align: middle;
@@ -213,6 +214,7 @@ back {
 	left: 8px;
 	font-size: 60px;
 	user-select: none;
+	text-decoration: none;
 }
 back:hover {
 	color: black;

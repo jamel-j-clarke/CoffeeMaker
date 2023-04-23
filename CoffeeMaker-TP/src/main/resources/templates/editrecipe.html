@@ -4,7 +4,12 @@
 <title>Edit Recipe</title>
 <link rel="stylesheet" href="css/bootstrap.css" />
 <link rel="stylesheet" href="css/app.css" />
-<link rel="icon" type="image/png" href="images/favicon-1.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+	href="https://fonts.googleapis.com/css2?family=Raleway&display=swap"
+	rel="stylesheet">
+<link rel="icon" type="image/png" href="images/favicon-1.png" />
 </head>
 <body>
 	<script
@@ -63,7 +68,7 @@
 				$http.get("/api/v1/recipes/" + $scope.recipe.name).then(function(response) {
 					$scope.recipe = response.data;
 				}, function(rejection) {
-					console.error("Error while getting Recipe");
+					$scope.messageToggle("There was an error while getting the recipe.");
 				})
 			}
 			
@@ -73,9 +78,9 @@
 							$scope.ingredients = success.data;
 						}, function(error) {
 							if (error.status === 404) {
-								  console.error("Error there's no ingredients", error);
+								$scope.messageToggle("There aren't any ingredients in CoffeeMaker. Contact the manager to update the inventory.");
 					        } else {
-					          console.error("Error while getting ingredients", error);
+					          	$scope.messageToggle("There was an error while getting all of the ingredients in CoffeeMaker.");
 					        }
 					    });
 			}
@@ -101,7 +106,7 @@
 				$http.get("/api/v1/recipes/" + $scope.recipe.name).then(function(response) {
 					$scope.OGrecipe = response.data;
 				}, function(rejection) {
-					console.error("Error while getting Recipe");
+					$scope.messageToggle("There was an error while getting the recipe.");
 				})
 				$scope.submitted = false;
 				$scope.getIngredients();
@@ -125,7 +130,7 @@
 							$scope.getRecipe();
 						}, function(rejection) {
 							$scope.failure = true;
-							console.error("Error while editing Recipe!");
+							$scope.messageToggle("There was an error while editing the recipe.");
 						});
 			}
 			
@@ -143,10 +148,10 @@
 							$scope.getRecipe();
 							
 						}, function(error) {
-						    alert("Cannot add duplicate ingredient. Try Again.");
+							$scope.messageToggle("That ingredient is already in CoffeeMaker. Try adding a new one.");
 					    });
 				} else {
-					alert("Invalid Input. Try Again.");
+					$scope.messageToggle("Invalid Input. Try Again.");
 				}
 				
 				$scope.resetIngredient();
@@ -163,21 +168,19 @@
 					$http.put("/api/v1/recipes/" + $scope.recipe.name + "/ingredients/" + $scope.name, $scope.updateIngredient)
 		            	.then(
 		            	function (response) {
-		            		console.log(response);
 		    				$scope.editsuccess = true;	
 		    				$scope.canSubmit = true;
 		                	$scope.getIngredients();
 		                	$scope.getRecipe();
 		            	},
 		            	function(rejection){
-		                	console.error('Error while editing ingredient');
-		                	console.log(rejection);
+		                	$scope.messageToggle("There was an error while editing an ingredient.");
 		                
 							$scope.editsuccess = false;
 		            	}
 		        	);
 		        } else {
-		        	alert("Invalid Input. Try Again.");
+		        	$scope.messageToggle("Invalid Input. Try Again.");
 		        }
 		        $scope.resetIngredient();
 			}
@@ -189,18 +192,16 @@
 					$http.delete("/api/v1/recipes/" + $scope.recipe.name + "/ingredients/" + $scope.name)
 		            	.then(
 		            	function (response) {
-		            		console.log(response);
 		    				$scope.delsuccess=true;	
 		    				$scope.canSubmit = true;
 		                	$scope.getIngredients();
 		                	$scope.getRecipe();
 		            	},
 		            	function(rejection){
-		                	console.error('Error while deleting ingredient');
-		                	console.log(rejection);		                
+		                	$scope.messageToggle("There was an error while removing an ingredient.");
 		            	});
 		        } else {
-		        	alert("Recipe must have at least one ingredient.");
+		        	$scope.messageToggle("Recipe must have at least one ingredient.");
 		        }
 		        
 		        $scope.resetIngredient();
@@ -246,7 +247,7 @@
 			
 			$scope.onHome = function() {
 				if($scope.canSubmit){
-					alert("Current Recipe has not been submitted. Submit or Cancel before returning home.");
+					$scope.messageToggle("Current recipe has not been submitted. Submit or Cancel before returning home.");
 				} else {
 					window.location.href = "/managerhomepage";
 				}
@@ -262,158 +263,199 @@
 
 			$scope.reset();
 
+			// make message popup appear function
+			$scope.messageToggle = function(message) {
+				console.log("hit!");
+				
+				// set the message of the popup
+				document.getElementById("messageString").innerHTML = message;
+				
+				// toggle it
+				var blur = document.getElementById('blur');
+				blur.classList.toggle('active');
+				var popup = document.getElementById('messagePopup');
+				popup.classList.toggle('active');
+				
+			}
 		});
 		/*]]>*/
 	</script>
 
 
 
-	<div class="generic-container ng-cloak" ng-app="myApp"
-		ng-controller="recipesCtrl as ctrl">
-		<div class="container">
-		<div class="form-group">
-		<div class="panel">
-			<div class="panel-heading">
-				<span><strong>Edit a Recipe</strong></span>
-			</div>
-			<div class="formcontainer">
-				<form ng-submit="submit()" name="editRecipeForm"
-					class="form-horizontal">
-						<div class="form-group col-md-12">
-							<label class="col-md-3 label-sm" for="ingredient">Select a Recipe to Edit:</label>
-		      				<div class="col-md-6">
-		      					<select ng-model="recipe.name" name="recipename" ng-required="true" class="form-control input-md-6">
-			      					<option value="">Select a Recipe</option>
-			      					<option ng-repeat="recipe in recipes" ng-value="recipe.name">{{recipe.name}}</option>	
-		      					</select>
-								<div class="has-error" ng-show="editRecipeForm.$dirty">
-									<span ng-show="editRecipeForm.recipename.$error.required">This
-										is a required field for editing a recipe.</span>
-								</div>
-		      				</div>						
-						
-							<div class="col-md-1">
-									<button type="button" ng-click="selectRecipe()" style="font-size: 20px; height: 35px; width: 150px; padding: 1px; margin-left: 10px;"
-										ng-disabled="editRecipeForm.recipename.$error.required">Select Recipe</button>
-							
-							</div>
-						</div>
-					
-					<div ng-hide="!selected">
-							<label class="col-md-3 label-sm" for="price">Price: </label>
-							<div class="col-md-5">
-								<input type="number" ng-model="recipe.price" name="price"
-									class="price form-control input-sm"
-									placeholder="Enter recipe price. Must be positive whole number (USD)." required="0" min="0"/>
-								<div class="has-error" ng-show="editRecipeForm.$dirty">
-									<span ng-show="editRecipeForm.price.$error.min">Minimum price
-										is 0 for creating a recipe.<br></span>
-								</div>
-							</div>
-							
-							
-							<div class="col-md-1">
-							<!-- instead of reset, a more custom reset so that name and price stay -->
-								<button type="button" ng-click="editRecipe()"
-									ng-disabled="editRecipeForm.price.$error.min"
-									style="height: 35px; width: 100px; padding: 1px; position: absolute;">Edit Price</button>
-							</div>
-					
-					
-						<div class="row">
+	<div class="generic-container ng-cloak" ng-app="myApp" ng-controller="recipesCtrl as ctrl">
+		<div class="container" style="width:80%; transition: 0.35s;" id="blur">
+			<div class="form-group">
+				<div class="panel">
+					<div class="panel-heading">
+						<span><strong>Edit a Recipe</strong></span>
+					</div>
+					<div class="formcontainer">
+						<form ng-submit="submit()" name="editRecipeForm"
+							class="form-horizontal">
 							<div class="form-group col-md-12">
-								<label class="col-md-2 label-sm" for="ingredient">Add Ingredient:</label>
-		      					<div class="col-md-3">
-		      						<select ng-model="ingredient.name" name="ingredientname" ng-required="true" class="form-control input-md-6">
-			      						<option value="">Select an Ingredient</option>
-			      						<option ng-repeat="ingredient in inventory" ng-value="ingredient.name">{{ingredient.name}}</option>	
-		      						</select>
-		      					</div>
+								<label class="col-md-3 label-sm" for="ingredient">Select
+									a Recipe to Edit:</label>
+								<div class="col-md-6">
+									<select ng-model="recipe.name" name="recipename"
+										ng-required="true" class="form-control input-md-6">
+										<option value="">Select a Recipe</option>
+										<option ng-repeat="recipe in recipes" ng-value="recipe.name">{{recipe.name}}</option>
+									</select>
+									<div class="has-error" ng-show="editRecipeForm.$dirty">
+										<span ng-show="editRecipeForm.recipename.$error.required">This
+											is a required field for editing a recipe.</span>
+									</div>
+								</div>
 
-								<label class="col-md-1 label-sm" for="amount">Amount:</label>
-		      					<div class="col-md-3">
-		        						<input type="number" ng-model="ingredient.amount" name="amount"
-											class="form-control input-md-6"
-											placeholder="Enter ingredient amount used by recipe." required="0" min="1"/>
-										<div class="has-error" ng-show="editRecipeForm.$dirty">
-											<span ng-show="editRecipeForm.amount.$error.min">Amount must be greater than
-												0 for adding an ingredient to recipe.</span>
-										</div>
-		      					</div>
-		      						<button type="button" ng-click="addIngredient()"
-										ng-disabled="editRecipeForm.amount.$error.min" >Add Ingredient</button>
-	           	 			</div>
-					    </div>
-					
-						<label class="panel-heading" for="list" style="border-bottom: 2px solid transparent;">Ingredient List</label>
-						<div class="row">	
-						<div class="button-group">
-                              <table class="table">
-                                  <tr>
-                                    <th>Edit/Delete</th>
-                                    <th>Name</th>
-                                    <th>Amount</th>
-                                  </tr>
-                                <tbody>
-                                  <tr ng-repeat="ingredient in ingredients">
-                                     <td>
-                                      <label>
-                                          <input type="radio" name="name" ng-model="$parent.name" value="{{ingredient.name}}">
-                                        </label>
-                                      </td>
-                                      <td>{{ ingredient.name }}</td>
-                                      <td>{{ ingredient.amount }}</td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                              </div>
-                                                  		<div class="col-sm-1">
-								<button type="button" ng-click="deleteIngredient()" style="height: 35px; width: 80px; padding: 1px;"
-									ng-disabled="addRecipeForm.$pristine">   Delete   </button>
-							</div>
-							<div class="col-sm-1">
-								<button type="button" ng-click="editIngredient()" style="height: 35px; width: 60px; padding: 1px;"
-									ng-disabled="addRecipeForm.$pristine">    Edit    </button>
-							</div>
-							<div class="col-sm-3">
-								<input type="number" ng-model="updateIngredient.amount" name="newAmount"
-									class="newAmount form-control input-md-1"
-									placeholder="Enter ingredient amount." required="0" min="1"/>
-								<div class="has-error" ng-show="addRecipeForm.$dirty">
-										 <span ng-show="addRecipeForm.newAmount.$error.min">Amount
-											must be greater than 0 for ingredient in recipe.</span>
+								<div class="col-md-1">
+									<button type="button" ng-click="selectRecipe()"
+										style="font-size: 20px; height: 35px; width: 150px; padding: 1px; margin-left: 10px;"
+										ng-disabled="editRecipeForm.recipename.$error.required">Select
+										Recipe</button>
+
 								</div>
 							</div>
-                    	</div>
-					</div>
-					
-					<div class="row" >
-						<div class="form-actions floatRight">
-								<button type="button" ng-click="submit()" ng-disabled="!canSubmit"
-								style="height: 35px; width: 90px; padding: 1px; position: absolute; margin-left: 1050px;">Submit</button>
-								 
-								<button type="button" ng-click="clear()"
-								style="height: 35px; width: 140px; padding: 1px; position: absolute; margin-left: 900px;">Cancel Edits</button>	
-						</div>
-					</div>
-						
-				</form>
-			</div>
-					
-			<div class="panel-footer">
-				<div ng-show="delsuccess">Ingredient Deleted!</div>
-				<div ng-show="editsuccess">Recipe Edited!</div>
-				<div ng-show="isuccess">Ingredient Added!</div>
-			</div>
-			
-		</div>
-		</div>
-		</div>
 
-		<a ng-click="onHome();" style="border: none;">
-           <back> ← </back>
-        </a>
+							<div ng-hide="!selected">
+								<label class="col-md-3 label-sm" for="price">Price: </label>
+								<div class="col-md-5">
+									<input type="number" ng-model="recipe.price" name="price"
+										class="price form-control input-sm"
+										placeholder="Enter recipe price. Must be positive whole number (USD)."
+										required="0" min="0" />
+									<div class="has-error" ng-show="editRecipeForm.$dirty">
+										<span ng-show="editRecipeForm.price.$error.min">Minimum
+											price is 0 for creating a recipe.<br>
+										</span>
+									</div>
+								</div>
+
+
+								<div class="col-md-1">
+									<!-- instead of reset, a more custom reset so that name and price stay -->
+									<button type="button" ng-click="editRecipe()"
+										ng-disabled="editRecipeForm.price.$error.min"
+										style="height: 35px; width: 100px; padding: 1px; position: absolute;">Edit
+										Price</button>
+								</div>
+
+
+								<div class="row">
+									<div class="form-group col-md-12">
+										<label class="col-md-2 label-sm" for="ingredient">Add
+											Ingredient:</label>
+										<div class="col-md-3">
+											<select ng-model="ingredient.name" name="ingredientname"
+												ng-required="true" class="form-control input-md-6">
+												<option value="">Select an Ingredient</option>
+												<option ng-repeat="ingredient in inventory"
+													ng-value="ingredient.name">{{ingredient.name}}</option>
+											</select>
+										</div>
+
+										<label class="col-md-1 label-sm" for="amount">Amount:</label>
+										<div class="col-md-3">
+											<input type="number" ng-model="ingredient.amount"
+												name="amount" class="form-control input-md-6"
+												placeholder="Enter ingredient amount used by recipe."
+												required="0" min="1" />
+											<div class="has-error" ng-show="editRecipeForm.$dirty">
+												<span ng-show="editRecipeForm.amount.$error.min">Amount
+													must be greater than 0 for adding an ingredient to recipe.</span>
+											</div>
+										</div>
+										<button type="button" ng-click="addIngredient()"
+											ng-disabled="editRecipeForm.amount.$error.min">Add
+											Ingredient</button>
+									</div>
+								</div>
+
+								<label class="panel-heading" for="list"
+									style="border-bottom: 2px solid transparent;">Ingredient
+									List</label>
+								<div class="row">
+									<div class="button-group">
+										<table class="table">
+											<tr>
+												<th>Edit/Delete</th>
+												<th>Name</th>
+												<th>Amount</th>
+											</tr>
+											<tbody>
+												<tr ng-repeat="ingredient in ingredients">
+													<td><label> <input type="radio" name="name"
+															ng-model="$parent.name" value="{{ingredient.name}}">
+													</label></td>
+													<td>{{ ingredient.name }}</td>
+													<td>{{ ingredient.amount }}</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<div class="col-sm-1">
+										<button type="button" ng-click="deleteIngredient()"
+											style="height: 35px; width: 80px; padding: 1px;"
+											ng-disabled="addRecipeForm.$pristine">Delete</button>
+									</div>
+									<div class="col-sm-1">
+										<button type="button" ng-click="editIngredient()"
+											style="height: 35px; width: 60px; padding: 1px;"
+											ng-disabled="addRecipeForm.$pristine">Edit</button>
+									</div>
+									<div class="col-sm-3">
+										<input type="number" ng-model="updateIngredient.amount"
+											name="newAmount" class="newAmount form-control input-md-1"
+											placeholder="Enter ingredient amount." required="0" min="1" />
+										<div class="has-error" ng-show="addRecipeForm.$dirty">
+											<span ng-show="addRecipeForm.newAmount.$error.min">Amount
+												must be greater than 0 for ingredient in recipe.</span>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="form-actions floatRight">
+									<button type="button" ng-click="submit()"
+										ng-disabled="!canSubmit"
+										style="height: 35px; width: 90px; padding: 1px; position: absolute; margin-left: 50%;">Submit</button>
+
+									<button type="button" ng-click="clear()"
+										style="height: 35px; width: 140px; padding: 1px; position: absolute; margin-left: 60%;">Cancel
+										Edits</button>
+								</div>
+							</div>
+
+						</form>
+					</div>
+
+					<div class="panel-footer">
+						<div ng-show="delsuccess">Ingredient Deleted!</div>
+						<div ng-show="editsuccess">Recipe Edited!</div>
+						<div ng-show="isuccess">Ingredient Added!</div>
+					</div>
+
+				</div>
+			</div>
+			<a ng-click="onHome();" style="border: none;"><back> ← </back></a>
+		</div>
+		<!-- general message order popup -->
+		<div class="holder" id="messagePopup">
+			<p id="messageString"></p>
+			<br>
+			<popupButton href="#" onclick="messageToggle()">OK</popupButton>
+		</div>
+		
+		<script type="text/javascript">
+			//make the message popup disappear function
+			function messageToggle() {
+				var blur = document.getElementById('blur');
+				blur.classList.toggle('active');
+				var popup = document.getElementById('messagePopup');
+				popup.classList.toggle('active');
+			}
+		</script>
 	</div>
-	
 </body>
 </html>

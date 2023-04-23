@@ -10,27 +10,25 @@
 <link rel="stylesheet" href="css/app.css" />
 <link rel="icon" type="image/png" href="images/favicon-1.png"/>
 <style>
-		
-      	#popup, #manpopup {
-      		position: fixed;
-      		top: 40%;
-      		left: 50%;
-      		transform: translate(-50%, -50%);
-      		width: 600px;
-      		padding: 50px;
-      		box-shadow: 0 5px 30px rgba(0,0,0,.3);
-      		background: #FFF;
-      		visibility: hidden;
-      		opacity: 0;
-      		transition: 0.35s;
-      	}
-      	#popup.active, #manpopup.active {
-      		top: 50%;
-      		visibility: visible;
-      		opacity: 1;
-      		transition: 0.35s;
-      	}
-
+   	#baristaLoginPopup, #managerLoginPopup {
+   		position: fixed;
+   		top: 40%;
+   		left: 50%;
+   		transform: translate(-50%, -50%);
+   		width: 600px;
+   		padding: 50px;
+   		box-shadow: 0 5px 30px rgba(0,0,0,.3);
+   		background: #FFF;
+   		visibility: hidden;
+   		opacity: 0;
+   		transition: 0.35s;
+   	}
+   	#baristaLoginPopup.active, #managerLoginPopup.active {
+   		top: 50%;
+   		visibility: visible;
+   		opacity: 1;
+   		transition: 0.35s;
+   	}
 </style>
 </head>
 <body>
@@ -53,22 +51,6 @@
 				
 				$scope.password = '';
 				
-				// successful employee login
-				$scope.toggle = function() {
-					var blur = document.getElementById('blur'); 
-					blur.classList.toggle('active');
-					var popup = document.getElementById('popup'); 
-					popup.classList.toggle('active');
-				}
-				
-				// Successful log in as manager
-				$scope.mantoggle = function() {
-					var blur = document.getElementById('blur'); 
-					blur.classList.toggle('active');
-					var manpopup = document.getElementById('manpopup'); 
-					manpopup.classList.toggle('active');
-				}
-				
 				$scope.submit = function(){
 					$scope.employee.password = $scope.password;
 					$http.post("/api/v1/employees/validate", $scope.employee)
@@ -79,9 +61,9 @@
 			            		
 			            		// Check if manager
 			            		if(success.status === 202) {
-			            			$scope.mantoggle();
+			            			$scope.managerLoginToggle();
 			            		} else {
-			            			$scope.toggle();
+			            			$scope.baristaLoginToggle();
 			            		}
 			            		
 			            		sessionStorage.setItem("currentUserName", $scope.employee.name);
@@ -91,9 +73,9 @@
 			                	$scope.success = false;
 			                	
 			                	if(failure.status == 404) {
-			                		alert("An account with that email does not exist. Contact your Manager to make the account.");
+			                		$scope.messageToggle("An account with that email doesn't exist. Contact the manager to get you registered!");
 			                	} else {
-			                		alert("Invalid password. Try again.");
+			                		$scope.messageToggle("The provided login information is incorrect.");
 			                	}
 			                	    
 			        		});
@@ -118,8 +100,54 @@
 				
 				}
 				
+				// go to homepage function
+				$scope.goToHomepage = function() {
+					window.location.href = "/index";
+				}
+				
+				$scope.goToManagerHomepage = function() {
+					window.location.href = "/managerhomepage";
+				}
+				
+				$scope.goToBaristaHomepage = function() {
+					window.location.href = "/baristahomepage";
+				}
+				
 				$scope.reset();
 		
+				// make barista login popup appear function
+				$scope.baristaLoginToggle = function(message, destination) {
+					
+					// toggle it
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var popup = document.getElementById('baristaLoginPopup');
+					popup.classList.toggle('active');
+				}
+				
+				// make manager login popup appear function
+				$scope.managerLoginToggle = function() {
+					
+					// toggle it
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var popup = document.getElementById('managerLoginPopup');
+					popup.classList.toggle('active');
+				}
+				
+				// make message popup appear function
+				$scope.messageToggle = function(message) {
+					
+					// set the message of the popup
+					document.getElementById("messageString").innerHTML = message;
+					
+					// toggle it
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var popup = document.getElementById('messagePopup');
+					popup.classList.toggle('active');
+					
+				}
 			});
 			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
 			/*<![CDATA[*/ 
@@ -127,11 +155,11 @@
 
 		<div ng-app="myApp" ng-controller="populateCtrl">
 			<!--- Various HTML elements, with extra tags telling Angular how to work with them, go here -->
-			<div>
-				<header>Employee Login</header>
-			</div>
-			<br>
 			<div class="holder" id="blur">
+				<div>
+					<header>Employee Login</header>
+				</div>
+				<br>
 				<form ng-sumbit="submit()" name="employeeLoginForm">
 					<table style="border: none; margin-left: auto; margin-right: auto;">
 						<tr>
@@ -159,7 +187,6 @@
 										required="true" style="border-radius: 7px;"/>
 								</div>
 							</td>
-							
 						</tr>
 					</table>
 					
@@ -171,19 +198,54 @@
 					</div>
 				</form>
 			</div>
-			<div class="holder" id="popup">
-				<p>Hi {{employee.name}}! <br> You're now logged in.</p>
-				<br> <br>
-				<a href="/baristahomepage" class="popupButton" style="text-decoration: none">OK</a>
+           	<back style="border: none;" ng-click="goToHomepage()"> ← </back>
+            
+            <!-- barista login popup -->
+			<div class="holder" id="baristaLoginPopup">
+				<p>Hi {{employee.name}}! You're now logged in.</p>
+				<br>
+				<popupButton href="/baristahomepage" ng-click="goToBaristaHomepage()">OK</popupButton>
 			</div>
-			<div class="holder" id="manpopup">
-				<p>Hi {{employee.name}}! <br> You're now logged in as Manager.</p>
-				<br> <br>
-				<a href="/managerhomepage" class="popupButton" style="text-decoration: none">OK</a>
+			
+			<!-- manager login popup -->
+			<div class="holder" id="managerLoginPopup">
+				<p>Hi {{employee.name}}! You're now logged in as manager.</p>
+				<br>
+				<popupButton href="/managerhomepage" ng-click="goToManagerHomepage()">OK</popupButton>
 			</div>
-            <a href="/index" style="border: none;">
-            	<back> ← </back>
-            </a>
+			
+			<!-- general message order popup -->
+			<div class="holder" id="messagePopup">
+				<p id="messageString"></p>
+				<br>
+				<popupButton href="#" ng-click="messageToggle()">OK</popupButton>
+			</div>
+			
+			<script type="text/javascript">
+				//make the message popup disappear function
+				function messageToggle() {
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var popup = document.getElementById('messagePopup');
+					popup.classList.toggle('active');
+				}
+				
+				// make the barista login popup disappear function
+				function baristaLoginToggle() {
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var popup = document.getElementById('baristaLoginPopup');
+					popup.classList.toggle('active');
+				}
+				
+				// make the manager login popup disappear function
+				function managerLoginToggle() {
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var popup = document.getElementById('managerLoginPopup');
+					popup.classList.toggle('active');
+				}
+			</script>
 		</div>
 	</div>	
 </body>
