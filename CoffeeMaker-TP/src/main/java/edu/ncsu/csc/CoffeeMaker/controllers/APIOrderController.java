@@ -224,7 +224,7 @@ public class APIOrderController extends APIController {
 
         else {
             return new ResponseEntity( errorResponse( currOrder.getId() + " does not have enough ingredients" ),
-                    HttpStatus.BAD_REQUEST );
+                    HttpStatus.CONFLICT );
         }
 
     }
@@ -312,10 +312,6 @@ public class APIOrderController extends APIController {
         else {
             currOrder.pickup();
             orderService.save( currOrder );
-            // final Customer cust = customerService.findByEmail(
-            // currOrder.getUserEmail() );
-            // Removes the order from the list of current orders
-            // cust.cancelOrder( currOrder );
             return new ResponseEntity( successResponse( currOrder.getId() + " was successfully picked up" ),
                     HttpStatus.OK );
         }
@@ -340,9 +336,6 @@ public class APIOrderController extends APIController {
         }
 
         if ( order.getStatus() == OrderStatus.NOT_STARTED ) {
-            final String userEmail = order.getUserEmail();
-            final Customer cust = customerService.findByEmail( userEmail );
-            cust.cancelOrder( order );
             orderService.delete( order );
             return new ResponseEntity( successResponse( order + " was deleted successfully" ), HttpStatus.OK );
         }
@@ -371,9 +364,7 @@ public class APIOrderController extends APIController {
         }
 
         if ( order.getStatus() == OrderStatus.NOT_STARTED || order.getStatus() == OrderStatus.IN_PROGRESS ) {
-            final String userEmail = order.getUserEmail();
-            final Customer cust = customerService.findByEmail( userEmail );
-            cust.cancelOrder( order );
+
             orderService.delete( order );
             return new ResponseEntity( successResponse( order + " was deleted successfully" ), HttpStatus.OK );
         }

@@ -39,6 +39,15 @@
 		/*]]>*/
 		var app = angular.module('myApp', []);
 		app.controller('populateCtrl', function($scope, $http, $q) {
+			$http.get("api/v1/employees/email/" + sessionStorage.getItem("currentUserEmail")).then(
+			            	function (success) {
+			            		// An employee but not a manager, so redirect
+			            		if(success.status == 200){
+			            			window.location.href = "/stafflogin";
+			            		}			            	
+			            	}, function(failure) {
+			            		window.location.href = "/index";			            	
+			});
 			
 			// log the hit
 			console.log("Hit!");
@@ -109,8 +118,7 @@
 							$scope.success = true;
 							$scope.failure = false;
 							$scope.toggle();
-							/**sessionStorage.setItem("currentUserName", $scope.barista.name);
-							sessionStorage.setItem("currentUserEmail", $scope.barista.email);*/
+							$scope.reset();
 						},
 						// we have a failure: the user already exists
 						function(failure) {
@@ -192,19 +200,17 @@
 			
 			<!-- welcome message popup-->
 			<div class="holder" id="popup">
-				<p>Your barista account has been registered. <br>Welcome {{barista.name}}!</p>
+				<p>Success! The barista account has been registered.</p>
 				<br> <br>
-				<a href="/baristahomepage" style="font-size: 20px">OK</a>
+				<a href="#" style="font-size: 20px" ng-click="toggle()">OK</a>
 			</div>
 			<!-- end of welcome message popup -->
 			
 			<!-- account already exists popup -->
 			<div class="holder" id="duplicateBaristaPopup">
-				<p>A barista account with this email already exists.<br>
-				Would you like to login?</p> 
+				<p>A barista account with this email already exists.</p> 
 				<br> <br>
-				<a href="/stafflogin" style="font-size: 20px">Login</a>
-				<a href="#" style="font-size: 20px" onclick="dupeToggle()">Cancel</a>
+				<a href="#" style="font-size: 20px" onclick="dupeToggle()">OK</a>
 			</div>
 			<!-- end of account already exists popup -->
 			<script type="text/javascript">

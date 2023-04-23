@@ -44,6 +44,15 @@
 			/*<![CDATA[*/
 			var app = angular.module('myApp', []);
 			app.controller('populateCtrl', function($scope, $http, $q) {
+				$http.get("api/v1/employees/email/" + sessionStorage.getItem("currentUserEmail")).then(
+			            	function (success) {
+			            		// A manager, so redirect.
+			            		if(success.status == 202){
+			            			window.location.href = "/stafflogin";
+			            		}			            	
+			            	}, function(failure) {
+			            		window.location.href = "/index";			            	
+			    });
 				console.log('Hit');
 				
 				$scope.ordersIncomp = {
@@ -65,7 +74,7 @@
 					$http.get("/api/v1/orders/incomplete").then(function(response) {
 						$scope.ordersIncomp = response.data;
 					}, function(rejection) {
-						console.error("Error while getting Recipe");
+						$scope.messageToggle("There was an error getting all orders.");
 					})
 				}
 				
@@ -73,11 +82,13 @@
 					$http.get("/api/v1/orders/inprogress").then(function(response) {
 						$scope.ordersInprog = response.data;
 					}, function(rejection) {
-						console.error("Error while getting Recipe");
+						$scope.messageToggle("There was an error getting your current orders.");
 					})
 				}
 
 				$scope.signout = function(){  
+					sessionStorage.setItem("currentUserEmail", "");
+					sessionStorage.setItem("currentUserName", "");
 					// update later to signout user of system instead of clearing
 					window.location.href = "/index";
 				}
@@ -92,11 +103,16 @@
 								$scope.order.id = '';
 							}, function(error) {
 								if (error.status === 404) {
-								    alert("Unable to Start order");
+									$scope.messageToggle("Order #" + $scope.order.id + " doesn't exist.");
 								    $scope.success = false;
 								}
 								if (error.status === 400) {
-								    alert("Not Enough Ingredients");
+									$scope.messageToggle("This order has already been started.");
+								    // Implement more later
+								    $scope.success = false;
+								}
+								if (error.status === 409) {
+									$scope.messageToggle("There aren't enough ingredients to complete this order. Contact the manager to update the inventory!");
 								    // Implement more later
 								    $scope.success = false;
 								}
@@ -111,14 +127,39 @@
 								$scope.success = true;
 								$scope.getIncomplete();
 								$scope.getInprogress();
-								toggle2();
+								$scope.messageToggle("Order #" + $scope.order.id + " has been completed."); 
 							}, function(error) {
 								if (error.status === 404) {
-								    alert("Recipe Not Found");
+									$scope.messageToggle("That recipe can't be found. Contact the manager to add it.");
 								    $scope.success = false;
 								}
 								if (error.status === 400) {
-								    alert("Not enough Ingredients");
+									$scope.messageToggle("This order has not been started yet.");
+								    // Implement more later
+								    $scope.success = false;
+								}
+								if (error.status === 409) {
+									$scope.messageToggle("There aren't enough ingredients to complete this order. Contact the manager to update the inventory!");
+								    // Implement more later
+								    $scope.success = false;
+								}
+							});
+				}
+				
+				$scope.cancel = function() {
+					$scope.success = false;
+					$http.delete("/api/v1/orders/employee/" + $scope.order.id).then(
+							function(success) {
+								$scope.success = true;
+								$scope.getIncomplete();
+								$scope.getInprogress();
+							}, function(error) {
+								if (error.status === 404) {
+									$scope.messageToggle("Order #" + $scope.order.id + " can't be found.");
+								    $scope.success = false;
+								}
+								if (error.status === 406) {
+									$scope.messageToggle("Order #" + $scope.order.id + " can't be canceled.");
 								    // Implement more later
 								    $scope.success = false;
 								}
@@ -128,6 +169,19 @@
 				$scope.getIncomplete();
 				$scope.getInprogress();
 		
+				// make message popup appear function
+				$scope.messageToggle = function(message) {
+					
+					// set the message of the popup
+					document.getElementById("messageString").innerHTML = message;
+					
+					// toggle it
+					var blur = document.getElementById('blur');
+					blur.classList.toggle('active');
+					var popup = document.getElementById('messagePopup');
+					popup.classList.toggle('active');
+				}
+				
 			});
 			/*]]>*/
 		</script>
@@ -200,7 +254,11 @@
 							</table>
 							<button ng-click="fulfill()"
 								class="button-side" style="	width: 215px; height: 50px;">Fulfill Order</button>
+							
 					</div>
+					
+					<button ng-click="cancel()"
+								class="button-side" style="	width: 215px; height: 50px;">Cancel Order</button>
 					</form>
 					</div>
 			</div>
@@ -212,12 +270,12 @@
 				<popupButton href="#" onclick="toggle()">Cancel</popupButton>
 			</div>
 			
-			<div class="holder" id="completePopup">
-				<p>Successfully completed Order</p>
+			<!-- general message order popup -->
+			<div class="holder" id="messagePopup">
+				<p id="messageString"></p>
 				<br>
-				<popupButton href="/baristahomepage" onclick="toggle2()">OK</popupButton>
+				<popupButton href="/baristahomepage" onclick="messageToggle()">OK</popupButton>
 			</div>
-			<!-- end of sign out popup -->
 			
 			<script type="text/javascript">
 				// make signout popup appear function
@@ -228,15 +286,18 @@
 					signoutPopup.classList.toggle('active');
 				}
 				
-				function toggle2() {
+				//make the message popup disappear function
+				function messageToggle() {
 					var blur = document.getElementById('blur');
 					blur.classList.toggle('active');
-					var completePopup = document.getElementById('completePopup');
-					completePopup.classList.toggle('active');
+					var popup = document.getElementById('messagePopup');
+					popup.classList.toggle('active');
 				}
 				
 				// go to login page function
 				function goToLogin() {
+					sessionStorage.setItem("currentUserEmail", "");
+					sessionStorage.setItem("currentUserName", "");
 					window.location.href = "/stafflogin";
 				}
 				

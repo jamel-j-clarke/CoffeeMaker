@@ -1,6 +1,7 @@
 package edu.ncsu.csc.CoffeeMaker.models;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,7 +16,7 @@ import javax.validation.constraints.Min;
  *
  * @author Emma Holincheck
  * @author Erin Grouge
- * @version 04/17/2023
+ * @version 04/20/2023
  *
  */
 @Entity
@@ -172,6 +173,11 @@ public class Order extends DomainObject {
 
     /**
      * Equals method for Order object
+     *
+     * @param obj
+     *            the object being compared to the current order
+     * @return true if the two objects are both equal orders and false if they
+     *         are not
      */
     @Override
     public boolean equals ( final Object obj ) {
@@ -185,6 +191,7 @@ public class Order extends DomainObject {
             return false;
         }
         final Order other = (Order) obj;
+        // Checks the case if beverage is null
         if ( beverage == null ) {
             if ( other.beverage != null ) {
                 return false;
@@ -193,6 +200,9 @@ public class Order extends DomainObject {
         else if ( !beverage.equals( other.beverage ) ) {
             return false;
         }
+        // Checks the case if the user email is null. This check is crucial
+        // because if we have a guest user their email may appear null in the
+        // system and so we need to account for that flow
         if ( userEmail == null ) {
             if ( other.userEmail != null ) {
                 return false;
@@ -210,6 +220,20 @@ public class Order extends DomainObject {
         return true;
     }
 
+    /**
+     * Calculates the object's hashcode.
+     */
+    @Override
+    public int hashCode () {
+        return Objects.hash( beverage, id, payment, status, userEmail );
+    }
+
+    /**
+     * To String method for the Order object that constructs a string with the
+     * order id, beverage, payment, user email, and status.
+     *
+     * @return string representation of the order
+     */
     @Override
     public String toString () {
         return "Order " + id + " of " + beverage + " for $" + payment + " placed by " + userEmail + " has status "

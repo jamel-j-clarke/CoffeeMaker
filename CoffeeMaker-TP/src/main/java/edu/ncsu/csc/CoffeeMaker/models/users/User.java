@@ -260,6 +260,14 @@ public class User extends DomainObject {
     }
 
     /**
+     * Calculates the object's hashcode
+     */
+    @Override
+    public int hashCode () {
+        return Objects.hash( email, id, name, password, salt );
+    }
+
+    /**
      * to String for the user object
      *
      * @return prints the users name and email

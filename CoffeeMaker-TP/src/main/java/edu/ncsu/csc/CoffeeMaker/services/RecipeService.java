@@ -28,6 +28,11 @@ public class RecipeService extends Service<Recipe, Long> {
     @Autowired
     private RecipeRepository recipeRepository;
 
+    /**
+     * Gets the current recipe repository
+     *
+     * @return the current recipe repository
+     */
     @Override
     protected JpaRepository<Recipe, Long> getRepository () {
         return recipeRepository;

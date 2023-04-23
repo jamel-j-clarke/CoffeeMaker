@@ -13,7 +13,7 @@ import edu.ncsu.csc.CoffeeMaker.repositories.CustomerRepository;
  * Customer Service
  *
  * @author Emma Holincheck
- * @version 03/30/2023
+ * @version 04/20/2023
  *
  */
 @Component
@@ -36,17 +36,6 @@ public class CustomerService extends Service<Customer, Long> {
     protected JpaRepository<Customer, Long> getRepository () {
         return customerRepository;
     }
-
-    // /**
-    // * Find a customer with the provided id
-    // *
-    // * @param id
-    // * id of the customer
-    // * @return found customer, null if none
-    // */
-    // public Customer findById ( final long id ) {
-    // return customerRepository.findById( id );
-    // }
 
     /**
      * Find a customer with the provided id
