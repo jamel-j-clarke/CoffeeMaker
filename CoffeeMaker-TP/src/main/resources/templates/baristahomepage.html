@@ -107,6 +107,11 @@
 								    $scope.success = false;
 								}
 								if (error.status === 400) {
+									$scope.messageToggle("This order has already been started.");
+								    // Implement more later
+								    $scope.success = false;
+								}
+								if (error.status === 409) {
 									$scope.messageToggle("There aren't enough ingredients to complete this order. Contact the manager to update the inventory!");
 								    // Implement more later
 								    $scope.success = false;
@@ -129,6 +134,11 @@
 								    $scope.success = false;
 								}
 								if (error.status === 400) {
+									$scope.messageToggle("This order has not been started yet.");
+								    // Implement more later
+								    $scope.success = false;
+								}
+								if (error.status === 409) {
 									$scope.messageToggle("There aren't enough ingredients to complete this order. Contact the manager to update the inventory!");
 								    // Implement more later
 								    $scope.success = false;
