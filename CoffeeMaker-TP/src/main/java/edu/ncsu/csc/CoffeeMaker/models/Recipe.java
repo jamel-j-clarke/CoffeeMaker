@@ -245,6 +245,27 @@ public class Recipe extends DomainObject {
     @Override
     public String toString () {
         final StringBuilder str = new StringBuilder();
+        // Formatting for 1 ingredient
+        if ( ingredients.size() == 1 ) {
+            str.append( ingredients.get( 0 ).getName() );
+            str.append( " (" );
+            str.append( ingredients.get( 0 ).getAmount() );
+            str.append( ")." );
+            return str.toString();
+        }
+        // Formatting for 2 ingredients
+        else if ( ingredients.size() == 2 ) {
+            str.append( ingredients.get( 0 ).getName() );
+            str.append( " (" );
+            str.append( ingredients.get( 0 ).getAmount() );
+            str.append( ") and " );
+            str.append( ingredients.get( 1 ).getName() );
+            str.append( " (" );
+            str.append( ingredients.get( 1 ).getAmount() );
+            str.append( ")." );
+            return str.toString();
+        }
+        // Formatting for 3+ ingredients.
         for ( int i = 0; i < ingredients.size(); i++ ) {
             if ( i == ingredients.size() - 1 ) {
                 str.append( "and " );

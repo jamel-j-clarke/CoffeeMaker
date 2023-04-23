@@ -225,10 +225,12 @@ public class MappingController {
         return "orderdrink";
     }
 
-    /*
+    /**
      * On a GET request to /ordersummary, the UserController will return
      * /src/main/resources/templates/ordersummary.html.
-     * @param model underlying UI model
+     *
+     * @param model
+     *            underlying UI model
      * @return contents of the page
      */
     @GetMapping ( { "/ordersummary", "/ordersummary.html" } )

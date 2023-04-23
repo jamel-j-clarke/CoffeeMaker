@@ -1,6 +1,7 @@
 package edu.ncsu.csc.CoffeeMaker.models;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -217,6 +218,14 @@ public class Order extends DomainObject {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Calculates the object's hashcode.
+     */
+    @Override
+    public int hashCode () {
+        return Objects.hash( beverage, id, payment, status, userEmail );
     }
 
     /**
