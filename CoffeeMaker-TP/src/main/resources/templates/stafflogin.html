@@ -100,6 +100,19 @@
 				
 				}
 				
+				// go to homepage function
+				$scope.goToHomepage = function() {
+					window.location.href = "/index";
+				}
+				
+				$scope.goToManagerHomepage = function() {
+					window.location.href = "/managerhomepage";
+				}
+				
+				$scope.goToBaristaHomepage = function() {
+					window.location.href = "/baristahomepage";
+				}
+				
 				$scope.reset();
 		
 				// make barista login popup appear function
@@ -185,27 +198,27 @@
 					</div>
 				</form>
 			</div>
-           	<back href="/index" style="border: none;"> ← </back>
+           	<back style="border: none;" ng-click="goToHomepage()"> ← </back>
             
             <!-- barista login popup -->
 			<div class="holder" id="baristaLoginPopup">
 				<p>Hi {{employee.name}}! You're now logged in.</p>
 				<br>
-				<popupButton href="/baristahomepage" onclick="baristaLoginToggle()">OK</popupButton>
+				<popupButton href="/baristahomepage" ng-click="goToBaristaHomepage()">OK</popupButton>
 			</div>
 			
 			<!-- manager login popup -->
 			<div class="holder" id="managerLoginPopup">
 				<p>Hi {{employee.name}}! You're now logged in as manager.</p>
 				<br>
-				<popupButton href="/managerhomepage" onclick="managerLoginToggle()">OK</popupButton>
+				<popupButton href="/managerhomepage" ng-click="goToManagerHomepage()">OK</popupButton>
 			</div>
 			
 			<!-- general message order popup -->
 			<div class="holder" id="messagePopup">
 				<p id="messageString"></p>
 				<br>
-				<popupButton href="#" onclick="messageToggle()">OK</popupButton>
+				<popupButton href="#" ng-click="messageToggle()">OK</popupButton>
 			</div>
 			
 			<script type="text/javascript">
